@@ -1,4 +1,4 @@
-versi = "v1.2.5"
+versi = "v1.2.6"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -689,6 +689,7 @@ end
 task.spawn(
     function()
         local num = 1
+        local flag_error = false
         while running do
             local currentTime = os.clock()
             text_jam.Text = formatTime(math.floor(getOnlineTime()))
@@ -696,10 +697,13 @@ task.spawn(
                 local delta = currentTime - lastCatchTime
                 delta = math.floor(delta * 10 + 0.5) / 10
                 if delta < 30 then
+                    flag_error = false
                     text_timer.Text = "⏳" .. delta .. " sec."
                 else
+                    flag_error = true
                     mainFrame.BackgroundColor3 = Color3.fromRGB(197, 16, 16)
                     text_timer.Text = "⚠️ OVER ⚠️ " .. delta .. " sec."
+                    
                 end
             end
             if num % 300 == 0 then -- tiap 5 menit
@@ -745,7 +749,14 @@ task.spawn(
                         end
                     end
                 end 
-
+            end
+            if num % 30 == 0 and flag_error == true then
+                task.wait(0.5)
+                Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
+                task.wait(0.5)
+                Net:WaitForChild("RE/FishingCompleted"):FireServer()
+                task.wait(0.5)
+                mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
             end
             num = num + 1
             task.wait(1)
