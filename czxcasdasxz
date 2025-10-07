@@ -471,10 +471,14 @@ local function updateSelected()
     end
     if enable_farming_event then
         if new_priority ~= selected_priority then
+            print("old", selected_priority)
+            print("new", new_priority)
             print("[PRIORITY CHANGE] -> checkpoint aktif")
             running_mancing = false
         end
     end
+    print("selected", selected)
+    print("selected priority", selected_priority)
     selected = new_selected
     selected_priority = new_priority
 end
