@@ -1,4 +1,4 @@
-versi = "v1.2.6.1"
+versi = "v1.2.6.2"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -53,7 +53,7 @@ text_jam.Size = UDim2.new(0, 0, 0, 0)
 text_jam.Position = UDim2.new(0.8, 0, 0.3, 0)
 text_jam.Text = "00:00:00"
 text_jam.Font = Enum.Font.RobotoMono
-text_jam.TextSize = 60
+text_jam.TextSize = 80
 text_jam.TextXAlignment = Enum.TextXAlignment.Center
 text_jam.TextColor3 = Color3.fromRGB(230, 255, 1)
 text_jam.Parent = mainFrame
@@ -63,7 +63,7 @@ text_coin.Size = UDim2.new(0, 0, 0, 0)
 text_coin.Position = UDim2.new(0.2, 0, 0.3, 0)
 text_coin.Text = "0"
 text_coin.Font = Enum.Font.RobotoMono
-text_coin.TextSize = 60
+text_coin.TextSize = 80
 text_coin.TextXAlignment = Enum.TextXAlignment.Center
 text_coin.TextColor3 = Color3.fromRGB(230, 255, 1)
 text_coin.Parent = mainFrame
@@ -82,8 +82,8 @@ local text_total = Instance.new("TextLabel")
 text_total.Size = UDim2.new(0, 0, 0, 0)
 text_total.Position = UDim2.new(0.5, 0, 0, 170)
 text_total.Text = "-"
-text_total.Font = Enum.Font.RobotoMono
-text_total.TextSize = 50
+text_total.Font = Enum.Font.Roboto
+text_total.TextSize = 100
 text_total.TextXAlignment = Enum.TextXAlignment.Center
 text_total.TextColor3 = Color3.fromRGB(255, 217, 1)
 text_total.Parent = mainFrame
@@ -719,20 +719,18 @@ task.spawn(
                 task.wait(2)
                 Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
                 task.wait(2)
-                local progress_quest = (cek_quest(quest(1)) + cek_quest(quest(2)) + cek_quest(quest(3)) + cek_quest(quest(4))) / 4
-                if cek_quest(quest(1)) == 100 and flag_quest_1 == false then
-                    running_mancing = false
-                    flag_quest_1 = true
-                end
-                if enable_quest_farm and progress_quest >= 100 then
-                    running_mancing = false
-                    enable_quest_farm = false
-                else
-                    text_quest.Text = "Progress Quest = " .. tostring(progress_quest) .. "%"
-                end
-                Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
-                Net:WaitForChild("RE/FishingCompleted"):FireServer()
                 if enable_quest_farm then
+                    local progress_quest = (cek_quest(quest(1)) + cek_quest(quest(2)) + cek_quest(quest(3)) + cek_quest(quest(4))) / 4
+                    if cek_quest(quest(1)) == 100 and flag_quest_1 == false then
+                        running_mancing = false
+                        flag_quest_1 = true
+                    end
+                    if enable_quest_farm and progress_quest >= 100 then
+                        running_mancing = false
+                        enable_quest_farm = false
+                    else
+                        text_quest.Text = "Progress Quest = " .. tostring(progress_quest) .. "%"
+                    end
                     watchdog_buy = true
                     local koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
                     local koins = convert(koin)
