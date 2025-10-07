@@ -1,1 +1,830 @@
-versi="v1.2.3"local a=game:GetService("Players")local b=a.LocalPlayer;local c=b:WaitForChild("PlayerGui")local d=b.Character or b.CharacterAdded:Wait()local e=d:WaitForChild("HumanoidRootPart")local f=game:GetService("ReplicatedStorage")local g=game:GetService("RunService")local h=f:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net")local i,j=pcall(function()return require(f.Packages.Replion)end)if not i or not j.Client then warn("Replion client tidak ditemukan")return end;local k=j.Client;local l=k:WaitReplion("Data")local m=l:GetExpect({"Inventory"})local n=Vector3.new(6,0.2,6)local o=-3;local p=tick()local q=false;local r=true;local s=true;local t=1;local u=0;local v={}local w=true;local x=Instance.new("ScreenGui")x.Name="HAYBOT"x.Parent=c;local y=Instance.new("Frame")y.Size=UDim2.new(1,0,1,100)y.Position=UDim2.new(0,0,0,-100)y.BackgroundColor3=Color3.fromRGB(0,0,0)y.BorderSizePixel=0;y.BackgroundTransparency=0.2;y.Visible=true;y.Parent=x;local z=Instance.new("TextLabel")z.Size=UDim2.new(0,0,0,0)z.Position=UDim2.new(0.8,0,0.3,0)z.Text="00:00:00"z.Font=Enum.Font.RobotoMono;z.TextSize=60;z.TextXAlignment=Enum.TextXAlignment.Center;z.TextColor3=Color3.fromRGB(230,255,1)z.Parent=y;local A=Instance.new("TextLabel")A.Size=UDim2.new(0,0,0,0)A.Position=UDim2.new(0.2,0,0.3,0)A.Text="0"A.Font=Enum.Font.RobotoMono;A.TextSize=60;A.TextXAlignment=Enum.TextXAlignment.Center;A.TextColor3=Color3.fromRGB(230,255,1)A.Parent=y;local B=Instance.new("TextLabel")B.Size=UDim2.new(0,0,0,0)B.Position=UDim2.new(0.5,0,0,100)B.Text="HAYBOT "..versi;B.Font=Enum.Font.RobotoMono;B.TextSize=30;B.TextXAlignment=Enum.TextXAlignment.Center;B.TextColor3=Color3.fromRGB(255,255,255)B.Parent=y;local C=Instance.new("TextLabel")C.Size=UDim2.new(0,0,0,0)C.Position=UDim2.new(0.5,0,0,150)C.Text="-"C.Font=Enum.Font.RobotoMono;C.TextSize=50;C.TextXAlignment=Enum.TextXAlignment.Center;C.TextColor3=Color3.fromRGB(255,217,1)C.Parent=y;local D=Instance.new("TextLabel")D.Size=UDim2.new(0,0,0,0)D.Position=UDim2.new(0.5,0,0.5,0)D.Text="IKAN KUNTUL"D.Font=Enum.Font.RobotoMono;D.TextSize=60;D.TextXAlignment=Enum.TextXAlignment.Center;D.TextColor3=Color3.fromRGB(230,255,1)D.Parent=y;local E=Instance.new("TextLabel")E.Size=UDim2.new(0,0,0,0)E.Position=UDim2.new(0.5,0,0.1,0)E.Text=b.Name;E.Font=Enum.Font.RobotoMono;E.TextSize=50;E.TextXAlignment=Enum.TextXAlignment.Center;E.TextColor3=Color3.fromRGB(255,255,255)E.Parent=y;local F=Instance.new("TextLabel")F.Size=UDim2.new(0,0,0,0)F.Position=UDim2.new(0.5,0,0.85,0)F.Text="QUEST KUNTUL"F.Font=Enum.Font.RobotoMono;F.TextSize=50;F.TextXAlignment=Enum.TextXAlignment.Center;F.TextColor3=Color3.fromRGB(255,255,255)F.Parent=y;local G=Instance.new("TextLabel")G.Size=UDim2.new(0,0,0,0)G.Position=UDim2.new(0.5,0,0.65,0)G.Text="00"G.Font=Enum.Font.RobotoMono;G.TextSize=60;G.TextXAlignment=Enum.TextXAlignment.Center;G.TextColor3=Color3.fromRGB(69,180,54)G.Parent=y;local H=Instance.new("TextLabel")H.Size=UDim2.new(0,0,0,0)H.Position=UDim2.new(0.5,0,0.75,0)H.Text="IKAN KUNTUL"H.Font=Enum.Font.RobotoMono;H.TextSize=50;H.TextXAlignment=Enum.TextXAlignment.Center;H.TextColor3=Color3.fromRGB(160,127,155)H.Parent=y;local I=Instance.new("TextButton")I.Size=UDim2.new(0,60,0,60)I.Position=UDim2.new(1,-190,0,100)I.Text="3D"I.TextSize=40;I.Visible=true;I.TextXAlignment=Enum.TextXAlignment.Center;I.TextColor3=Color3.fromRGB(255,255,255)I.Parent=y;I.BackgroundColor3=Color3.fromRGB(49,165,155)local J=Instance.new("TextButton")J.Size=UDim2.new(0,60,0,60)J.Position=UDim2.new(1,-260,0,100)J.Text="ID"J.TextSize=40;J.Visible=true;J.TextXAlignment=Enum.TextXAlignment.Center;J.TextColor3=Color3.fromRGB(255,255,255)J.Parent=y;J.BackgroundColor3=Color3.fromRGB(49,165,155)local K=Instance.new("TextButton")K.Size=UDim2.new(0,60,0,60)K.Position=UDim2.new(1,-120,0,100)K.Text="Х"K.TextSize=40;K.Visible=true;K.TextXAlignment=Enum.TextXAlignment.Center;K.TextColor3=Color3.fromRGB(255,255,255)K.Parent=y;K.BackgroundColor3=Color3.fromRGB(172,49,49)local L={{name="Megalodon Hunt",priority=9,loc={{-1076.3,-1.3999,1676.19},{-1191.8,-1.3999,3597.30},{412.700,-1.3999,4134.39}}},{name="Worm Hunt",priority=6,loc={{1591.55,-1.3999,-105.92},{-2450.6,-1.3999,139.731},{-267.47,-1.3999,5188.53}}},{name="Ghost Shark Hunt",priority=7,loc={{489.558,-1.3500,25.4060},{1976.51,-1.3500,2915.93},{-1358.2,-1.3500,4100.55},{627.859,-1.3500,3798.08}}},{name="Shark Hunt",priority=4,loc={{1.64999,-1.3500,2095.72},{1369.94,-1.3500,930.125},{-1585.5,-1.3500,1242.87},{-1896.8,-1.3500,2634.37}}}}local function M(N)if string.find(N,"K")then local O=string.gsub(N,"K","")return math.floor(O*1000)end;if string.find(N,"M")then local O=string.gsub(N,"M","")return math.floor(O*1000000)end;return tonumber(N)end;local function P(Q)for R,S in ipairs(list_rod)do if S.nama==Q then print("beli rod id:"..S.id)h:WaitForChild("RF/PurchaseFishingRod"):InvokeServer(S.id)end end end;local function T(U)task.wait(1)h:WaitForChild("RF/PurchaseBait"):InvokeServer(U)task.wait(1)h:WaitForChild("RE/EquipBait"):FireServer(U)task.wait(1)end;function round(O,V)local W=10^(V or 0)return math.floor(O*W+0.5)/W end;local function X(Y)if Y<999 then result=tostring(Y)elseif Y<1000000 then kk=Y/1000;result=tostring(round(kk,2)).." K"else kk=Y/1000000;result=tostring(round(kk,2)).." M"end;return result end;local Z={}local list_rod={}for _,a0 in pairs(f:WaitForChild("Items"):GetChildren())do if a0:IsA("ModuleScript")then local a1,a2=pcall(require,a0)if a1 and a2.Data.Type=="Fishes"then Z[a2.Data.Id]=a2.SellPrice end;if a1 and string.find(a2.Data.Name,"Rod")then list_rod[a2.Data.Id]={tier=a2.Data.Tier,nama=a2.Data.Name,id=a2.Data.Id}end end end;local a3=h:WaitForChild("RE/ObtainedNewFishNotification")if getconnections then for _,a4 in ipairs(getconnections(a3.OnClientEvent))do a4:Disable()end end;a3.OnClientEvent:Connect(function(a5,a6,a7,a8)local a9=a6 and a6.Weight or 0;if a9<1 then print(string.format("[CANCEL] Ikan terlalu kecil (%.2f). Dibatalkan.",a9))h:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())return end;print(string.format("[IKAN BESAR] ID:%s | Berat: %.2f",a5,a9))end)local function aa(ab)local ac;local ad=h:WaitForChild("RE/FishCaught")if not ac then ac=ad.OnClientEvent:Connect(function(Q,a2)if s then ab(Q,a2)end end)end end;local ae=nil;aa(function(Q,a2)local af=""if a2.Variants then af="["..tostring(a2.Variants).."] "end;G.Text=af..Q.." ("..round(a2.Weight,2).." Kg)"ae=os.clock()end)local function ag(ah)local ai=Instance.new("Part")ai.Name="LocalPlatform"ai.Size=n;ai.Anchored=true;ai.CanCollide=true;ai.Transparency=0.3;ai.Color=Color3.new(1,0,0)ai.Parent=workspace;local function aj()ai.CFrame=CFrame.new(e.Position.X,e.Position.Y+o,e.Position.Z)end;aj()e:GetPropertyChangedSignal("Position"):Connect(aj)ah.AncestryChanged:Connect(function(_,ak)if not ak then if ai and ai.Parent then ai:Destroy()end end end)end;b.CharacterAdded:Connect(ag)if b.Character then ag(b.Character)end;local function al(am,an,ao)local ah=b.Character or b.CharacterAdded:Wait()local e=ah:FindFirstChild("HumanoidRootPart")if e then e.CFrame=CFrame.new(Vector3.new(am,an,ao))end end;local function ap(aq)local ah=b.Character or b.CharacterAdded:Wait()local e=ah:FindFirstChild("HumanoidRootPart")if e then local ar=e.Position;local as=math.rad(aq)local at=Vector3.new(math.sin(as),0,math.cos(as))e.CFrame=CFrame.lookAt(ar,ar+at)end end;local function au()local av=game:GetService("Lighting")local aw=workspace:FindFirstChildOfClass("Terrain")local ax=game:GetService("MaterialService")settings().Rendering.QualityLevel=Enum.QualityLevel.Level01;av.GlobalShadows=false;av.Brightness=1;av.EnvironmentDiffuseScale=0;av.EnvironmentSpecularScale=0;for _,ay in ipairs(av:GetChildren())do if ay:IsA("PostEffect")then ay.Enabled=false end end;if aw then aw.WaterWaveSize=0;aw.WaterWaveSpeed=0;aw.WaterReflectance=0;aw.WaterTransparency=1 end;ax.Use2022Materials=false end;local az=true;local aA=false;local function aB()az=not az;aA=not aA;g:Set3dRenderingEnabled(az)for _,c in ipairs(c:GetChildren())do if c:IsA("ScreenGui")and c~=x then c.Enabled=false end end end;selected=nil;selected_priority=-1;local aC=game:GetService("Players").LocalPlayer.PlayerGui.Events.Frame.Events;local function aD()local aE=nil;local aF=-1;cetak_list_event=""for R,aG in ipairs(aC:GetChildren())do if aG:IsA("ImageLabel")and aG.Visible then if string.find(aG.Name,"Hunt")then for _,aH in ipairs(L)do if aG.Name==aH.name then if aH.priority>aF then aE=aG;aF=aH.priority end end end end;cetak_list_event=cetak_list_event.." ["..aG.Name.."]"end end;if q then if aF~=selected_priority then print("[PRIORITY CHANGE] -> checkpoint aktif")r=false end end;selected=aE;selected_priority=aF end;local function aI(aG)if aG:IsA("ImageLabel")then aG:GetPropertyChangedSignal("Visible"):Connect(function()aD()end)end end;for _,aG in ipairs(aC:GetChildren())do aI(aG)end;local function aJ(aK)local aL=tostring(aK):match("^%-?%d+")return tonumber(aL)end;local function aM(aN)local aO={}local aC=workspace["!!! MENU RINGS"]for _,a0 in ipairs(aC:GetChildren())do if a0:IsA("Model")and a0.Name=="Props"then local ar=a0.WorldPivot.Position;local aP=aJ(ar.X)table.insert(aO,aP)end end;local aQ={}for _,am in ipairs(aO)do aQ[am]=true end;for _,aR in ipairs(L)do if aR.name==aN then for _,aS in ipairs(aR.loc)do local am=aJ(aS[1])print(am)if aQ[am]then return aS[1],aS[2],aS[3]end end end end;return nil end;function memancing()print("memancing")e.Anchored=true;H.Text=b:GetAttribute("LocationName")h:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)task.wait(1)print("running mancing: ",r)task.wait(3)count_mancing=0;while s do math.randomseed(os.time())local aT=math.random()*2-1;task.wait(0.2)h:WaitForChild("RF/ChargeFishingRod"):InvokeServer(tick())task.wait(0.5)h:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(aT,1.0)for R=1,20 do h:WaitForChild("RE/FishingCompleted"):FireServer()task.wait(0.2)end;if count_mancing%10==0 then if r==false then r=true;return end end;count_mancing=count_mancing+1 end end;local function aU()local aV=tick()-p;return aV end;local function aW(aX)local Y=math.floor(aX/3600)local aY=math.floor(aX%3600/60)local aZ=math.floor(aX%60)return string.format("%02d:%02d:%02d",Y,aY,aZ)end;local function a_()print("update inventory")u=0;list_inventory_rod={}for b0,b1 in pairs(m)do if b0=="Fishing Rods"then for _,b2 in ipairs(b1)do local b3=list_rod[b2.Id]if b3 then list_inventory_rod[b3.nama]={Id=b2.Id,UUID=b2.UUID,Name=b3.nama,Tier=b3.tier}end end end;if b0=="Items"then for _,b2 in ipairs(b1)do local Y=Z[b2.Id]if Y~=nil then u=u+Y end end else end end end;local function b4()local b5=game.JobId;if setclipboard then setclipboard(b5)task.wait(1.5)J.Text="✅"else J.Text="⚠️"end end;K.MouseButton1Click:Connect(function()s=false;x:Destroy()end)I.MouseButton1Click:Connect(function()aB()end)J.MouseButton1Click:Connect(b4)local function b6()print("kontol")local b7=0;local b8=""local b9=""for Q,S in pairs(list_inventory_rod)do print(S.Name)if S.Tier>b7 then b7=S.Tier;b8=S.UUID;b9=S.Name;print("terbaik ->",S.Name,S.Tier)end end;if b8~=""then print(b9)h:WaitForChild("RE/EquipItem"):FireServer(b8,"Fishing Rods")else print("⚠️ Tidak ada rod ditemukan.")end end;local function ba(bb)local aC=workspace["!!! MENU RINGS"]["Deep Sea Tracker"].Board.Gui.Content;local bc=aC:FindFirstChild("Label"..bb)if bc and bc:IsA("TextLabel")then return bc.Text else return nil end end;local function bd(be)if not be then return nil end;local bf=string.match(be,"(%d+)%%")if bf then return tonumber(bf)end;return nil end;local bg=bd(ba(1))local bh=(bd(ba(2))+bd(ba(3))+bd(ba(4)))/3;if bg==100 then flag_quest_1=true end;task.spawn(function()local O=1;while s do local bi=os.clock()z.Text=aW(math.floor(aU()))if ae then local bj=bi-ae;bj=math.floor(bj*10+0.5)/10;if bj<30 then D.Text="⏳"..bj.." sec."else y.BackgroundColor3=Color3.fromRGB(197,16,16)D.Text="⚠️ OVER ⚠️ "..bj.." sec."end end;if O%300==0 then y.BackgroundColor3=Color3.fromRGB(0,0,0)print("update harga spawn = ",u)a_()A.Text=X(u)task.wait(2)h:WaitForChild("RF/SellAllItems"):InvokeServer(now)task.wait(2)local bk=(bd(ba(1))+bd(ba(2))+bd(ba(3))+bd(ba(4)))/4;if bd(ba(1))==100 and flag_quest_1==false then r=false;flag_quest_1=true end;if w and bk>=100 then r=false;w=false else F.Text="Progress Quest = "..tostring(bk).."%"end;if w then watchdog_buy=true;local bl=c:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text;local bm=M(bl)if watchdog_buy==true then if bm>3700000 and list_inventory_rod["Ghostfinn Rod"]~=nil then T(16)watchdog_buy=false;b6()elseif bm>1150000 and list_inventory_rod["Astral Rod"]==nil then print("beli rod astral")T(15)P("Astral Rod")b6()elseif bm>50000 and list_inventory_rod["Midnight Rod"]==nil then print("beli rod midnight")T(3)P("Midnight Rod")b6()end end end end;O=O+1;task.wait(1)end end)au()aB()a_()b6()function farming_island()task.wait(1)al(948,3.75,5114)task.wait(3)ap(120)task.wait(1)memancing()print("selesai island")task.wait(1)end;local function bn(aG)print("event: ",aG)local am,an,ao=aM(aG)if am then print("Ketemu lokasi:",am,an,ao)al(am+math.random(1,12),3,ao+math.random(1,12))task.wait(3)ap(0)task.wait(1)memancing()task.wait(1)print("selesai event")else print("tidak ketemu lokasinya!")end end;aD()task.wait(2)while s do if w then if bg<100 then q=false;al(-3602,-283,-1612)task.wait(3)ap(120)task.wait(1)memancing()end;if bg==100 and bh<100 then q=false;al(-3734,-135,-1013)task.wait(3)ap(0)task.wait(1)memancing()end;G.Text="semua quest selesai"print("semua quest selesai")end;w=false;q=true;if selected~=nil and q then F.Text=selected.Name;bn(selected.Name)else farming_island()end;e.Anchored=false;task.wait(1)end;e.Anchored=false;print("running : ",s)print("-----------------end-")
+versi = "v1.2.4"
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local gui = player:WaitForChild("PlayerGui")
+local character = player.Character or player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local Net =
+    ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild(
+    "net"
+)
+
+local ok, Replion = pcall(function() return require(ReplicatedStorage.Packages.Replion) end)
+if not ok or not Replion.Client then
+    warn("Replion client tidak ditemukan")
+    return
+end
+local Client = Replion.Client
+local replion_data = Client:WaitReplion("Data") -- sama seperti controller
+-- Inventory biasanya berbentuk tabel: { ["Fishing Rods"] = { item1, item2, ... }, ["Items"] = {...} }
+local inventory = replion_data:GetExpect({"Inventory"})
+
+local PLATFORM_SIZE = Vector3.new(6, 0.2, 6)
+local OFFSET = -3
+--GLOBAL VARIABLE
+local startscript = tick()
+local enable_farming_event = false
+local running_mancing = true
+local running = true
+local total_mancing = 1
+local total_harga = 0
+local list_inventory = {}
+local enable_quest_farm = true
+-- === ScreenGui utama ===
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "HAYBOT"
+screenGui.Parent = gui
+
+-- === Frame utama (container) ===
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(1, 0, 1, 100)
+mainFrame.Position = UDim2.new(0, 0, 0, -100)
+mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+mainFrame.BorderSizePixel = 0
+mainFrame.BackgroundTransparency = 0.2
+mainFrame.Visible = true
+mainFrame.Parent = screenGui
+
+local text_jam = Instance.new("TextLabel")
+text_jam.Size = UDim2.new(0, 0, 0, 0)
+text_jam.Position = UDim2.new(0.8, 0, 0.3, 0)
+text_jam.Text = "00:00:00"
+text_jam.Font = Enum.Font.RobotoMono
+text_jam.TextSize = 60
+text_jam.TextXAlignment = Enum.TextXAlignment.Center
+text_jam.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_jam.Parent = mainFrame
+
+local text_coin = Instance.new("TextLabel")
+text_coin.Size = UDim2.new(0, 0, 0, 0)
+text_coin.Position = UDim2.new(0.2, 0, 0.3, 0)
+text_coin.Text = "0"
+text_coin.Font = Enum.Font.RobotoMono
+text_coin.TextSize = 60
+text_coin.TextXAlignment = Enum.TextXAlignment.Center
+text_coin.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_coin.Parent = mainFrame
+
+local text_versi = Instance.new("TextLabel")
+text_versi.Size = UDim2.new(0, 0, 0, 0)
+text_versi.Position = UDim2.new(0.5, 0, 0, 100)
+text_versi.Text = "HAYBOT " .. versi
+text_versi.Font = Enum.Font.RobotoMono
+text_versi.TextSize = 30
+text_versi.TextXAlignment = Enum.TextXAlignment.Center
+text_versi.TextColor3 = Color3.fromRGB(255, 255, 255)
+text_versi.Parent = mainFrame
+
+local text_total = Instance.new("TextLabel")
+text_total.Size = UDim2.new(0, 0, 0, 0)
+text_total.Position = UDim2.new(0.5, 0, 0, 150)
+text_total.Text = "-"
+text_total.Font = Enum.Font.RobotoMono
+text_total.TextSize = 50
+text_total.TextXAlignment = Enum.TextXAlignment.Center
+text_total.TextColor3 = Color3.fromRGB(255, 217, 1)
+text_total.Parent = mainFrame
+
+local text_timer = Instance.new("TextLabel")
+text_timer.Size = UDim2.new(0, 0, 0, 0)
+text_timer.Position = UDim2.new(0.5, 0, 0.5, 0)
+text_timer.Text = "IKAN KUNTUL"
+text_timer.Font = Enum.Font.RobotoMono
+text_timer.TextSize = 60
+text_timer.TextXAlignment = Enum.TextXAlignment.Center
+text_timer.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_timer.Parent = mainFrame
+
+local text_nama = Instance.new("TextLabel")
+text_nama.Size = UDim2.new(0, 0, 0, 0)
+text_nama.Position = UDim2.new(0.5, 0, 0.1, 0)
+text_nama.Text = player.Name
+text_nama.Font = Enum.Font.RobotoMono
+text_nama.TextSize = 50
+text_nama.TextXAlignment = Enum.TextXAlignment.Center
+text_nama.TextColor3 = Color3.fromRGB(255, 255, 255)
+text_nama.Parent = mainFrame
+
+local text_quest = Instance.new("TextLabel")
+text_quest.Size = UDim2.new(0, 0, 0, 0)
+text_quest.Position = UDim2.new(0.5, 0, 0.85, 0)
+text_quest.Text = "QUEST KUNTUL"
+text_quest.Font = Enum.Font.RobotoMono
+text_quest.TextSize = 50
+text_quest.TextXAlignment = Enum.TextXAlignment.Center
+text_quest.TextColor3 = Color3.fromRGB(255, 255, 255)
+text_quest.Parent = mainFrame
+
+local text_ikan = Instance.new("TextLabel")
+text_ikan.Size = UDim2.new(0, 0, 0, 0)
+text_ikan.Position = UDim2.new(0.5, 0, 0.65, 0)
+text_ikan.Text = "00"
+text_ikan.Font = Enum.Font.RobotoMono
+text_ikan.TextSize = 60
+text_ikan.TextXAlignment = Enum.TextXAlignment.Center
+text_ikan.TextColor3 = Color3.fromRGB(69, 180, 54)
+text_ikan.Parent = mainFrame
+
+local text_lokasi = Instance.new("TextLabel")
+text_lokasi.Size = UDim2.new(0, 0, 0, 0)
+text_lokasi.Position = UDim2.new(0.5, 0, 0.75, 0)
+text_lokasi.Text = "IKAN KUNTUL"
+text_lokasi.Font = Enum.Font.RobotoMono
+text_lokasi.TextSize = 50
+text_lokasi.TextXAlignment = Enum.TextXAlignment.Center
+text_lokasi.TextColor3 = Color3.fromRGB(160, 127, 155)
+text_lokasi.Parent = mainFrame
+
+-- === Tombol Close (X) ===
+local render_btn = Instance.new("TextButton")
+render_btn.Size = UDim2.new(0, 60, 0, 60)
+render_btn.Position = UDim2.new(1, -190, 0, 100)
+render_btn.Text = "3D"
+render_btn.TextSize = 40
+render_btn.Visible = true
+render_btn.TextXAlignment = Enum.TextXAlignment.Center
+render_btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+render_btn.Parent = mainFrame
+render_btn.BackgroundColor3 = Color3.fromRGB(49, 165, 155)
+
+local job_btn = Instance.new("TextButton")
+job_btn.Size = UDim2.new(0, 60, 0, 60)
+job_btn.Position = UDim2.new(1, -260, 0, 100)
+job_btn.Text = "ID"
+job_btn.TextSize = 40
+job_btn.Visible = true
+job_btn.TextXAlignment = Enum.TextXAlignment.Center
+job_btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+job_btn.Parent = mainFrame
+job_btn.BackgroundColor3 = Color3.fromRGB(49, 165, 155)
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 60, 0, 60)
+closeBtn.Position = UDim2.new(1, -120, 0, 100)
+closeBtn.Text = "Х"
+closeBtn.TextSize = 40
+closeBtn.Visible = true
+closeBtn.TextXAlignment = Enum.TextXAlignment.Center
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Parent = mainFrame
+closeBtn.BackgroundColor3 = Color3.fromRGB(172, 49, 49)
+
+
+
+local list_event = {
+    {
+        name = "Megalodon Hunt",
+        priority = 9,
+        loc = {
+            {-1076.3, -1.3999, 1676.19},
+            {-1191.8, -1.3999, 3597.30},
+            {412.700, -1.3999, 4134.39}
+        }
+    },
+    {
+        name = "Worm Hunt",
+        priority = 6,
+        loc = {
+            {1591.55, -1.3999, -105.92},
+            {-2450.6, -1.3999, 139.731},
+            {-267.47, -1.3999, 5188.53}
+        }
+    },
+    {
+        name = "Ghost Shark Hunt",
+        priority = 7,
+        loc = {
+            {489.558, -1.3500, 25.4060},
+            {1976.51, -1.3500, 2915.93},
+            {-1358.2, -1.3500, 4100.55},
+            {627.859, -1.3500, 3798.08}
+        }
+    },
+    {
+        name = "Shark Hunt",
+        priority = 4,
+        loc = {
+            {1.64999, -1.3500, 2095.72},
+            {1369.94, -1.3500, 930.125},
+            {-1585.5, -1.3500, 1242.87},
+            {-1896.8, -1.3500, 2634.37}
+        }
+    }
+}
+
+----------------------------------------------------------------------------------
+------------------- MAIN FUNGSI
+----------------------------------------------------------------------------------
+--[[
+local list_items_id = {}
+for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
+    if child:IsA("ModuleScript") then
+        local success, data = pcall(require, child)
+        if success and data then
+            list_items_id[data.Data.Id] = data
+        end
+    end
+end
+--]]
+
+local function convert(str)
+    if string.find(str, "K") then
+        local num = string.gsub(str, "K", "")
+        return math.floor(num * 1000)
+    end
+    if string.find(str, "M") then
+        local num = string.gsub(str, "M", "")
+        return math.floor(num * 1000000)
+    end
+    return tonumber(str)
+end
+
+local function auto_buy_rod(name)
+    for i, v in ipairs(list_rod) do
+        if v.nama == name then
+            print("beli rod id:" .. v.id)
+            Net:WaitForChild("RF/PurchaseFishingRod"):InvokeServer(v.id)
+        end
+    end
+end
+
+local function auto_buy_bait(id)
+    task.wait(1)
+    Net:WaitForChild("RF/PurchaseBait"):InvokeServer(id)
+    task.wait(1)
+    Net:WaitForChild("RE/EquipBait"):FireServer(id)
+    task.wait(1)
+end
+
+function round(num, numDecimalPlaces)
+    local mult = 10 ^ (numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
+end
+
+local function harganizer(h)
+    if h < 999 then
+        result = tostring(h)
+    elseif h < 1000000 then
+        kk = h / 1000
+        result = tostring(round(kk,2)) .. " K"
+    else
+        kk = h / 1000000
+        result = tostring(round(kk,2)) .. " M"
+    end
+    return result
+end
+
+local list_harga_ikan = {}
+local list_rod = {}
+for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
+    if child:IsA("ModuleScript") then
+        local success, data = pcall(require, child)
+        if success and data.Data.Type == "Fishes" then
+            list_harga_ikan[data.Data.Id] = data.SellPrice
+        end
+        if success and string.find(data.Data.Name,"Rod") then
+            list_rod[data.Data.Id] = {
+                    tier = data.Data.Tier,
+                    nama = data.Data.Name,
+                    id = data.Data.Id
+                }
+        end
+    end
+end
+
+local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
+-- putuskan koneksi lama (opsional)
+if getconnections then
+    for _, conn in ipairs(getconnections(Event.OnClientEvent)) do
+        conn:Disable()
+    end
+end
+
+Event.OnClientEvent:Connect(
+    function(itemId, stats, meta, flag)
+        local weight = stats and stats.Weight or 0
+
+        -- cek berat ikan
+        if weight < 1 then
+            print(string.format("[CANCEL] Ikan terlalu kecil (%.2f). Dibatalkan.", weight))
+            return
+        end
+
+        -- kalau >= 100, lanjutkan logicmu di sini
+        print(string.format("[IKAN BESAR] ID:%s | Berat: %.2f", itemId, weight))
+    end
+)
+
+local function onFishCaught(callback)
+    local connection
+    local remote = Net:WaitForChild("RE/FishCaught")
+    if not connection then
+        connection =
+            remote.OnClientEvent:Connect(
+            function(name, data)
+                if running then
+                    callback(name, data)
+                end
+            end
+        )
+    end
+end
+local lastCatchTime = nil
+
+onFishCaught(
+    function(name, data)
+        local varian = ""
+        if data.Variants then
+            varian = "[" .. tostring(data.Variants) .. "] "
+        end
+        text_ikan.Text = varian .. name .. " (" .. round(data.Weight, 2) .. " Kg)"
+        lastCatchTime = os.clock()
+    end
+)
+
+-----------------------------------------------------------------
+-- teleport
+-----------------------------------------------------------------
+local function attachSmartPlatform(char)
+    -- Buat platform sekali
+    local platform = Instance.new("Part")
+    platform.Name = "LocalPlatform"
+    platform.Size = PLATFORM_SIZE
+    platform.Anchored = true
+    platform.CanCollide = true
+    platform.Transparency = 0.3
+    platform.Color = Color3.new(1, 0, 0)
+    platform.Parent = workspace
+
+    -- Update posisi hanya ketika karakter bergerak
+    local function updatePlatform()
+        platform.CFrame = CFrame.new(root.Position.X, root.Position.Y + OFFSET, root.Position.Z)
+    end
+
+    updatePlatform() -- set posisi awal
+
+    root:GetPropertyChangedSignal("Position"):Connect(updatePlatform)
+
+    -- Jika karakter mati / hilang
+    char.AncestryChanged:Connect(
+        function(_, parent)
+            if not parent then
+                if platform and platform.Parent then
+                    platform:Destroy()
+                end
+            end
+        end
+    )
+end
+
+player.CharacterAdded:Connect(attachSmartPlatform)
+if player.Character then
+    attachSmartPlatform(player.Character)
+end
+
+local function teleport(x, y, z)
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.CFrame = CFrame.new(Vector3.new(x, y, z))
+    end
+end
+local function face(yawDeg)
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        local pos = root.Position
+        local yaw = math.rad(yawDeg) -- derajat ke radian
+        local dir = Vector3.new(math.sin(yaw), 0, math.cos(yaw))
+        root.CFrame = CFrame.lookAt(pos, pos + dir)
+    end
+end
+
+-----------------------------------------------------------------
+--helper graphic
+-----------------------------------------------------------------
+local function SetLowGraphics()
+    local Lighting = game:GetService("Lighting")
+    local Terrain = workspace:FindFirstChildOfClass("Terrain")
+    local MaterialService = game:GetService("MaterialService")
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    Lighting.GlobalShadows = false
+    Lighting.Brightness = 1
+    Lighting.EnvironmentDiffuseScale = 0
+    Lighting.EnvironmentSpecularScale = 0
+    for _, effect in ipairs(Lighting:GetChildren()) do
+        if effect:IsA("PostEffect") then
+            effect.Enabled = false
+        end
+    end
+    if Terrain then
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+        Terrain.WaterReflectance = 0
+        Terrain.WaterTransparency = 1
+    end
+    MaterialService.Use2022Materials = false
+end
+local renderEnabled = true
+local uiHidden = false
+
+local function toggle3DAndUI()
+    renderEnabled = not renderEnabled
+    uiHidden = not uiHidden
+
+    RunService:Set3dRenderingEnabled(renderEnabled)
+  
+    for _, gui in ipairs(gui:GetChildren()) do
+        if gui:IsA("ScreenGui") and gui ~= screenGui then
+            gui.Enabled = false -- kalau render off, UI juga ikut mati
+        end
+    end
+end
+
+-----------------------------------------------------------------
+--              event finder
+-----------------------------------------------------------------
+selected = nil
+selected_priority = -1
+local path = game:GetService("Players").LocalPlayer.PlayerGui.Events.Frame.Events
+-- fungsi untuk update pilihan event
+local function updateSelected()
+    local new_selected = nil
+    local new_priority = -1
+    cetak_list_event = ""
+    for i, evt in ipairs(path:GetChildren()) do
+        if evt:IsA("ImageLabel") and evt.Visible then
+            if string.find(evt.Name, "Hunt") then
+                for _, info in ipairs(list_event) do
+                    if evt.Name == info.name then
+                        if info.priority > new_priority then
+                            new_selected = evt
+                            new_priority = info.priority
+                        end
+                    end
+                end
+            end
+            cetak_list_event = cetak_list_event .. " [" .. evt.Name .. "]"
+        end
+    end
+    if enable_farming_event then
+        if new_priority ~= selected_priority then
+            print("[PRIORITY CHANGE] -> checkpoint aktif")
+            running_mancing = false
+        end
+    end
+    selected = new_selected
+    selected_priority = new_priority
+end
+
+-- pasang listener untuk setiap child
+local function connectChild(evt)
+    if evt:IsA("ImageLabel") then
+        evt:GetPropertyChangedSignal("Visible"):Connect(
+            function()
+                updateSelected()
+            end
+        )
+    end
+end
+for _, evt in ipairs(path:GetChildren()) do
+    connectChild(evt)
+end
+
+-- fungsi bulatkan ke 1 desimal
+local function round1(angka)
+    local hasil = tostring(angka):match("^%-?%d+")
+    return tonumber(hasil)
+end
+
+-- gabungan getlocation + cari_lokasi
+local function getlocation(event_name)
+    local props_list = {}
+    local path = workspace["!!! MENU RINGS"]
+
+    -- ambil semua props
+    for _, child in ipairs(path:GetChildren()) do
+        if child:IsA("Model") and child.Name == "Props" then
+            local pos = child.WorldPivot.Position
+            local rounded = round1(pos.X)
+            table.insert(props_list, rounded) -- simpan X yang dibulatkan
+        end
+    end
+
+    -- buat lookup table
+    local lookup = {}
+    for _, x in ipairs(props_list) do
+        lookup[x] = true
+    end
+
+    -- cek ke list_event
+    for _, ev in ipairs(list_event) do
+        if ev.name == event_name then
+            for _, loc in ipairs(ev.loc) do
+                local x = round1(loc[1])
+                print(x)
+                if lookup[x] then
+                    return loc[1], loc[2], loc[3]
+                end
+            end
+        end
+    end
+    return nil -- tidak ketemu
+end
+
+function memancing()
+    print("memancing")
+    root.Anchored = true
+    text_lokasi.Text = player:GetAttribute("LocationName")
+    Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+    task.wait(1)
+    print("running mancing: ", running_mancing)
+    task.wait(3)
+    count_mancing = 0
+    while running do
+        math.randomseed(os.time())
+        local random_number = math.random() * 2 - 1
+        task.wait(0.2)
+        Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(tick())
+        task.wait(0.5)
+        Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0)
+        for i = 1, 20 do
+            
+            Net:WaitForChild("RE/FishingCompleted"):FireServer()
+            task.wait(0.2)
+        end
+        if count_mancing % 10 == 0 then
+            if running_mancing == false then
+                running_mancing = true
+                return
+            end
+        end
+        count_mancing = count_mancing + 1
+    end
+end
+
+local function getOnlineTime()
+    local elapsed = tick() - startscript
+    return elapsed
+end
+
+local function formatTime(seconds)
+    local h = math.floor(seconds / 3600)
+    local m = math.floor((seconds % 3600) / 60)
+    local s = math.floor(seconds % 60)
+    return string.format("%02d:%02d:%02d", h, m, s)
+end
+
+local function update_inventory()
+    print("update inventory")
+    total_harga = 0
+    list_inventory_rod = {}
+    for category, items in pairs(inventory) do
+        if category == "Fishing Rods" then
+            for _, item in ipairs(items) do
+             local rod_info = list_rod[item.Id]
+                if rod_info then
+                    list_inventory_rod[rod_info.nama] = {
+                        Id = item.Id,
+                        UUID = item.UUID,
+                        Name = rod_info.nama,
+                        Tier = rod_info.tier
+                    }
+                end
+            end
+        end
+        if category == "Items" then
+            for _, item in ipairs(items) do
+                local h = list_harga_ikan[item.Id]
+                if h ~= nil then
+                    total_harga = total_harga + h
+                end
+            end
+        else
+        end
+    end
+end
+local function copyJobId()
+	local jobId = game.JobId
+	if setclipboard then
+		setclipboard(jobId)
+		task.wait(1.5)
+		job_btn.Text = "✅"
+	else
+		job_btn.Text = "⚠️"
+	end
+end
+
+closeBtn.MouseButton1Click:Connect(
+    function()
+        running = false
+        screenGui:Destroy()
+    end
+)
+
+render_btn.MouseButton1Click:Connect(
+    function()
+       toggle3DAndUI()
+    end
+)
+
+job_btn.MouseButton1Click:Connect(copyJobId)
+
+local function best_rod_wear()
+    print("kontol")
+    local old_tier = 0
+    local current_uuid = ""
+    local best = ""
+    for name, v in pairs(list_inventory_rod) do
+        print(v.Name)
+        if v.Tier > old_tier then
+            old_tier = v.Tier
+            current_uuid = v.UUID
+            best = v.Name
+            print("terbaik ->", v.Name,  v.Tier)
+        end
+    end
+    if current_uuid ~= "" then
+        print(best)
+        Net:WaitForChild("RE/EquipItem"):FireServer(current_uuid, "Fishing Rods")
+    else
+        print("⚠️ Tidak ada rod ditemukan.")
+    end
+end
+
+local function quest(index)
+    local path = workspace["!!! MENU RINGS"]["Deep Sea Tracker"].Board.Gui.Content
+    local label = path:FindFirstChild("Label" .. index)
+    if label and label:IsA("TextLabel") then
+        return label.Text
+    else
+        return nil
+    end
+end
+local function cek_quest(text)
+    if not text then return nil end
+    local percent = string.match(text, "(%d+)%%") 
+    if percent then
+        return tonumber(percent)
+    end
+    return nil
+end
+local quest_1 = cek_quest(quest(1)) 
+local quest_234 = (cek_quest(quest(2)) + cek_quest(quest(3)) + cek_quest(quest(4))) / 3
+
+-----------------------------------------------------------------
+--             M A I N
+-----------------------------------------------------------------
+if quest_1 == 100 then
+    flag_quest_1 = true
+end
+
+task.spawn(
+    function()
+        local num = 1
+        while running do
+            local currentTime = os.clock()
+            text_jam.Text = formatTime(math.floor(getOnlineTime()))
+            if lastCatchTime then
+                local delta = currentTime - lastCatchTime
+                delta = math.floor(delta * 10 + 0.5) / 10
+                if delta < 30 then
+                    text_timer.Text = "⏳" .. delta .. " sec."
+                else
+                    mainFrame.BackgroundColor3 = Color3.fromRGB(197, 16, 16)
+                    text_timer.Text = "⚠️ OVER ⚠️ " .. delta .. " sec."
+                end
+            end
+            if num % 300 == 0 then -- tiap 5 menit
+                mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                update_inventory()
+                text_coin.Text = harganizer(total_harga)
+                task.wait(2)
+                Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
+                task.wait(2)
+                local progress_quest = (cek_quest(quest(1)) + cek_quest(quest(2)) + cek_quest(quest(3)) + cek_quest(quest(4))) / 4
+                if cek_quest(quest(1)) == 100 and flag_quest_1 == false then
+                    running_mancing = false
+                    flag_quest_1 = true
+                end
+                if enable_quest_farm and progress_quest >= 100 then
+                    running_mancing = false
+                    enable_quest_farm = false
+                else
+                    text_quest.Text = "Progress Quest = " .. tostring(progress_quest) .. "%"
+                end
+                Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
+                Net:WaitForChild("RE/FishingCompleted"):FireServer()
+                if enable_quest_farm then
+                    watchdog_buy = true
+                    local koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
+                    local koins = convert(koin)
+
+                    if watchdog_buy == true then
+                        if koins > 3700000 and list_inventory_rod["Ghostfinn Rod"] ~= nil  then
+                            auto_buy_bait(16) -- aether
+                            watchdog_buy = false
+                            best_rod_wear()
+                        elseif koins > 1150000 and list_inventory_rod["Astral Rod"] == nil then
+                            print("beli rod astral")
+                            auto_buy_bait(15) -- corrupt
+                            auto_buy_rod("Astral Rod")
+                            best_rod_wear()
+                        elseif  koins > 50000 and list_inventory_rod["Midnight Rod"] == nil then
+                            print("beli rod midnight")
+                            auto_buy_bait(3) -- corrupt
+                            auto_buy_rod("Midnight Rod")
+                            best_rod_wear()
+                        end
+                    end
+                end 
+
+            end
+            num = num + 1
+            task.wait(1)
+        end
+    end
+)
+----------------------------------------------------------------------------------------------------------------------------
+---
+---MULAI ALGORITMA
+---
+
+SetLowGraphics()
+toggle3DAndUI()
+
+update_inventory()
+best_rod_wear()
+
+function farming_island()
+    task.wait(1)
+    teleport(948, 3.75, 5114)
+    task.wait(3)
+    face(120)
+    task.wait(1)
+    memancing()
+    print("selesai island")
+    task.wait(1)
+end
+local function farming_event(evt)
+    print("event: ", evt)
+    local x, y, z = getlocation(evt)
+    if x then
+        print("Ketemu lokasi:", x, y, z)
+        teleport(x + math.random(1,12), 3, z + math.random(1,12))
+        task.wait(3)
+        face(0)
+        task.wait(1)
+        memancing()
+        task.wait(1)
+        print("selesai event")
+    else
+        print("tidak ketemu lokasinya!")
+        farming_island()
+    end
+end
+
+updateSelected()
+
+task.wait(2)
+while running do
+    if enable_quest_farm then
+        if quest_1 < 100 then
+            enable_farming_event = false
+            teleport(-3602, -283, -1612)
+            task.wait(3)
+            face(120)
+            task.wait(1)
+            memancing()
+        end
+        if quest_1 == 100 and quest_234 < 100 then
+            enable_farming_event = false
+            teleport(-3734, -135, -1013)
+            task.wait(3)
+            face(0)
+            task.wait(1)
+            memancing()
+        end
+        text_ikan.Text ="semua quest selesai"
+        print("semua quest selesai")
+    end
+    enable_quest_farm = false
+    enable_farming_event = true
+    if selected ~= nil and enable_farming_event then
+        text_quest.Text = selected.Name
+        farming_event(selected.Name)
+    else
+        farming_island()
+    end
+    root.Anchored = false
+    task.wait(5)
+end
+root.Anchored = false
+print("running : ", running)
+print("-----------------end-")
+--]]
+-----------------------------------------------------------------
+--               E N D     M A I N
+-----------------------------------------------------------------
