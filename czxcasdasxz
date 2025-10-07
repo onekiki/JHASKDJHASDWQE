@@ -1,4 +1,4 @@
-versi = "v1.2.6"
+versi = "v1.2.6.1"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -32,6 +32,7 @@ local total_mancing = 1
 local total_harga = 0
 local list_inventory = {}
 local enable_quest_farm = true
+local fish_caught = false
 -- === ScreenGui utama ===
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "HAYBOT"
@@ -79,7 +80,7 @@ text_versi.Parent = mainFrame
 
 local text_total = Instance.new("TextLabel")
 text_total.Size = UDim2.new(0, 0, 0, 0)
-text_total.Position = UDim2.new(0.5, 0, 0, 150)
+text_total.Position = UDim2.new(0.5, 0, 0, 170)
 text_total.Text = "-"
 text_total.Font = Enum.Font.RobotoMono
 text_total.TextSize = 50
@@ -308,12 +309,13 @@ Event.OnClientEvent:Connect(
 
         -- cek berat ikan
         if weight < 1 then
-            print(string.format("[CANCEL] Ikan terlalu kecil (%.2f). Dibatalkan.", weight))
+            --print(string.format("[CANCEL] Ikan terlalu kecil (%.2f). Dibatalkan.", weight))
+            fish_caught = true
             return
         end
 
         -- kalau >= 100, lanjutkan logicmu di sini
-        print(string.format("[IKAN BESAR] ID:%s | Berat: %.2f", itemId, weight))
+        --print(string.format("[IKAN BESAR] ID:%s | Berat: %.2f", itemId, weight))
     end
 )
 
@@ -541,7 +543,7 @@ end
 
 function memancing()
     print("memancing")
-    root.Anchored = true
+    --root.Anchored = true
     text_lokasi.Text = player:GetAttribute("LocationName")
     Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
     task.wait(1)
@@ -549,16 +551,19 @@ function memancing()
     task.wait(3)
     count_mancing = 0
     while running do
+        text_total.Text = count_mancing
         math.randomseed(os.time())
         local random_number = math.random() * 2 - 1
         task.wait(0.2)
         Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(tick())
         task.wait(0.5)
         Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0)
-        for i = 1, 20 do
-            
+        for i = 1, 15 do
+            if fish_caught == true then
+                break
+            end
             Net:WaitForChild("RE/FishingCompleted"):FireServer()
-            task.wait(0.2)
+            task.wait(0.4)
         end
         if count_mancing % 10 == 0 then
             if running_mancing == false then
@@ -566,6 +571,7 @@ function memancing()
                 return
             end
         end
+        fish_caught = false
         count_mancing = count_mancing + 1
     end
 end
