@@ -1,14 +1,30 @@
 {
-  "listening": true,
-  "global_enable" :true,
-"jobs_id" : "asdas-asdasd21321-qwq2321ds31",
-"farm_event" : false,
-"farm_quest" : false,
-"auto_trade" : false,
-"selected_island" : "jungle",
-"island" : {
-  "jungle" : ["1518, 6, -460","1533, 4, -454", "1548, 4, -448", "1607, 5, -414", "1656, 3, -311"],
-  "islandx" : ["123,123,123","123,123,123"],
-  "ccccc" : ["123,123,123","123,123,123"]
-  }
+	"listening": true,
+	"global_enable": true,
+	"jobs_id": "asdas-asdasd21321-qwq2321ds31",
+	"farm_event": false,
+	"farm_quest": false,
+	"auto_trade": false,
+	"auto_sell": true,
+	"selected_island": "lever1",
+	"island": {
+		"jungle": [
+			"1518, 6, -460",
+			"1533, 4, -454",
+			"1548, 4, -448",
+			"1607, 5, -414",
+			"1656, 3, -311"
+		],
+		"lever1": [
+			"1492, 5, -846"
+		],
+		"islandx": [
+			"123,123,123",
+			"123,123,123"
+		],
+		"ccccc": [
+			"123,123,123",
+			"123,123,123"
+		]
+	}
 }
