@@ -354,15 +354,12 @@ if getconnections then
 end
 
 Event.OnClientEvent:Connect(function(itemId, stats, data, flag)
-    fish_caught = true
     if itemId == 265 or itemId== 266 or itemId == 267 or itemId == 271 then
-        print("dapat artifak")
         discord("dapat artifact: " .. list_ikan[itemId].nama)
         fav(data.InventoryItem.UUID)
     end
     if list_ikan[itemId].tier > 5 then
         local cetak = "dapat ikan tier " .. list_ikan[itemId].tier .. " > " .. list_ikan[itemId]
-        print(cetak)
         discord(cetak)
     end
 end)
@@ -402,7 +399,7 @@ onFishCaught(
 -----------------------------------------------------------------
 -- teleport
 -----------------------------------------------------------------
---[[
+
 local function attachSmartPlatform(char)
     -- Buat platform sekali
     local platform = Instance.new("Part")
@@ -439,7 +436,7 @@ player.CharacterAdded:Connect(attachSmartPlatform)
 if player.Character then
     attachSmartPlatform(player.Character)
 end
---]]
+
 local function teleport(x, y, z)
     local char = player.Character or player.CharacterAdded:Wait()
     local root = char:FindFirstChild("HumanoidRootPart")
@@ -541,22 +538,21 @@ local function random_island_path(island_name)
         return {}
     end
 end
-
-local last_json_data = nil
-
 local function ambilData()
-    local success, result = pcall(function()
-        return getJSON(url)
-    end)
-
-    if success and result then
-        last_json_data = result
-        print("Data baru berhasil diambil!")
-        return result
-    else
-        warn("Gagal ambil data, pakai data lama.")
-        return last_json_data
+    for i = 1, 3 do
+        local success, result = pcall(function()
+            return getJSON(url)
+        end)
+        if success and result then
+            last_json_data = result
+            return result
+        else
+            warn(("Percobaan %d gagal"):format(i))
+            task.wait(1)
+        end
     end
+    warn("Semua percobaan gagal, pakai data lama.")
+    return last_json_data
 end
 local json = ambilData()
 if json then
@@ -896,14 +892,15 @@ select_quest = "jungle"
 count_mancing = 0
 update_inventory()
 text_lokasi.Text = player:GetAttribute("LocationName")
---best_rod_wear()
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+--best_rod_wear()
+
 local step = 1
 if select_quest == "jungle" then
     while running do
         
         if step == 1 then
-            if list_inventory_fishs[265] == nil then
+            if running and list_inventory_fishs[265] == nil then
                 text_quest.Text = "1 > Arrow artefak"
                 x, y, z, arah = teleport_string(json.quest.jungle.arrow)
                 teleport(x, y, z)
@@ -913,33 +910,33 @@ if select_quest == "jungle" then
                     auto_fish()
                 end
             end
-            if list_inventory_fishs[266] == nil then
+            if running and list_inventory_fishs[266] == nil then
                 text_quest.Text = "2 > crescent artefak"
                 x, y, z, arah = teleport_string(json.quest.jungle.crescent)
                 teleport(x, y, z)
                 task.wait(5)
                 face(arah)
-                while running and list_inventory_fishs[265] == nil do
+                while running and list_inventory_fishs[266] == nil do
                     auto_fish()
                 end
             end
-            if list_inventory_fishs[267] == nil then
+            if running and list_inventory_fishs[267] == nil then
                 text_quest.Text = "3 > diamond artefak"
                 x, y, z, arah = teleport_string(json.quest.jungle.diamond)
                 teleport(x, y, z)
                 task.wait(5)
                 face(arah)
-                while running and list_inventory_fishs[265] == nil do
+                while running and list_inventory_fishs[267] == nil do
                     auto_fish()
                 end
             end
-            if list_inventory_fishs[271] == nil then
+            if running and list_inventory_fishs[271] == nil then
                 text_quest.Text = "4 > hourglass artefak"
                 x, y, z, arah = teleport_string(json.quest.jungle.hourglass)
                 teleport(x, y, z)
                 task.wait(5)
                 face(arah)
-                while running and list_inventory_fishs[265] == nil do
+                while running and list_inventory_fishs[271] == nil do
                     auto_fish()
                 end
             end
