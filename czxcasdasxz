@@ -1,4 +1,4 @@
-versi = "v1.3.0"
+versi = "v1.3.1"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -34,9 +34,10 @@ local list_inventory = {}
 local enable_quest_farm = true
 local fish_caught = false
 local flag_json_memancing = false
+local old_select_island = ""
 
 local  url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/data.json"
-
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1425376677982113832/ZjsQSZk6JZWWVQ63tdyF3Gcdz1li088TA39bAZfB5sBQj8fB-vYvMv4A7_8m21ZiCWtc"
 
 
 
@@ -259,6 +260,28 @@ local function convert(str)
     return tonumber(str)
 end
 
+function round(num, numDecimalPlaces)
+    local mult = 10 ^ (numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
+end
+
+local function discord(message)
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+    local prefix = "[ " .. player.Name .. " ] > "
+    local data = {
+        ["content"] = prefix .. message
+    }
+    local body = HttpService:JSONEncode(data)
+    local response = request({
+        Url = WEBHOOK_URL,
+        Method = "POST",
+        Headers = headers,
+        Body = body
+    })
+end
+
 local function auto_buy_rod(name)
     for i, v in ipairs(list_rod) do
         if v.nama == name then
@@ -276,10 +299,7 @@ local function auto_buy_bait(id)
     task.wait(1)
 end
 
-function round(num, numDecimalPlaces)
-    local mult = 10 ^ (numDecimalPlaces or 0)
-    return math.floor(num * mult + 0.5) / mult
-end
+
 
 local function harganizer(h)
     if h < 999 then
@@ -358,7 +378,11 @@ onFishCaught(
         if data.Variants then
             varian = "[" .. tostring(data.Variants) .. "] "
         end
+        
         text_ikan.Text = varian .. name .. " (" .. round(data.Weight, 2) .. " Kg)"
+        if data.Name == "Arrow Artifact" or data.Name == "Crescent Artifact" or data.Name == "Diamond Artifact" or data.Name == "Hourglass Diamond Artifact" then
+            discord("dapat -> ", data.Name)
+        end
         lastCatchTime = os.clock()
     end
 )
@@ -511,7 +535,7 @@ local json_enable = json.global_enable
 local config_farm_event = json.farm_quest
 local config_farm_quest = json.farm_quest
 local config_select_island = json.selected_island
-
+local config_autosell = json.auto_sell
 -----------------------------------------------------------------
 --              event finder
 -----------------------------------------------------------------
@@ -785,7 +809,13 @@ task.spawn(
                 update_inventory()
                 text_coin.Text = harganizer(total_harga)
                 task.wait(2)
-                Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
+                if json_enable then
+                    if config_autosell then
+                        Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)  --- AUTO SELL
+                    end
+                else
+                    Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)  --- AUTO SELL
+                end
                 task.wait(2)
                 if enable_quest_farm then
                     local progress_quest = (cek_quest(quest(1)) + cek_quest(quest(2)) + cek_quest(quest(3)) + cek_quest(quest(4))) / 4
@@ -835,7 +865,11 @@ task.spawn(
                     enable_farming_event = config_farm_event
                     enable_quest_farm  = config_farm_quest
 
-                    -- tambahkan pengecekan selected island, jika sama tidak perlu teleport, jika beda teleport baru
+                    if old_select_island ~= config_select_island then
+                        print("CONTROL ISLAND BARU DITEMUKAN")
+                        running_mancing = false
+                        old_select_island = config_select_island
+                    end
                     -- matikan macning , buat flag
                     if flag_json_memancing == false then
                         running_mancing = false
@@ -854,7 +888,7 @@ task.spawn(
 ---
 ---MULAI ALGORITMA
 ---
-
+discord("online")
 SetLowGraphics()
 toggle3DAndUI()
 
@@ -868,6 +902,7 @@ if json_enable then
     enable_farming_event = config_farm_event
     enable_quest_farm  = config_farm_quest
     flag_json_memancing = true
+    old_select_island = config_select_island
     print("config_farm_event",config_farm_event)
     print("enable_quest_farm",enable_quest_farm)
     print("config_select_island", config_select_island)
