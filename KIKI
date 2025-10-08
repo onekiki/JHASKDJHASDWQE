@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.3.4"
+versi = "JUNGLE v1.3.5"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -842,8 +842,12 @@ task.spawn(
                 text_bp.Text = bagsize.Text
                 task.wait(2)
             end
-            if num % 50 == 0 then
+            if num % 30 == 0 then
                 update_inventory()
+                print(print(list_inventory_fishs[265]))
+                print(print(list_inventory_fishs[266]))
+                print(print(list_inventory_fishs[267]))
+                print(print(list_inventory_fishs[271]))
                 if flag_error == true then
                     task.wait(0.5)
                     Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
@@ -908,7 +912,8 @@ if select_quest == "jungle" then
                 teleport(x, y, z)
                 task.wait(5)
                 face(arah)
-                while running and list_inventory_fishs[265] == nil do
+                while list_inventory_fishs[265] == nil do
+                    print(list_inventory_fishs[265])
                     auto_fish()
                 end
             end
@@ -918,7 +923,8 @@ if select_quest == "jungle" then
                 teleport(x, y, z)
                 task.wait(5)
                 face(arah)
-                while running and list_inventory_fishs[266] == nil do
+                while list_inventory_fishs[266] == nil do
+                    print(list_inventory_fishs[266])
                     auto_fish()
                 end
             end
@@ -928,7 +934,8 @@ if select_quest == "jungle" then
                 teleport(x, y, z)
                 task.wait(5)
                 face(arah)
-                while running and list_inventory_fishs[267] == nil do
+                while list_inventory_fishs[267] == nil do
+                    print(list_inventory_fishs[267])
                     auto_fish()
                 end
             end
@@ -938,7 +945,8 @@ if select_quest == "jungle" then
                 teleport(x, y, z)
                 task.wait(5)
                 face(arah)
-                while running and list_inventory_fishs[271] == nil do
+                while list_inventory_fishs[271] == nil do
+                    print(list_inventory_fishs[271])
                     auto_fish()
                 end
             end
