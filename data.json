@@ -5,10 +5,10 @@
 	"farm_quest": false,
 	"auto_trade": false,
 	"auto_sell": true,
-	"selected_island": "custom",
+	"selected_island": "jungle",
 	"island": {
 		"jungle": [
-			"1518, 6, -460, 0"
+			"1485, 8, -861, 0"
 		],
 		"custom": [
 			"1628, 3, -411, 0"
