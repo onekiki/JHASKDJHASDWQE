@@ -5,7 +5,7 @@
 	"farm_event": false,
 	"farm_quest": false,
 	"auto_trade": false,
-	"auto_sell": true,
+	"auto_sell": false,
 	"selected_island": "lever1",
 	"island": {
 		"jungle": [
