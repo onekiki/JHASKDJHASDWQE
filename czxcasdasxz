@@ -819,7 +819,9 @@ task.spawn(
                 end
                 local bagsize = gui:WaitForChild("Inventory"):WaitForChild("Main"):WaitForChild("Top"):WaitForChild("Options"):WaitForChild("Fish"):WaitForChild("Label"):WaitForChild("BagSize")
                 text_bp.Text = bagsize.Text
-                if string.find(bagsize.Text, "4900/5000") then
+                local str = bagsize.Text
+                local bpmax = str:match("^(%d+)")
+                if bpmax > 4600 then
                     print("BACKPACK HAMPIR PENUH")
                     running = false
                 end
