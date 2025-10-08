@@ -915,6 +915,7 @@ if select_quest == "jungle" then
                 while list_inventory_fishs[265] == nil do
                     print(list_inventory_fishs[265])
                     auto_fish()
+                    if not running then break end
                 end
             end
             if running and list_inventory_fishs[266] == nil then
@@ -926,6 +927,7 @@ if select_quest == "jungle" then
                 while list_inventory_fishs[266] == nil do
                     print(list_inventory_fishs[266])
                     auto_fish()
+                    if not running then break end
                 end
             end
             if running and list_inventory_fishs[267] == nil then
@@ -937,6 +939,7 @@ if select_quest == "jungle" then
                 while list_inventory_fishs[267] == nil do
                     print(list_inventory_fishs[267])
                     auto_fish()
+                    if not running then break end
                 end
             end
             if running and list_inventory_fishs[271] == nil then
@@ -948,6 +951,7 @@ if select_quest == "jungle" then
                 while list_inventory_fishs[271] == nil do
                     print(list_inventory_fishs[271])
                     auto_fish()
+                    if not running then break end
                 end
             end
             if list_inventory_fishs[265] ~= nil and list_inventory_fishs[266] ~= nil and list_inventory_fishs[267] ~= nil and list_inventory_fishs[271] ~= nil then
