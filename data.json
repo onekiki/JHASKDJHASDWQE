@@ -1,11 +1,12 @@
 {
-"jobs_id" : "2ed9f670-9fdd-4a6a-b9cb-e30028349986",
+"jobs_id" : "asdas-asdasd21321-qwq2321ds31",
 "farm_event" : true,
 "farm_quest" : false,
 "auto_trade" : false,
-"focus_area" : "12312,123123,123321",
-  "island" : {
-  "1" : "1231, 12312, 23123",
-  "2" : "12312,123123,123321"
+"selected_island" : "syspus",
+"island" : {
+  "syspus" : ["123,123123,123123", "123123,123123,123123"],
+  "islandx" : ["123,123,123","123,123,123"],
+  "ccccc" : ["123,123,123","123,123,123"]
   }
 }
