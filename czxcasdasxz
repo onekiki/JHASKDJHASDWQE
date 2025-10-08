@@ -322,13 +322,18 @@ local function harganizer(h)
     return result
 end
 
-local list_harga_ikan = {}
+local list_ikan = {}
 local list_rod = {}
 for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
     if child:IsA("ModuleScript") then
         local success, data = pcall(require, child)
         if success and data.Data.Type == "Fishes" then
-            list_harga_ikan[data.Data.Id] = data.SellPrice
+            list_ikan[data.Data.Id] = {
+                harga = data.SellPrice,
+                tier = data.Data.Tier,
+                nama = data.Data.Name,
+                id = data.Data.Id
+            }
         end
         if success and string.find(data.Data.Name,"Rod") then
             list_rod[data.Data.Id] = {
@@ -350,8 +355,12 @@ end
 
 Event.OnClientEvent:Connect(function(itemId, stats, data, flag)
     if itemId == 265 or itemId== 266 or itemId == 267 or itemId == 271 then
-        discord("dapat: ", itemId)
+        discord("dapat: " .. tostring(itemId))
+        local berat = Weight or stats or stats.Weight
         fav(data.InventoryItem.UUID)
+        if list_ikan[itemId].tier > 5 then
+            discord("dapat ikan langka > " .. list_ikan[itemId].nama .. " | " .. berat .. " Kg")
+        end
     end
 end)
 
@@ -380,8 +389,9 @@ onFishCaught(
         
         text_ikan.Text = varian .. name .. " (" .. round(data.Weight, 2) .. " Kg)"
         if name == "Arrow Artifact" or name == "Crescent Artifact" or name == "Diamond Artifact" or name == "Hourglass Diamond Artifact" then
-            discord("dapat -> ", name)
+            discord("dapat -> " .. name)
         end
+
         lastCatchTime = os.clock()
     end
 )
@@ -696,7 +706,7 @@ local function update_inventory()
         end
         if category == "Items" then
             for _, item in ipairs(items) do
-                local h = list_harga_ikan[item.Id]
+                local h = list_ikan[item.Id].harga
                 if h ~= nil then
                     total_harga = total_harga + h
                 end
@@ -807,15 +817,10 @@ task.spawn(
             end
             if num % 300 == 0 then -- tiap 5 menit
                 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                update_inventory()
                 text_coin.Text = harganizer(total_harga)
                 task.wait(2)
-                if json_enable then
-                    if config_autosell then
-                        Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)  --- AUTO SELL
-                    end
-                else
-                    Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)  --- AUTO SELL
+                if config_autosell then
+                    Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
                 end
                 local bagsize = gui:WaitForChild("Inventory"):WaitForChild("Main"):WaitForChild("Top"):WaitForChild("Options"):WaitForChild("Fish"):WaitForChild("Label"):WaitForChild("BagSize")
                 text_bp.Text = bagsize.Text
@@ -828,13 +833,17 @@ task.spawn(
 
                 task.wait(2)
             end
-            if num % 30 == 0 and flag_error == true then -- tiap 1/2 menit
-                task.wait(0.5)
-                Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
-                task.wait(0.5)
-                Net:WaitForChild("RE/FishingCompleted"):FireServer()
-                task.wait(0.5)
-                mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            if num % 30 == 0 then
+                update_inventory()
+                if flag_error == true then
+                    task.wait(0.5)
+                    Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
+                    task.wait(0.5)
+                    Net:WaitForChild("RE/FishingCompleted"):FireServer()
+                    task.wait(0.5)
+                    mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                end
+
                 if old_select_island ~= config_select_island then
                     print("CONTROL ISLAND BARU DITEMUKAN")
                     running_mancing = false
@@ -842,19 +851,19 @@ task.spawn(
                 end
                 if select_quest == "jungle" then
                      local quest1, quest2, quest3, quest4 = true
-                    if list_inventory_fishs[265] == nil and quest1 == true then
+                    if list_inventory_fishs[265] ~= nil and quest1 == true then
                         running_mancing = false
                         quest1 = false
                     end
-                    if list_inventory_fishs[266] == nil and quest2 == true then
+                    if list_inventory_fishs[266] ~= nil and quest2 == true then
                         running_mancing = false
                         quest2 = false
                     end
-                    if list_inventory_fishs[267] == nil and quest3 == true then
+                    if list_inventory_fishs[267] ~= nil and quest3 == true then
                         running_mancing = false
                         quest3 = false
                     end
-                    if list_inventory_fishs[271] == nil and quest4 == true then
+                    if list_inventory_fishs[271] ~= nil and quest4 == true then
                         running_mancing = false
                         quest4 = false
                     end
@@ -916,111 +925,9 @@ if select_quest == "jungle" then
         task.wait(10)
     end
 end
-    --[[
-print("JSON ENABLE:", json_enable)
-if json_enable then
-    status_online.BackgroundColor3 = Color3.fromRGB(38, 155, 38)
-    print("cek online data")
-    enable_farming_event = config_farm_event
-    enable_quest_farm  = config_farm_quest
-    flag_json_memancing = true
-    old_select_island = config_select_island
-    print("config_farm_event",config_farm_event)
-    print("enable_quest_farm",enable_quest_farm)
-    print("config_select_island", config_select_island)
-end
-
-local function farming_island()
-    task.wait(1)
-    if json_enable then
-        local island_paths = json.island[config_select_island]
-        if island_paths ~= nil then
-            print("total path: ",  #island_paths)
-            if #island_paths > 0 then
-                local random_path = island_paths[math.random(1, #island_paths)]
-                print("Random selected path:", random_path)
-                local numbers = {}
-                for value in string.gmatch(random_path, "[-%d%.]+") do
-                    table.insert(numbers, tonumber(value))
-                end
-                teleport(numbers[1], numbers[2], numbers[3])
-            else
-                print("gagal mengambil data island")
-                teleport(1607, 5, -414)
-            end
-        else
-            warn("gagal menemukan island")
-        end
-    else
-        print("json not enable")
-        teleport(1607, 5, -414)
-    end
-    task.wait(3)
-    face(0)
-    task.wait(1)
-    memancing()
-    print("selesai island")
-    task.wait(1)
-end
-local function farming_event(evt)
-    print("event: ", evt)
-    local x, y, z = getlocation(evt)
-    if x then
-        print("Ketemu lokasi:", x, y, z)
-        teleport(x + math.random(1,12), 3, z + math.random(1,12))
-        task.wait(3)
-        face(0)
-        task.wait(1)
-        memancing()
-        task.wait(1)
-        print("selesai event")
-    else
-        print("tidak ketemu lokasinya!")
-        farming_island()
-    end
-end
-
-updateSelected()
-
-task.wait(2)
-while running do
-    if enable_quest_farm then
-        if quest_1 < 100 then
-            enable_farming_event = false
-            teleport(-3602, -283, -1612)
-            task.wait(3)
-            face(120)
-            task.wait(1)
-            memancing()
-        end
-        if quest_1 == 100 and quest_234 < 100 then
-            enable_farming_event = false
-            teleport(-3734, -135, -1013)
-            task.wait(3)
-            face(0)
-            task.wait(1)
-            memancing()
-        end
-        enable_farming_event = true
-        text_ikan.Text ="semua quest selesai"
-        print("semua quest selesai")
-    end
-    if selected ~= nil and enable_farming_event then
-        text_quest.Text = selected.Name
-        farming_event(selected.Name)
-    else
-        if json_enable then
-            text_quest.Text = config_select_island
-        end
-        farming_island()
-    end
-    root.Anchored = false
-    task.wait(5)
-end
---]]
 root.Anchored = false
 print("running : ", running)
-print("-----------------end-")
+print("-----------------end-------------")
 
 -----------------------------------------------------------------
 --               E N D     M A I N
