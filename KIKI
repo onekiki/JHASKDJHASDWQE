@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.3"
+versi = "JUNGLE v1.3.2"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -354,12 +354,15 @@ if getconnections then
 end
 
 Event.OnClientEvent:Connect(function(itemId, stats, data, flag)
+    fish_caught = true
     if itemId == 265 or itemId== 266 or itemId == 267 or itemId == 271 then
+        print("dapat artifak")
         discord("dapat artifact: " .. list_ikan[itemId].nama)
         fav(data.InventoryItem.UUID)
     end
     if list_ikan[itemId].tier > 5 then
         local cetak = "dapat ikan tier " .. list_ikan[itemId].tier .. " > " .. list_ikan[itemId]
+        print(cetak)
         discord(cetak)
     end
 end)
@@ -399,6 +402,7 @@ onFishCaught(
 -----------------------------------------------------------------
 -- teleport
 -----------------------------------------------------------------
+--[[
 local function attachSmartPlatform(char)
     -- Buat platform sekali
     local platform = Instance.new("Part")
@@ -435,7 +439,7 @@ player.CharacterAdded:Connect(attachSmartPlatform)
 if player.Character then
     attachSmartPlatform(player.Character)
 end
-
+--]]
 local function teleport(x, y, z)
     local char = player.Character or player.CharacterAdded:Wait()
     local root = char:FindFirstChild("HumanoidRootPart")
@@ -537,7 +541,29 @@ local function random_island_path(island_name)
         return {}
     end
 end
-local json = getJSON(url)
+
+local last_json_data = nil
+
+local function ambilData()
+    local success, result = pcall(function()
+        return getJSON(url)
+    end)
+
+    if success and result then
+        last_json_data = result
+        print("Data baru berhasil diambil!")
+        return result
+    else
+        warn("Gagal ambil data, pakai data lama.")
+        return last_json_data
+    end
+end
+local json = ambilData()
+if json then
+    print("Data aktif:", json)
+else
+    warn("Tidak ada data sama sekali (belum pernah berhasil ambil).")
+end
 local json_enable = json.global_enable
 local config_select_island = json.selected_island
 local config_autosell = json.auto_sell
@@ -786,16 +812,6 @@ local function cek_quest(text)
     end
     return nil
 end
-local quest_1 = cek_quest(quest(1)) 
-local quest_234 = (cek_quest(quest(2)) + cek_quest(quest(3)) + cek_quest(quest(4))) / 3
-
-
------------------------------------------------------------------
---             M A I N
------------------------------------------------------------------
-if quest_1 == 100 then
-    flag_quest_1 = true
-end
 
 task.spawn(
     function()
@@ -828,7 +844,7 @@ task.spawn(
                 text_bp.Text = bagsize.Text
                 task.wait(2)
             end
-            if num % 30 == 0 then
+            if num % 50 == 0 then
                 update_inventory()
                 if flag_error == true then
                     task.wait(0.5)
@@ -838,31 +854,12 @@ task.spawn(
                     task.wait(0.5)
                     mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
                 end
-
+                
                 if old_select_island ~= config_select_island then
                     print("CONTROL ISLAND BARU DITEMUKAN")
                     running_mancing = false
                     old_select_island = config_select_island
                 end
-                if select_quest == "jungle" then
-                     local quest1, quest2, quest3, quest4 = true
-                    if list_inventory_fishs[265] ~= nil and quest1 == true then
-                        running_mancing = false
-                        quest1 = false
-                    end
-                    if list_inventory_fishs[266] ~= nil and quest2 == true then
-                        running_mancing = false
-                        quest2 = false
-                    end
-                    if list_inventory_fishs[267] ~= nil and quest3 == true then
-                        running_mancing = false
-                        quest3 = false
-                    end
-                    if list_inventory_fishs[271] ~= nil and quest4 == true then
-                        running_mancing = false
-                        quest4 = false
-                    end
-                end --end select quest
 
             end
             num = num + 1
@@ -871,6 +868,23 @@ task.spawn(
     end
 )
 
+local function auto_fish()
+    math.randomseed(os.time())
+    local random_number = math.random() * 2 - 1
+    task.wait(0.2)
+    Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(tick())
+    task.wait(0.5)
+    Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0)
+    for i = 1, 15 do
+        if fish_caught == true then
+            break
+        end
+        Net:WaitForChild("RE/FishingCompleted"):FireServer()
+        task.wait(0.3)
+    end
+    fish_caught = false
+    count_mancing = count_mancing + 1
+end
 ----------------------------------------------------------------------------------------------------------------------------
 ---
 ---MULAI ALGORITMA
@@ -879,10 +893,11 @@ task.spawn(
 SetLowGraphics()
 toggle3DAndUI()
 select_quest = "jungle"
-
+count_mancing = 0
 update_inventory()
-
+text_lokasi.Text = player:GetAttribute("LocationName")
 --best_rod_wear()
+Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 local step = 1
 if select_quest == "jungle" then
     while running do
@@ -891,26 +906,50 @@ if select_quest == "jungle" then
             if list_inventory_fishs[265] == nil then
                 text_quest.Text = "1 > Arrow artefak"
                 x, y, z, arah = teleport_string(json.quest.jungle.arrow)
-            elseif list_inventory_fishs[266] == nil then
+                teleport(x, y, z)
+                task.wait(5)
+                face(arah)
+                while running and list_inventory_fishs[265] == nil do
+                    auto_fish()
+                end
+            end
+            if list_inventory_fishs[266] == nil then
                 text_quest.Text = "2 > crescent artefak"
                 x, y, z, arah = teleport_string(json.quest.jungle.crescent)
-            elseif ist_inventory_fishs[267] == nil then
+                teleport(x, y, z)
+                task.wait(5)
+                face(arah)
+                while running and list_inventory_fishs[265] == nil do
+                    auto_fish()
+                end
+            end
+            if ist_inventory_fishs[267] == nil then
                 text_quest.Text = "3 > diamond artefak"
                 x, y, z, arah = teleport_string(json.quest.jungle.diamond)
-            elseif list_inventory_fishs[271] == nil then
+                teleport(x, y, z)
+                task.wait(5)
+                face(arah)
+                while running and list_inventory_fishs[265] == nil do
+                    auto_fish()
+                end
+            end
+            if list_inventory_fishs[271] == nil then
                 text_quest.Text = "4 > hourglass artefak"
                 x, y, z, arah = teleport_string(json.quest.jungle.hourglass)
-            else
+                teleport(x, y, z)
+                task.wait(5)
+                face(arah)
+                while running and list_inventory_fishs[265] == nil do
+                    auto_fish()
+                end
+            end
+            if list_inventory_fishs[265] ~= nil and list_inventory_fishs[266] ~= nil and list_inventory_fishs[267] ~= nil and list_inventory_fishs[271] ~= nil then
                 print("selesai step 1")
                 text_quest.Text ="selesai step 1"
                 step = step + 1
             end
-            teleport(x, y, z)
-            task.wait(3)
-            face(arah)
-            task.wait(1)
-            memancing()
         end
+
         if step == 2 then
             discord("sudah sampai step 2")
             text_quest.Text ="STEP 2 !!"
