@@ -1,4 +1,4 @@
-versi = "v1.2.6.2"
+versi = "v1.3.0"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -10,7 +10,7 @@ local Net =
     ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild(
     "net"
 )
-
+local HttpService = game:GetService("HttpService")
 local ok, Replion = pcall(function() return require(ReplicatedStorage.Packages.Replion) end)
 if not ok or not Replion.Client then
     warn("Replion client tidak ditemukan")
@@ -33,6 +33,16 @@ local total_harga = 0
 local list_inventory = {}
 local enable_quest_farm = true
 local fish_caught = false
+local flag_json_memancing = false
+
+local  url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/data.json"
+
+
+
+
+
+
+
 -- === ScreenGui utama ===
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "HAYBOT"
@@ -447,6 +457,55 @@ local function toggle3DAndUI()
 end
 
 -----------------------------------------------------------------
+--              JSON ONLINE DECODER
+-----------------------------------------------------------------
+local function getJSON(url)
+    local response = request({
+        Url = url,
+        Method = "GET",
+        Headers = {
+            ["Accept"] = "application/json"
+        }
+    })
+
+    if not response.Success then
+        warn("Request gagal:", response.StatusCode)
+        return nil
+    end
+
+    print("[DEBUG] Raw body:", response.Body)
+
+    local ok, data = pcall(function()
+        return HttpService:JSONDecode(response.Body)
+    end)
+
+    if ok then
+        return data
+    else
+        warn("Gagal decode JSON:", data)
+        return nil
+    end
+end
+
+-- contoh pemakaian
+
+local function random_island_path(island_name)
+    if json and json.island and json.island[island_name] then
+        local paths = json.island[island_name]
+        return paths
+    else
+        warn("Pulau tidak ditemukan:", island_name)
+        return {}
+    end
+end
+local json = getJSON(url)
+local json_listening = json.listening
+local json_enable = json.global_enable
+local config_farm_event = json.farm_quest
+local config_farm_quest = json.farm_quest
+local config_select_island = json.selected_island
+
+-----------------------------------------------------------------
 --              event finder
 -----------------------------------------------------------------
 selected = nil
@@ -692,6 +751,8 @@ if quest_1 == 100 then
     flag_quest_1 = true
 end
 
+    
+
 task.spawn(
     function()
         local num = 1
@@ -761,6 +822,19 @@ task.spawn(
                 Net:WaitForChild("RE/FishingCompleted"):FireServer()
                 task.wait(0.5)
                 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                print("cek JSON status:")
+                if json_enable == true then
+                    print("daily check json status")
+                    enable_farming_event = config_farm_event
+                    enable_quest_farm  = config_farm_quest
+
+                    -- tambahkan pengecekan selected island, jika sama tidak perlu teleport, jika beda teleport baru
+                    -- matikan macning , buat flag
+                    if flag_json_memancing == false then
+                        running_mancing = false
+                        flag_json_memancing = true
+                    end
+                end
             end
             num = num + 1
             task.wait(1)
@@ -772,17 +846,50 @@ task.spawn(
 ---MULAI ALGORITMA
 ---
 
-SetLowGraphics()
-toggle3DAndUI()
+--SetLowGraphics()
+--toggle3DAndUI()
 
 update_inventory()
 best_rod_wear()
 
-function farming_island()
+print("JSON ENABLE:", json_enable)
+if json_enable then
+    print("cek online data")
+    enable_farming_event = config_farm_event
+    enable_quest_farm  = config_farm_quest
+    flag_json_memancing = true
+    print("config_farm_event",config_farm_event)
+    print("enable_quest_farm",enable_quest_farm)
+    print("config_select_island", config_select_island)
+end
+
+local function farming_island()
     task.wait(1)
-    teleport(948, 3.75, 5114)
+    if json_enable then
+        local island_paths = json.island[config_select_island]
+        if island_paths ~= nil then
+            print("total path: ",  #island_paths)
+            if #island_paths > 0 then
+                local random_path = island_paths[math.random(1, #island_paths)]
+                print("Random selected path:", random_path)
+                local numbers = {}
+                for value in string.gmatch(random_path, "[-%d%.]+") do
+                    table.insert(numbers, tonumber(value))
+                end
+                teleport(numbers[1], numbers[2], numbers[3])
+            else
+                print("gagal mengambil data island")
+                teleport(1607, 5, -414)
+            end
+        else
+            warn("gagal menemukan island")
+        end
+    else
+        print("json not enable")
+        teleport(1607, 5, -414)
+    end
     task.wait(3)
-    face(120)
+    face(0)
     task.wait(1)
     memancing()
     print("selesai island")
@@ -827,15 +934,17 @@ while running do
             task.wait(1)
             memancing()
         end
+        enable_farming_event = true
         text_ikan.Text ="semua quest selesai"
         print("semua quest selesai")
     end
-    enable_quest_farm = false
-    enable_farming_event = true
     if selected ~= nil and enable_farming_event then
         text_quest.Text = selected.Name
         farming_event(selected.Name)
     else
+        if json_enable then
+            text_quest.Text = config_select_island
+        end
         farming_island()
     end
     root.Anchored = false
