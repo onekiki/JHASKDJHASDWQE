@@ -1,4 +1,4 @@
-versi = "v1.3.1"
+versi = "JUNGLE - v1.1"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -31,17 +31,17 @@ local running = true
 local total_mancing = 1
 local total_harga = 0
 local list_inventory = {}
+local list_inventory_fishs = {}
 local enable_quest_farm = true
 local fish_caught = false
 local flag_json_memancing = false
 local old_select_island = ""
 
-local  url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/data.json"
+local  url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/quest.json"
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1425376677982113832/ZjsQSZk6JZWWVQ63tdyF3Gcdz1li088TA39bAZfB5sBQj8fB-vYvMv4A7_8m21ZiCWtc"
 
 
-
-
+local select_quest = nil
 
 
 -- === ScreenGui utama ===
@@ -65,6 +65,7 @@ status_online.Position = UDim2.new(0.5, 0, 0.3, 50) -- tengah layar
 status_online.BackgroundTransparency = 0
 status_online.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 status_online.Parent = mainFrame
+
 
 local text_jam = Instance.new("TextLabel")
 text_jam.Size = UDim2.new(0, 0, 0, 0)
@@ -105,6 +106,16 @@ text_total.TextSize = 100
 text_total.TextXAlignment = Enum.TextXAlignment.Center
 text_total.TextColor3 = Color3.fromRGB(255, 217, 1)
 text_total.Parent = mainFrame
+
+local text_bp = Instance.new("TextLabel")
+text_bp.Size = UDim2.new(0, 0, 0, 0)
+text_bp.Position = UDim2.new(0.5, 0, 0, 200)
+text_bp.Text = "0/0"
+text_bp.Font = Enum.Font.Roboto
+text_bp.TextSize = 50
+text_bp.TextXAlignment = Enum.TextXAlignment.Center
+text_bp.TextColor3 = Color3.fromRGB(179, 12, 245)
+text_bp.Parent = mainFrame
 
 local text_timer = Instance.new("TextLabel")
 text_timer.Size = UDim2.new(0, 0, 0, 0)
@@ -168,16 +179,16 @@ render_btn.TextColor3 = Color3.fromRGB(255, 255, 255)
 render_btn.Parent = mainFrame
 render_btn.BackgroundColor3 = Color3.fromRGB(49, 165, 155)
 
-local job_btn = Instance.new("TextButton")
-job_btn.Size = UDim2.new(0, 60, 0, 60)
-job_btn.Position = UDim2.new(1, -260, 0, 100)
-job_btn.Text = "ID"
-job_btn.TextSize = 40
-job_btn.Visible = true
-job_btn.TextXAlignment = Enum.TextXAlignment.Center
-job_btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-job_btn.Parent = mainFrame
-job_btn.BackgroundColor3 = Color3.fromRGB(49, 165, 155)
+local sell_btn = Instance.new("TextButton")
+sell_btn.Size = UDim2.new(0, 150, 0, 60)
+sell_btn.Position = UDim2.new(0.7, 0, 0, 100)
+sell_btn.Text = "SELL"
+sell_btn.TextSize = 40
+sell_btn.Visible = true
+sell_btn.TextXAlignment = Enum.TextXAlignment.Center
+sell_btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+sell_btn.Parent = mainFrame
+sell_btn.BackgroundColor3 = Color3.fromRGB(250, 133, 0)
 
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 60, 0, 60)
@@ -282,6 +293,11 @@ local function discord(message)
     })
 end
 
+local function fav(uuid)
+    Net:WaitForChild("RE/FavoriteItem"):FireServer(uuid)
+    task.wait(1)
+end
+
 local function auto_buy_rod(name)
     for i, v in ipairs(list_rod) do
         if v.nama == name then
@@ -380,8 +396,8 @@ onFishCaught(
         end
         
         text_ikan.Text = varian .. name .. " (" .. round(data.Weight, 2) .. " Kg)"
-        if data.Name == "Arrow Artifact" or data.Name == "Crescent Artifact" or data.Name == "Diamond Artifact" or data.Name == "Hourglass Diamond Artifact" then
-            discord("dapat -> ", data.Name)
+        if name == "Arrow Artifact" or name == "Crescent Artifact" or name == "Diamond Artifact" or name == "Hourglass Diamond Artifact" then
+            discord("dapat -> ", name)
         end
         lastCatchTime = os.clock()
     end
@@ -504,7 +520,6 @@ local function getJSON(url)
         return nil
     end
 
-    print("[DEBUG] Raw body:", response.Body)
 
     local ok, data = pcall(function()
         return HttpService:JSONDecode(response.Body)
@@ -530,15 +545,14 @@ local function random_island_path(island_name)
     end
 end
 local json = getJSON(url)
-local json_listening = json.listening
 local json_enable = json.global_enable
-local config_farm_event = json.farm_quest
-local config_farm_quest = json.farm_quest
 local config_select_island = json.selected_island
 local config_autosell = json.auto_sell
 -----------------------------------------------------------------
 --              event finder
 -----------------------------------------------------------------
+---
+--[[
 selected = nil
 selected_priority = -1
 local path = game:GetService("Players").LocalPlayer.PlayerGui.Events.Frame.Events
@@ -630,7 +644,7 @@ local function getlocation(event_name)
     end
     return nil -- tidak ketemu
 end
-
+--]]
 function memancing()
     print("memancing")
     --root.Anchored = true
@@ -682,6 +696,7 @@ local function update_inventory()
     print("update inventory")
     total_harga = 0
     list_inventory_rod = {}
+    list_inventory_fishs = {}
     for category, items in pairs(inventory) do
         if category == "Fishing Rods" then
             for _, item in ipairs(items) do
@@ -702,20 +717,14 @@ local function update_inventory()
                 if h ~= nil then
                     total_harga = total_harga + h
                 end
+                list_inventory_fishs[item.Id] = {
+                    Id = item.Id,
+                    UUID = item.UUID
+                }
             end
         else
         end
     end
-end
-local function copyJobId()
-	local jobId = game.JobId
-	if setclipboard then
-		setclipboard(jobId)
-		task.wait(1.5)
-		job_btn.Text = "✅"
-	else
-		job_btn.Text = "⚠️"
-	end
 end
 
 closeBtn.MouseButton1Click:Connect(
@@ -731,10 +740,14 @@ render_btn.MouseButton1Click:Connect(
     end
 )
 
-job_btn.MouseButton1Click:Connect(copyJobId)
+sell_btn.MouseButton1Click:Connect(
+    function()
+       Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
+    end
+)
+
 
 local function best_rod_wear()
-    print("kontol")
     local old_tier = 0
     local current_uuid = ""
     local best = ""
@@ -754,7 +767,13 @@ local function best_rod_wear()
         print("⚠️ Tidak ada rod ditemukan.")
     end
 end
-
+local function teleport_string(data)
+    local numbers = {}
+    for value in string.gmatch(data, "[-%d%.]+") do
+        table.insert(numbers, tonumber(value))
+    end
+    return numbers[1], numbers[2], numbers[3], numbers[4]
+end
 local function quest(index)
     local path = workspace["!!! MENU RINGS"]["Deep Sea Tracker"].Board.Gui.Content
     local label = path:FindFirstChild("Label" .. index)
@@ -775,14 +794,13 @@ end
 local quest_1 = cek_quest(quest(1)) 
 local quest_234 = (cek_quest(quest(2)) + cek_quest(quest(3)) + cek_quest(quest(4))) / 3
 
+
 -----------------------------------------------------------------
 --             M A I N
 -----------------------------------------------------------------
 if quest_1 == 100 then
     flag_quest_1 = true
 end
-
-    
 
 task.spawn(
     function()
@@ -816,85 +834,120 @@ task.spawn(
                 else
                     Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)  --- AUTO SELL
                 end
-                task.wait(2)
-                if enable_quest_farm then
-                    local progress_quest = (cek_quest(quest(1)) + cek_quest(quest(2)) + cek_quest(quest(3)) + cek_quest(quest(4))) / 4
-                    if cek_quest(quest(1)) == 100 and flag_quest_1 == false then
-                        running_mancing = false
-                        flag_quest_1 = true
-                    end
-                    if enable_quest_farm and progress_quest >= 100 then
-                        running_mancing = false
-                        enable_quest_farm = false
-                    else
-                        text_quest.Text = "Progress Quest = " .. tostring(progress_quest) .. "%"
-                    end
-                    watchdog_buy = true
-                    local koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
-                    local koins = convert(koin)
+                local bagsize = gui:WaitForChild("Inventory"):WaitForChild("Main"):WaitForChild("Top"):WaitForChild("Options"):WaitForChild("Fish"):WaitForChild("Label"):WaitForChild("BagSize")
+                text_bp.Text = bagsize.Text
+                if string.find(bagsize.Text, "4900/5000") then
+                    print("BACKPACK HAMPIR PENUH")
+                    running = false
+                end
 
-                    if watchdog_buy == true then
-                        if koins > 3700000 and list_inventory_rod["Ghostfinn Rod"] ~= nil  then
-                            auto_buy_bait(16) -- aether
-                            watchdog_buy = false
-                            best_rod_wear()
-                        elseif koins > 1150000 and list_inventory_rod["Astral Rod"] == nil then
-                            print("beli rod astral")
-                            auto_buy_bait(15) -- corrupt
-                            auto_buy_rod("Astral Rod")
-                            best_rod_wear()
-                        elseif  koins > 50000 and list_inventory_rod["Midnight Rod"] == nil then
-                            print("beli rod midnight")
-                            auto_buy_bait(3) -- corrupt
-                            auto_buy_rod("Midnight Rod")
-                            best_rod_wear()
-                        end
-                    end
-                end 
+                task.wait(2)
             end
-            if num % 30 == 0 and flag_error == true then
+            if num % 30 == 0 and flag_error == true then -- tiap 1/2 menit
                 task.wait(0.5)
                 Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
                 task.wait(0.5)
                 Net:WaitForChild("RE/FishingCompleted"):FireServer()
                 task.wait(0.5)
                 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                print("cek JSON status:")
-                if json_enable == true then
-                    print("daily check json status")
-                    enable_farming_event = config_farm_event
-                    enable_quest_farm  = config_farm_quest
-
-                    if old_select_island ~= config_select_island then
-                        print("CONTROL ISLAND BARU DITEMUKAN")
-                        running_mancing = false
-                        old_select_island = config_select_island
-                    end
-                    -- matikan macning , buat flag
-                    if flag_json_memancing == false then
-                        running_mancing = false
-                        flag_json_memancing = true
-                    end
-                else
-                    status_online.BackgroundColor3 = Color3.fromRGB(160, 115, 115)
+                if old_select_island ~= config_select_island then
+                    print("CONTROL ISLAND BARU DITEMUKAN")
+                    running_mancing = false
+                    old_select_island = config_select_island
                 end
+                if select_quest == "jungle" then
+                     local quest1, quest2, quest3, quest4 = true
+                    if list_inventory_fishs[266] == nil and quest1 == true then
+                        running_mancing = false
+                        quest1 = false
+                    end
+                    if list_inventory_fishs[266] == nil and quest2 == true then
+                        running_mancing = false
+                        quest2 = false
+                    end
+                    if list_inventory_fishs[267] == nil and quest3 == true then
+                        running_mancing = false
+                        quest3 = false
+                    end
+                    if list_inventory_fishs[271] == nil and quest4 == true then
+                        running_mancing = false
+                        quest4 = false
+                    end
+                end --end select quest
+
             end
             num = num + 1
             task.wait(1)
         end
     end
 )
+
 ----------------------------------------------------------------------------------------------------------------------------
 ---
 ---MULAI ALGORITMA
 ---
-discord("online")
+--discord("online")
 SetLowGraphics()
 toggle3DAndUI()
+select_quest = "jungle"
 
 update_inventory()
-best_rod_wear()
 
+--best_rod_wear()
+local progress_quest1 = 0
+local progress_quest2 = 0
+local progress_quest3 = 0
+local progress_quest4 = 0
+local progress_quest = 0
+local step = 0
+if select_quest == "jungle" then
+    while running do
+        
+        if step == 0 then
+            if list_inventory_fishs[265] == nil then
+                text_quest.Text = "1 > Arrow artefak"
+                x, y, z, arah = teleport_string(json.quest.jungle.arrow)
+            else
+                progress_quest1 = 100
+            end
+            if list_inventory_fishs[266] == nil then
+                text_quest.Text = "2 > crescent artefak"
+                x, y, z, arah = teleport_string(json.quest.jungle.crescent)
+            else
+                progress_quest2 = 100
+            end
+            if list_inventory_fishs[267] == nil then
+                text_quest.Text = "3 > diamond artefak"
+                x, y, z, arah = teleport_string(json.quest.jungle.diamond)
+            else
+                progress_quest3 = 100
+            end
+            if list_inventory_fishs[271] == nil then
+                text_quest.Text = "4 > hourglass artefak"
+                x, y, z, arah = teleport_string(json.quest.jungle.hourglass)
+            else
+                progress_quest4 = 100
+            end
+            task.wait(3)
+            face(arah)
+            task.wait(1)
+            memancing()
+            print()
+            local progress = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4
+            if progress >= 100 then
+                step = step + 1
+            end
+        end
+        if step == 2 then
+            discord("sudah sampai step 2")
+            text_quest.Text ="STEP 2 !!"
+            break
+        end
+        print("loop running progress quest", progress_quest)
+        task.wait(10)
+    end
+end
+    --[[
 print("JSON ENABLE:", json_enable)
 if json_enable then
     status_online.BackgroundColor3 = Color3.fromRGB(38, 155, 38)
