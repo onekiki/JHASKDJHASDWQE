@@ -36,6 +36,7 @@ local enable_quest_farm = true
 local fish_caught = false
 local flag_json_memancing = false
 local old_select_island = ""
+local count_mancing = 0
 
 local  url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/quest.json"
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1425376677982113832/ZjsQSZk6JZWWVQ63tdyF3Gcdz1li088TA39bAZfB5sBQj8fB-vYvMv4A7_8m21ZiCWtc"
@@ -859,6 +860,7 @@ task.spawn(
                 end
 
             end
+            text_total.Text = count_mancing
             num = num + 1
             task.wait(1)
         end
@@ -890,7 +892,6 @@ end
 SetLowGraphics()
 toggle3DAndUI()
 select_quest = "jungle"
-count_mancing = 0
 update_inventory()
 text_lokasi.Text = player:GetAttribute("LocationName")
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
