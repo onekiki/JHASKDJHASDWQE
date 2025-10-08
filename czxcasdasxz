@@ -173,7 +173,7 @@ render_btn.BackgroundColor3 = Color3.fromRGB(49, 165, 155)
 
 local sell_btn = Instance.new("TextButton")
 sell_btn.Size = UDim2.new(0, 150, 0, 60)
-sell_btn.Position = UDim2.new(0, 0, 0, 20)
+sell_btn.Position = UDim2.new(0, 20, 0, 100)
 sell_btn.Text = "SELL"
 sell_btn.TextSize = 40
 sell_btn.Visible = true
