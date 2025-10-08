@@ -1,12 +1,13 @@
 {
+  "listening": true,
   "global_enable" :true,
 "jobs_id" : "asdas-asdasd21321-qwq2321ds31",
 "farm_event" : true,
 "farm_quest" : false,
 "auto_trade" : false,
-"selected_island" : "syspus",
+"selected_island" : "custom",
 "island" : {
-  "syspus" : ["123,123123,123123", "123123,123123,123123"],
+  "custom" : ["123,123123,123123", "123123,123123,123123"],
   "islandx" : ["123,123,123","123,123,123"],
   "ccccc" : ["123,123,123","123,123,123"]
   }
