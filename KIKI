@@ -488,13 +488,13 @@ local function toggle3DAndUI()
     uiHidden = not uiHidden
 
     RunService:Set3dRenderingEnabled(renderEnabled)
-  --[[
+  
     for _, gui in ipairs(gui:GetChildren()) do
         if gui:IsA("ScreenGui") and gui ~= screenGui then
             gui.Enabled = false -- kalau render off, UI juga ikut mati
         end
     end
-    ]]
+    
 end
 
 -----------------------------------------------------------------
