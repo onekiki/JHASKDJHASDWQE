@@ -2,13 +2,13 @@
     "global_enable": true,
     "auto_trade": false,
     "auto_sell": false,
-    "selected_island": "lever1",
+    "selected_island": "jungle",
     "quest": {
         "jungle": {
-            "lever1": "884, 7, -370",
-            "lever2": "1819, 8, -284",
-            "lever3": "1420, 31, 79",
-            "lever4": "1485, 8, -861"
+            "arrow": "884, 7, -370, 270",
+            "diamond": "1840, 4, -296, 90",
+            "crescent": "1420, 31, 79, 0",
+            "hourglass": "1485, 8, -861, 0"
         }
     }
 }
