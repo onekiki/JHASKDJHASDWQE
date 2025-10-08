@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.3.3"
+versi = "JUNGLE v1.3.4"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -359,7 +359,7 @@ Event.OnClientEvent:Connect(function(itemId, stats, data, flag)
         fav(data.InventoryItem.UUID)
     end
     if list_ikan[itemId].tier > 5 then
-        local cetak = "dapat ikan tier " .. list_ikan[itemId].tier .. " > " .. list_ikan[itemId]
+        local cetak = "dapat ikan tier " .. list_ikan[itemId].tier .. " > " .. list_ikan[itemId].nama
         discord(cetak)
     end
 end)
@@ -538,6 +538,7 @@ local function random_island_path(island_name)
         return {}
     end
 end
+local last_json_data = nil
 local function ambilData()
     for i = 1, 3 do
         local success, result = pcall(function()
