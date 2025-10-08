@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.3.2"
+versi = "JUNGLE v1.3.3"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -923,7 +923,7 @@ if select_quest == "jungle" then
                     auto_fish()
                 end
             end
-            if ist_inventory_fishs[267] == nil then
+            if list_inventory_fishs[267] == nil then
                 text_quest.Text = "3 > diamond artefak"
                 x, y, z, arah = teleport_string(json.quest.jungle.diamond)
                 teleport(x, y, z)
