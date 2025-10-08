@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.2.1"
+versi = "JUNGLE v1.3"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -355,12 +355,12 @@ end
 
 Event.OnClientEvent:Connect(function(itemId, stats, data, flag)
     if itemId == 265 or itemId== 266 or itemId == 267 or itemId == 271 then
-        discord("dapat: " .. tostring(itemId))
-        local berat = Weight or stats or stats.Weight
+        discord("dapat artifact: " .. list_ikan[itemId].nama)
         fav(data.InventoryItem.UUID)
-        if list_ikan[itemId].tier > 5 then
-            discord("dapat ikan langka > " .. list_ikan[itemId].nama .. " | " .. berat .. " Kg")
-        end
+    end
+    if list_ikan[itemId].tier > 5 then
+        local cetak = "dapat ikan tier " .. list_ikan[itemId].tier .. " > " .. list_ikan[itemId]
+        discord(cetak)
     end
 end)
 
@@ -706,10 +706,12 @@ local function update_inventory()
         end
         if category == "Items" then
             for _, item in ipairs(items) do
+                --[[
                 local h = list_ikan[item.Id].harga
                 if h ~= nil then
                     total_harga = total_harga + h
                 end
+                ]]
                 list_inventory_fishs[item.Id] = {
                     Id = item.Id,
                     UUID = item.UUID
@@ -824,13 +826,6 @@ task.spawn(
                 end
                 local bagsize = gui:WaitForChild("Inventory"):WaitForChild("Main"):WaitForChild("Top"):WaitForChild("Options"):WaitForChild("Fish"):WaitForChild("Label"):WaitForChild("BagSize")
                 text_bp.Text = bagsize.Text
-                local str = bagsize.Text
-                local bpmax = str:match("^(%d+)")
-                if bpmax > 4600 then
-                    print("BACKPACK HAMPIR PENUH")
-                    running = false
-                end
-
                 task.wait(2)
             end
             if num % 30 == 0 then
