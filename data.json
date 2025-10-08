@@ -1,11 +1,10 @@
 {
 	"listening": true,
 	"global_enable": true,
-	"jobs_id": "asdas-asdasd21321-qwq2321ds31",
 	"farm_event": false,
 	"farm_quest": false,
 	"auto_trade": false,
-	"auto_sell": false,
+	"auto_sell": true,
 	"selected_island": "lever1",
 	"island": {
 		"jungle": [
