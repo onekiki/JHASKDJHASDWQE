@@ -5,13 +5,13 @@
 	"farm_quest": false,
 	"auto_trade": false,
 	"auto_sell": true,
-	"selected_island": "crescent",
+	"selected_island": "custom",
 	"island": {
 		"jungle": [
 			"1485, 8, -861, 0"
 		],
 		"custom": [
-			"1628, 3, -411, 0"
+			"0, 0, 0, 0"
 		],
 		"crescent": [
 			"1404, 4, 122, 0"
