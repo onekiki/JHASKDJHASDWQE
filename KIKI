@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.5.3"
+versi = "JUNGLE v1.5.4"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -900,7 +900,9 @@ if select_quest == "jungle" then
                 end
                 task.wait(20)
             end
+            text_quest.Text ="MANUAL RELOAD SCRIPT !!"
             step = step + 1
+            break
         end
 
         if step == 3 then
@@ -934,6 +936,7 @@ if select_quest == "jungle" then
         task.wait(10)
     end
 end
+running = false
 root.Anchored = false
 print("running : ", running)
 print("-----------------end-------------")
