@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.5.2"
+versi = "JUNGLE v1.5.3"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -888,6 +888,17 @@ if select_quest == "jungle" then
                     Net:WaitForChild("RE/PlaceLeverItem"):FireServer(list_ikan[k].nama)
                     task.wait(1)
                 end
+            end
+             
+            while true do
+                local pintu = workspace["JUNGLE INTERACTIONS"].Doors.TempleDoor:FindFirstChild("DELETE_ME_AFTER_UNLOCK")
+                if pintu then
+                    print("menunggu")
+                    text_quest.Text ="menunggu pintu terbuka"
+                else
+                    break
+                end
+                task.wait(20)
             end
             step = step + 1
         end
