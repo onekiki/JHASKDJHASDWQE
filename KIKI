@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.3.5"
+versi = "JUNGLE v1.4.0"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -30,7 +30,7 @@ local running_mancing = true
 local running = true
 local total_mancing = 1
 local total_harga = 0
-local list_inventory = {}
+local list_inventory_rod = {}
 local list_inventory_fishs = {}
 local enable_quest_farm = true
 local fish_caught = false
@@ -711,9 +711,10 @@ end
 
 local function update_inventory()
     print("update inventory")
+    for k in pairs(list_inventory_fishs) do
+        list_inventory_fishs[k] = nil
+    end
     total_harga = 0
-    list_inventory_rod = {}
-    list_inventory_fishs = {}
     for category, items in pairs(inventory) do
         if category == "Fishing Rods" then
             for _, item in ipairs(items) do
@@ -786,8 +787,8 @@ local function best_rod_wear()
         print("⚠️ Tidak ada rod ditemukan.")
     end
 end
+local numbers = {}
 local function teleport_string(data)
-    local numbers = {}
     for value in string.gmatch(data, "[-%d%.]+") do
         table.insert(numbers, tonumber(value))
     end
@@ -913,7 +914,6 @@ if select_quest == "jungle" then
                 task.wait(5)
                 face(arah)
                 while list_inventory_fishs[265] == nil do
-                    print(list_inventory_fishs[265])
                     auto_fish()
                     if not running then break end
                 end
@@ -925,7 +925,6 @@ if select_quest == "jungle" then
                 task.wait(5)
                 face(arah)
                 while list_inventory_fishs[266] == nil do
-                    print(list_inventory_fishs[266])
                     auto_fish()
                     if not running then break end
                 end
@@ -937,7 +936,6 @@ if select_quest == "jungle" then
                 task.wait(5)
                 face(arah)
                 while list_inventory_fishs[267] == nil do
-                    print(list_inventory_fishs[267])
                     auto_fish()
                     if not running then break end
                 end
@@ -949,7 +947,6 @@ if select_quest == "jungle" then
                 task.wait(5)
                 face(arah)
                 while list_inventory_fishs[271] == nil do
-                    print(list_inventory_fishs[271])
                     auto_fish()
                     if not running then break end
                 end
