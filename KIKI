@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.4.0"
+versi = "JUNGLE v1.4.1"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -16,10 +16,6 @@ if not ok or not Replion.Client then
     warn("Replion client tidak ditemukan")
     return
 end
-local Client = Replion.Client
-local replion_data = Client:WaitReplion("Data") -- sama seperti controller
--- Inventory biasanya berbentuk tabel: { ["Fishing Rods"] = { item1, item2, ... }, ["Items"] = {...} }
-local inventory = replion_data:GetExpect({"Inventory"})
 
 local PLATFORM_SIZE = Vector3.new(6, 0.2, 6)
 local OFFSET = -3
@@ -710,10 +706,10 @@ local function formatTime(seconds)
 end
 
 local function update_inventory()
+    local Client = Replion.Client
+    local replion_data = Client:WaitReplion("Data")
+    local inventory = replion_data:GetExpect({"Inventory"})
     print("update inventory")
-    for k in pairs(list_inventory_fishs) do
-        list_inventory_fishs[k] = nil
-    end
     total_harga = 0
     for category, items in pairs(inventory) do
         if category == "Fishing Rods" then
