@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.4.1"
+versi = "JUNGLE v1.5"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -34,6 +34,12 @@ local flag_json_memancing = false
 local old_select_island = ""
 local count_mancing = 0
 
+
+local progress_element_quest_1 = 0
+local progress_element_quest_2 = 0
+local progress_element_quest_3 = 0
+local progress_element_quest_4 = 0
+
 local  url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/quest.json"
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1425376677982113832/ZjsQSZk6JZWWVQ63tdyF3Gcdz1li088TA39bAZfB5sBQj8fB-vYvMv4A7_8m21ZiCWtc"
 
@@ -52,7 +58,7 @@ mainFrame.Size = UDim2.new(1, 0, 1, 100)
 mainFrame.Position = UDim2.new(0, 0, 0, -100)
 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 mainFrame.BorderSizePixel = 0
-mainFrame.BackgroundTransparency = 0.2
+mainFrame.BackgroundTransparency = 1
 mainFrame.Visible = true
 mainFrame.Parent = screenGui
 
@@ -247,6 +253,14 @@ for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
     end
 end
 --]]
+local function cek_quest(text)
+    if not text then return nil end
+    local percent = string.match(text, "(%d+)%%") 
+    if percent then
+        return (percent)
+    end
+    return 0
+end
 
 local function convert(str)
     if string.find(str, "K") then
@@ -790,7 +804,7 @@ local function teleport_string(data)
     end
     return numbers[1], numbers[2], numbers[3], numbers[4]
 end
-local function quest(index)
+local function quest_deep_sea(index)
     local path = workspace["!!! MENU RINGS"]["Deep Sea Tracker"].Board.Gui.Content
     local label = path:FindFirstChild("Label" .. index)
     if label and label:IsA("TextLabel") then
@@ -799,13 +813,22 @@ local function quest(index)
         return nil
     end
 end
-local function cek_quest(text)
+local function quest_jungle(index)
+    local path = workspace["!!! MENU RINGS"]["Element Tracker"].Board.Gui.Content
+    local label = path:FindFirstChild("Label" .. index)
+    if label and label:IsA("TextLabel") then
+        return label.Text
+    else
+        return nil
+    end
+end
+local function cek_quest_deep_sea(text)
     if not text then return nil end
     local percent = string.match(text, "(%d+)%%") 
     if percent then
         return tonumber(percent)
     end
-    return nil
+    return 0
 end
 
 task.spawn(
@@ -829,6 +852,7 @@ task.spawn(
                 end
             end
             if num % 300 == 0 then -- tiap 5 menit
+                update_inventory()
                 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
                 text_coin.Text = harganizer(total_harga)
                 task.wait(2)
@@ -840,11 +864,6 @@ task.spawn(
                 task.wait(2)
             end
             if num % 30 == 0 then
-                update_inventory()
-                print(print(list_inventory_fishs[265]))
-                print(print(list_inventory_fishs[266]))
-                print(print(list_inventory_fishs[267]))
-                print(print(list_inventory_fishs[271]))
                 if flag_error == true then
                     task.wait(0.5)
                     Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
@@ -854,12 +873,11 @@ task.spawn(
                     mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
                 end
                 
-                if old_select_island ~= config_select_island then
-                    print("CONTROL ISLAND BARU DITEMUKAN")
-                    running_mancing = false
-                    old_select_island = config_select_island
-                end
-
+                 progress_element_quest_1 = tonumber(cek_quest(quest_jungle(1)))
+                 progress_element_quest_2 = tonumber(cek_quest(quest_jungle(2)))
+                 progress_element_quest_3 = tonumber(cek_quest(quest_jungle(3)))
+                 progress_element_quest_4 = tonumber(cek_quest(quest_jungle(4)))
+                 print("Progress:" .. tostring(progress_element_quest_1) .. "|" .. tostring(progress_element_quest_2) .. "|" .. tostring(progress_element_quest_3) .. "|" .. tostring(progress_element_quest_4))
             end
             text_total.Text = count_mancing
             num = num + 1
@@ -898,10 +916,29 @@ text_lokasi.Text = player:GetAttribute("LocationName")
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 --best_rod_wear()
 
-local step = 1
+local step = 0
+
+
+print(cek_quest(quest_jungle(1)))
+print(cek_quest(quest_jungle(2)))
+print(cek_quest(quest_jungle(3)))
+print(cek_quest(quest_jungle(4)))
+
 if select_quest == "jungle" then
+
+    local exists = workspace["JUNGLE INTERACTIONS"].Doors.TempleDoor:FindFirstChild("DELETE_ME_AFTER_UNLOCK")
+
+    if exists then
+        print("Model ditemukan!")
+        step = 1
+    else
+        step = 3
+    end
+
     while running do
-        
+        if step == 0 then
+            break
+        end
         if step == 1 then
             if running and list_inventory_fishs[265] == nil then
                 text_quest.Text = "1 > Arrow artefak"
@@ -957,7 +994,58 @@ if select_quest == "jungle" then
         if step == 2 then
             discord("sudah sampai step 2")
             text_quest.Text ="STEP 2 !!"
-            break
+            list_quest_id = {265,266,267,271}
+            for i, k in ipairs(list_quest_id) do
+                if list_inventory_fishs[k] ~= nil then
+                    if i == 1 then
+                        teleport(897, 8, -361)
+                        task.wait(5)
+                    end
+                     if i == 2 then
+                        teleport(1420, 31, 79)
+                        task.wait(5)
+                    end
+                     if i == 3 then
+                        teleport(1819, 8, -284)
+                        task.wait(5)
+                    end
+                     if i == 4 then
+                        teleport(1485, 8, -861)
+                        task.wait(5)
+                    end
+                    Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
+                    task.wait(1)
+                    Net:WaitForChild("RE/PlaceLeverItem"):FireServer(list_ikan[k].nama)
+                    task.wait(1)
+                end
+            end
+            step = step + 1
+        end
+
+        if step == 3 then
+            text_quest.Text ="STEP 3 !!"
+            if running and progress_element_quest_3 < 100 then 
+                text_quest.Text = quest_jungle(3) -- Catch 1 SECRET fish at Sacred Temple - 0%
+                teleport(1510, -22, -629)
+                task.wait(3)
+                face(0)
+                while progress_element_quest_3 < 100 do
+                    auto_fish()
+                end
+            end
+            if running and progress_element_quest_2 < 100 then
+                text_quest.Text = quest_jungle(2) -- Catch 1 SECRET fish at Ancient Jungle - 0%
+                teleport(878, 4, -351)
+                task.wait(3)
+                face(0)
+                while progress_element_quest_2 < 100 do
+                    auto_fish()
+                end
+            end
+            if running and progress_element_quest_4 < 100 then
+                print("bikin batu dari secret")
+                break
+            end
         end
         print("loop running progress quest")
         task.wait(10)
