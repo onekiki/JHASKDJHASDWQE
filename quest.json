@@ -1,5 +1,6 @@
 {
     "global_enable": true,
+    "auto_run": true,
     "auto_trade": false,
     "auto_sell": true,
     "selected_island": "jungle",
