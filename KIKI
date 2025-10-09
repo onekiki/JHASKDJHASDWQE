@@ -1,4 +1,4 @@
-versi = "JUNGLE v1.5"
+versi = "JUNGLE v1.5.1"
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local gui = player:WaitForChild("PlayerGui")
@@ -58,7 +58,7 @@ mainFrame.Size = UDim2.new(1, 0, 1, 100)
 mainFrame.Position = UDim2.new(0, 0, 0, -100)
 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 mainFrame.BorderSizePixel = 0
-mainFrame.BackgroundTransparency = 1
+mainFrame.BackgroundTransparency = 0
 mainFrame.Visible = true
 mainFrame.Parent = screenGui
 
@@ -71,6 +71,57 @@ text_jam.TextSize = 80
 text_jam.TextXAlignment = Enum.TextXAlignment.Center
 text_jam.TextColor3 = Color3.fromRGB(230, 255, 1)
 text_jam.Parent = mainFrame
+
+local text_quest_master = Instance.new("TextLabel")
+text_quest_master.Size = UDim2.new(0, 0, 0, 0)
+text_quest_master.Position = UDim2.new(0, 20, 0.4, 0)
+text_quest_master.Text = "JUNGLE QUEST:"
+text_quest_master.Font = Enum.Font.Roboto
+text_quest_master.TextSize = 40
+text_quest_master.TextXAlignment = Enum.TextXAlignment.Left
+text_quest_master.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_quest_master.Parent = mainFrame
+
+local text_quest_1 = Instance.new("TextLabel")
+text_quest_1.Size = UDim2.new(0, 0, 0, 0)
+text_quest_1.Position = UDim2.new(0, 20, 0.4, 50)
+text_quest_1.Text = "QUEST 1"
+text_quest_1.Font = Enum.Font.Roboto
+text_quest_1.TextSize = 40
+text_quest_1.TextXAlignment = Enum.TextXAlignment.Left
+text_quest_1.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_quest_1.Parent = mainFrame
+
+local text_quest_2 = Instance.new("TextLabel")
+text_quest_2.Size = UDim2.new(0, 0, 0, 0)
+text_quest_2.Position = UDim2.new(0, 20, 0.4, 100)
+text_quest_2.Text = "QUEST 1"
+text_quest_2.Font = Enum.Font.Roboto
+text_quest_2.TextSize = 40
+text_quest_2.TextXAlignment = Enum.TextXAlignment.Left
+text_quest_2.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_quest_2.Parent = mainFrame
+
+local text_quest_3 = Instance.new("TextLabel")
+text_quest_3.Size = UDim2.new(0, 0, 0, 0)
+text_quest_3.Position = UDim2.new(0, 20, 0.4, 150)
+text_quest_3.Text = "QUEST 1"
+text_quest_3.Font = Enum.Font.Roboto
+text_quest_3.TextSize = 40
+text_quest_3.TextXAlignment = Enum.TextXAlignment.Left
+text_quest_3.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_quest_3.Parent = mainFrame
+
+local text_quest_4 = Instance.new("TextLabel")
+text_quest_4.Size = UDim2.new(0, 0, 0, 0)
+text_quest_4.Position = UDim2.new(0, 20, 0.4, 200)
+text_quest_4.Text = "QUEST 1"
+text_quest_4.Font = Enum.Font.Roboto
+text_quest_4.TextSize = 40
+text_quest_4.TextXAlignment = Enum.TextXAlignment.Left
+text_quest_4.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_quest_4.Parent = mainFrame
+
 
 local text_coin = Instance.new("TextLabel")
 text_coin.Size = UDim2.new(0, 0, 0, 0)
@@ -877,11 +928,16 @@ task.spawn(
                  progress_element_quest_2 = tonumber(cek_quest(quest_jungle(2)))
                  progress_element_quest_3 = tonumber(cek_quest(quest_jungle(3)))
                  progress_element_quest_4 = tonumber(cek_quest(quest_jungle(4)))
+                 text_quest_1.Text = "QUEST 1: " .. tostring(progress_element_quest_1) .. " %"
+                 text_quest_2.Text = "QUEST 2: " .. tostring(progress_element_quest_2) .. " %"
+                 text_quest_3.Text = "QUEST 3: " .. tostring(progress_element_quest_3) .. " %"
+                 text_quest_4.Text = "QUEST 4: " .. tostring(progress_element_quest_4) .. " %"
+                 
                  print("Progress:" .. tostring(progress_element_quest_1) .. "|" .. tostring(progress_element_quest_2) .. "|" .. tostring(progress_element_quest_3) .. "|" .. tostring(progress_element_quest_4))
             end
             text_total.Text = count_mancing
             num = num + 1
-            task.wait(1)
+            task.wait(5)
         end
     end
 )
@@ -934,6 +990,9 @@ if select_quest == "jungle" then
     else
         step = 3
     end
+    --DEBUG
+    step = 0
+
 
     while running do
         if step == 0 then
@@ -1043,7 +1102,9 @@ if select_quest == "jungle" then
                 end
             end
             if running and progress_element_quest_4 < 100 then
-                print("bikin batu dari secret")
+                -- manual goto altar and give secret 3
+                teleport(1487, 128, -591)
+                text_quest.Text = "MANUAL ENCHANGED"
                 break
             end
         end
