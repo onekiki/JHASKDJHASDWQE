@@ -7,11 +7,9 @@ local character = player.Character or player.CharacterAdded:Wait()
 local root = character:WaitForChild("HumanoidRootPart")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local Net =
-    ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild(
-    "net"
-)
+local Net = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net")
 local HttpService = game:GetService("HttpService")
+local dailyLoginGui = gui:FindFirstChild("!!! Daily Login")
 local koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
 
 local ok, Replion = pcall(function() return require(ReplicatedStorage.Packages.Replion) end)
@@ -558,7 +556,6 @@ local function teleport(x, y, z)
     if root then
         root.CFrame = CFrame.new(Vector3.new(x, y, z))
     end
-    text_lokasi.Text = player:GetAttribute("LocationName")
 end
 local function face(yawDeg)
     local char = player.Character or player.CharacterAdded:Wait()
@@ -970,6 +967,23 @@ for _, child in pairs(listContainer:GetChildren()) do
 	end
 end
 
+
+local function hapus_gui_daily()
+    if dailyLoginGui and dailyLoginGui:IsA("ScreenGui") then
+        if dailyLoginGui.Enabled then
+            dailyLoginGui:Destroy()
+            print("ScreenGui '!!! Daily Login' dihapus.")
+        else
+            print("'!!! Daily Login' ada tapi tidak aktif.")
+        end
+    end
+end
+
+--------------------------------------------------------------------
+--- SPAWN
+--------------------------------------------------------------------
+
+
 task.spawn(
     function()
         local num = 1
@@ -995,12 +1009,14 @@ task.spawn(
             end
             if num % 300 == 0 then -- tiap 5 menit
                 update_inventory()
+                text_lokasi.Text = player:GetAttribute("LocationName")
                 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
                 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
                 task.wait(2)
                 Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
                 task.wait(2)
                 update_quest()
+                hapus_gui_daily()
                 updateList()
             end
             if num % 30 == 0 then -- tiap 30 detik
@@ -1022,14 +1038,16 @@ task.spawn(
     end
 )
 
-
-----------------------------------------------------------------------------------------------------------------------------
----
+---------------------------------------------
 ---MULAI ALGORITMA
----
---discord("online")
+---------------------------------------------
+-- TWEAK
+Net:WaitForChild("RE/ChangeSetting"):FireServer("Server Notifications",false)
+Net:WaitForChild("RE/ChangeSetting"):FireServer("Global Notifications",false)
+
 SetLowGraphics()
 toggle3DAndUI()
+
 print("INISIALISASI --------------------------")
 update_inventory()
 auto_buy()
