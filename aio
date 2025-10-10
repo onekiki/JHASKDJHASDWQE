@@ -1,4 +1,4 @@
-versi = "AIO V1.4.0"
+versi = "AIO V1.4.1"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
