@@ -1,4 +1,4 @@
-versi = "AIO V1.3.0"
+versi = "AIO V1.4.0"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -34,13 +34,16 @@ local progress_quest1 = 0
 local progress_quest2 = 0
 local progress_quest3 = 0
 local progress_quest4 = 0
+local list_secret = {}
+local list_trade = {}
+local list_mythic = {}
 
 local  url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/quest.json"
 local WEBHOOK_URL = "https://discord.com/api/webhooks/1425376677982113832/ZjsQSZk6JZWWVQ63tdyF3Gcdz1li088TA39bAZfB5sBQj8fB-vYvMv4A7_8m21ZiCWtc"
 
 
 local select_quest = nil
-
+local master_user = "haytest00"
 
 -- === ScreenGui utama ===
 local screenGui = Instance.new("ScreenGui")
@@ -273,6 +276,17 @@ btn_reload.TextColor3 = Color3.fromRGB(255, 255, 255)
 btn_reload.Parent = mainFrame
 btn_reload.BackgroundColor3 = Color3.fromRGB(77, 77, 77)
 
+local btn_trade = Instance.new("TextButton")
+btn_trade.Size = UDim2.new(0, 150, 0, 40)
+btn_trade.Position = UDim2.new(0, 150, 0, 100)
+btn_trade.Text = "Trade"
+btn_trade.TextScaled = true
+btn_trade.Visible = true
+btn_trade.TextXAlignment = Enum.TextXAlignment.Center
+btn_trade.TextColor3 = Color3.fromRGB(255, 255, 255)
+btn_trade.Parent = mainFrame
+btn_trade.BackgroundColor3 = Color3.fromRGB(177, 107, 16)
+
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 60, 0, 60)
 closeBtn.Position = UDim2.new(1, -120, 0, 100)
@@ -425,11 +439,11 @@ end
 
 Event.OnClientEvent:Connect(function(itemId, stats, data, flag)
     if itemId == 265 or itemId== 266 or itemId == 267 or itemId == 271 then
-        discord("dapat artifact: " .. list_ikan[itemId].nama)
         fav(data.InventoryItem.UUID)
     end
-    if list_ikan[itemId].tier > 5 then
-        local cetak = "dapat ikan tier " .. list_ikan[itemId].tier .. " > " .. list_ikan[itemId].nama
+    if list_ikan[itemId].tier == 7 then
+        local cetak = "[SECRET] " .. list_ikan[itemId].tier .. " > " .. list_ikan[itemId].nama
+        fav(data.InventoryItem.UUID)
         discord(cetak)
     end
 end)
@@ -456,12 +470,7 @@ onFishCaught(
         if data.Variants then
             varian = "[" .. tostring(data.Variants) .. "] "
         end
-        
         text_ikan.Text = varian .. name .. " (" .. round(data.Weight, 2) .. " Kg)"
-        if name == "Arrow Artifact" or name == "Crescent Artifact" or name == "Diamond Artifact" or name == "Hourglass Diamond Artifact" then
-            discord("dapat -> " .. name)
-        end
-
         lastCatchTime = os.clock()
     end
 )
@@ -651,8 +660,9 @@ local function update_inventory()
     local total_harga_jual = 0
     local total_harga_secret = 0
     local total_harga_mythic = 0
-    local list_secret = {}
-    local list_mythic = {}
+    list_secret = {}
+    list_mythic = {}
+    list_trade = {}
     for category, items in pairs(inventory) do
         if category == "Fishing Rods" then
             for _, item in ipairs(items) do
@@ -672,13 +682,18 @@ local function update_inventory()
                 if list_ikan[item.Id] then
                     local berat = item.Metadata and item.Metadata.Weight or 0
                     local nama = list_ikan[item.Id].nama
+                    local uuid = item.UUID
                     if list_ikan[item.Id].tier == 7 then -- total ikan secret
-                        table.insert(list_secret, nama)
+                        table.insert(list_secret, uuid)
                         total_harga_secret = total_harga_secret + list_ikan[item.Id].harga
                     end
                     if list_ikan[item.Id].tier == 6 then --total ikan mythic
-                        table.insert(list_mythic, nama)
+                        table.insert(list_mythic, uuid)
                         total_harga_mythic = total_harga_mythic + list_ikan[item.Id].harga
+                    end
+                    if list_ikan[item.Id].tier == 7 then -- LIST TRADE
+                        
+                        table.insert(list_trade, uuid)
                     end
                     if list_ikan[item.Id].tier > 5 then -- total harga jual mythic++
                         total_harga_jual = total_harga_jual + list_ikan[item.Id].harga
@@ -691,16 +706,13 @@ local function update_inventory()
             end
         end
     end
+    if list_trade == nil then
+        print("TIDAK ADA ITEM TRADEABLE")
+    end
     total_secret.Text = "Secret: " .. #list_secret .. " - $ " .. konvert_harga(total_harga_secret)
    print("Total Secret:", #list_secret)
-	for _, v in ipairs(list_secret) do
-		print("Secret:", v)
-	end
     total_mythic.Text = "Mythic: " .. #list_mythic .. " - $ " .. konvert_harga(total_harga_mythic)
 	print("Total Mythic:", #list_mythic)
-	for _, v in ipairs(list_mythic) do
-		print("Mythic:", v)
-	end
     total_all.Text = "$ " .. konvert_harga(total_harga_jual)
 end
 
@@ -723,6 +735,62 @@ btn_reload.MouseButton1Click:Connect(
     end
 )
 
+local completed = false
+
+-- sambungkan listener
+local xxx
+xxx = Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(function(data)
+    if data and data.Text == "Trade completed!" then
+        completed = true
+        print("[INFO] Notifikasi 'Trade completed!' diterima ✅")
+    end
+end)
+
+btn_trade.MouseButton1Click:Connect(
+    function()
+        update_inventory()
+        --local targetName = "hayfish96"
+        local berhasil = 0
+        local info_akhir = ""
+        local targetName = master_user
+        local function trade_user(usr)
+            if usr.Name == targetName then
+                print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
+                if list_trade ~= nil then
+                    for i, uuid in ipairs(list_trade) do
+                        Net:WaitForChild("RE/EquipItem"):FireServer(uuid, "Fishes")
+                        Net:WaitForChild("RF/InitiateTrade"):InvokeServer(usr.UserId, uuid)
+                        local timeout = 0
+                        while completed ~= true do
+                            task.wait(0.5)
+                            print("wait")
+                            timeout = timeout + 1
+                            if timeout > 30 then
+                                break
+                            end
+                        end
+                        if timeout < 30 then
+                            berhasil = berhasil + 1
+                            info_akhir = "TRADE " .. berhasil .. "/" .. #list_trade
+                            text_ikan.Text = info_akhir
+                        end
+                        completed = false
+                    end
+                else
+                    text_quest.Text = "tidak ada barang lagi"
+                end
+                text_quest.Text = "SELESAI SEMUA " .. info_akhir
+                print("clear list")
+            end
+        end
+        local existing = Players:FindFirstChild(targetName)
+        if existing then
+            trade_user(existing)
+        else
+            print("player tidak ada")
+        end
+    end
+)
 
 local function best_rod_wear()
     local old_tier = 0
@@ -796,6 +864,7 @@ task.spawn(
                 end
             end
             if num % 500 == 0 then
+                text_lokasi.Text = player:GetAttribute("LocationName")
                 local koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
                 text_coin.Text = koin
                 if flag_auto_buy == true then
@@ -812,7 +881,7 @@ task.spawn(
                         auto_buy_rod("Astral Rod")
                         best_rod_wear()
                     end
-                    if select_quest == "jungle" and coins > 4000000 then
+                    if select_quest == "jungle" and koins > 4000000 then
                         if step > 2 and list_inventory_rod["Ghostfinn Rod"] ~= nil then
                             auto_buy_bait(20)
                             flag_auto_buy = false
@@ -898,7 +967,7 @@ else
     select_quest = "deep_sea"
 end
 text_quest_master.Text = select_quest .. " Quest :"
-text_lokasi.Text = player:GetAttribute("LocationName")
+
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
 if select_quest == "deep_sea" then
