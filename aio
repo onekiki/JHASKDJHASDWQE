@@ -1,4 +1,4 @@
-versi = "AIO V1.4.1"
+versi = "AIO V1.4.2"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -43,7 +43,7 @@ local WEBHOOK_URL = "https://discord.com/api/webhooks/1425376677982113832/ZjsQSZ
 
 
 local select_quest = nil
-local master_user = "haytest00"
+local master_user = "hayfish96"
 
 -- === ScreenGui utama ===
 local screenGui = Instance.new("ScreenGui")
