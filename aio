@@ -1,4 +1,4 @@
-versi = "AIO V1.5.0"
+versi = "AIO V1.5.1"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -558,6 +558,7 @@ local function teleport(x, y, z)
     if root then
         root.CFrame = CFrame.new(Vector3.new(x, y, z))
     end
+    text_lokasi.Text = player:GetAttribute("LocationName")
 end
 local function face(yawDeg)
     local char = player.Character or player.CharacterAdded:Wait()
@@ -894,7 +895,6 @@ end
 
 local function update_quest()
     print("update quest di panggil -> ")
-    text_lokasi.Text = player:GetAttribute("LocationName")
     text_coin.Text = koin
     print("quest:", select_quest)
     if select_quest == "jungle" then
