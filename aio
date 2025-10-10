@@ -1,4 +1,4 @@
-versi = "AIO V1.4.2"
+versi = "AIO V1.4.3"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -23,6 +23,7 @@ local OFFSET = -3
 --GLOBAL VARIABLE
 local startscript = tick()
 local running = true
+local spawning = true
 local total_harga = 0
 local list_inventory_rod = {}
 local list_inventory_fishs = {}
@@ -718,6 +719,7 @@ end
 
 closeBtn.MouseButton1Click:Connect(
     function()
+        spawning = false
         running = false
         screenGui:Destroy()
     end
@@ -749,6 +751,8 @@ end)
 btn_trade.MouseButton1Click:Connect(
     function()
         update_inventory()
+        running  = false
+        print("RUNNING ", running)
         --local targetName = "hayfish96"
         local berhasil = 0
         local info_akhir = ""
@@ -775,12 +779,14 @@ btn_trade.MouseButton1Click:Connect(
                             text_ikan.Text = info_akhir
                         end
                         completed = false
+                        task.wait(1)
                     end
                 else
                     text_quest.Text = "tidak ada barang lagi"
                 end
                 text_quest.Text = "SELESAI SEMUA " .. info_akhir
                 print("clear list")
+                running  = true
             end
         end
         local existing = Players:FindFirstChild(targetName)
@@ -844,7 +850,7 @@ task.spawn(
     function()
         local num = 1
         local flag_error = false
-        while running do
+        while spawning or running do
             local currentTime = os.clock()
             text_jam.Text = formatTime(math.floor(getOnlineTime()))
             if lastCatchTime then
@@ -978,6 +984,7 @@ if select_quest == "deep_sea" then
         face(120)
         while progress_quest1 < 100 do
             auto_fish()
+            if not running then break end
         end
     end
     if progress_quest1 >= 100 and progress_quest2 < 100 and progress_quest3 < 100 and progress_quest4 < 100 then
@@ -988,6 +995,7 @@ if select_quest == "deep_sea" then
         while true do
             if progress_quest2 >= 100 and progress_quest3 >= 100 and progress_quest4 >= 100 then break end
             auto_fish()
+            if not running then break end
         end
     end
     text_quest.Text = "selesai deep sea quest"
@@ -1117,6 +1125,7 @@ if select_quest == "jungle" then
                 face(0)
                 while progress_quest3 < 100 do
                     auto_fish()
+                    if not running then break end
                 end
             end
             if running and progress_quest2 < 100 then
@@ -1126,6 +1135,7 @@ if select_quest == "jungle" then
                 face(0)
                 while progress_quest2 < 100 do
                     auto_fish()
+                    if not running then break end
                 end
             end
             if running and progress_quest4 < 100 then
@@ -1135,11 +1145,12 @@ if select_quest == "jungle" then
                 break
             end
         end
-        print("loop running progress quest")
+        text_rod.Text = "waiting running..."
         task.wait(10)
     end
 
 end
+spawning = false
 running = false
 root.Anchored = false
 print("running : ", running)
