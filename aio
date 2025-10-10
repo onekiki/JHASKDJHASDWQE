@@ -927,7 +927,7 @@ task.spawn(
             end
             text_total.Text = count_mancing
             num = num + 1
-            task.wait(5)
+            task.wait(2)
         end
     end
 )
