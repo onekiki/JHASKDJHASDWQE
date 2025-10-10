@@ -1,5 +1,6 @@
 
-    "auto_running": false,
+{
+"auto_running": false,
     "selected_island": "jungle",
     "quest": {
         "jungle": {
