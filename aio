@@ -1052,7 +1052,6 @@ text_quest_master.Text = select_quest .. " Quest :"
 
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
-progress_quest1 = 100
 print("MAIN PROGRAM -------------------------------")
 
 if select_quest == "deep_sea" then
