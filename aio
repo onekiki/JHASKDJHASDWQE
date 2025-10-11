@@ -1,4 +1,4 @@
-versi = "AIO V1.5.5"
+versi = "AIO V1.5.6"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -44,8 +44,6 @@ local progress_quest2 = 0
 local progress_quest3 = 0
 local progress_quest4 = 0
 local list_secret = {}
-local list_trade_secret = {}
-local list_trade_mythic = {}
 local list_mythic = {}
 local list_trade_batu = {}
 local list_inv_item_uuid = {}
@@ -837,9 +835,6 @@ local function update_inventory()
                         table.insert(list_mythic, uuid)
                         total_harga_mythic = total_harga_mythic + list_ikan[item.Id].harga
                     end
-                    if list_ikan[item.Id].tier == 7 then -- LIST TRADE
-                        table.insert(list_trade, uuid)
-                    end
                 end
                 list_inventory_fishs[item.Id] = {
                     Id = item.Id,
@@ -847,9 +842,6 @@ local function update_inventory()
                 }
             end
         end
-    end
-    if list_trade == nil then
-        print("TIDAK ADA ITEM TRADEABLE")
     end
     total_secret.Text = "$ " .. konvert_harga(total_harga_secret)
     print("Total Secret:", #list_secret)
@@ -907,11 +899,13 @@ local function custom_trade(custom_list, limit)
             print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
             if custom_list ~= nil then
                 for i, uuid in ipairs(custom_list) do
+                    print("trade item -> ", uuid)
+                    task.wait(1)
                     Net:WaitForChild("RE/EquipItem"):FireServer(uuid, "Fishes")
+                    task.wait(1)
                     Net:WaitForChild("RF/InitiateTrade"):InvokeServer(usr.UserId, uuid)
                     local timeout = 0
                     while completed ~= true do
-                        print("wait")
                         timeout = timeout + 1
                         if timeout > 30 then
                             print("timeout lebih dari 15 detik")
