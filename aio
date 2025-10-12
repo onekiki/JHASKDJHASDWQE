@@ -1,4 +1,4 @@
-versi = "AIO V1.5.6"
+versi = "AIO V1.5.7"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1031,26 +1031,6 @@ local function quest_jungle(index)
     end
 end
 
-local function update_quest()
-    print("update quest di panggil -> ")
-    text_coin.Text = koin
-    print("quest:", select_quest)
-    if select_quest == "jungle" then
-        progress_quest1 = cek_quest(quest_jungle(1))
-        progress_quest2 = cek_quest(quest_jungle(2))
-        progress_quest3 = cek_quest(quest_jungle(3))
-        progress_quest4 = cek_quest(quest_jungle(4))
-    elseif select_quest == "deep_sea" then
-        progress_quest1 = cek_quest(quest_deep_sea(1))
-        progress_quest2 = cek_quest(quest_deep_sea(2))
-        progress_quest3 = cek_quest(quest_deep_sea(3))
-        progress_quest4 = cek_quest(quest_deep_sea(4))
-    end
-    text_quest_1.Text = "QUEST 1 -> " .. progress_quest1 .. " %"
-    text_quest_2.Text = "QUEST 2 -> " .. progress_quest2 .. " %"
-    text_quest_3.Text = "QUEST 3 -> " .. progress_quest3 .. " %"
-    text_quest_4.Text = "QUEST 4 -> " .. progress_quest4 .. " %"
-end
 local function auto_fish()
     math.randomseed(os.time())
     local random_number = math.random() * 2 - 1
@@ -1076,14 +1056,17 @@ local function auto_buy()
         print("beli rod midnight")
         auto_buy_bait(3) -- corrupt
         auto_buy_rod(80) -- midnight rod
+        best_rod_wear()
     end
     if list_inventory_rod["Astral Rod"] == nil and koins > 1150000 then
         print("beli rod astral")
         auto_buy_bait(15) -- corrupt
         auto_buy_rod(5) -- astral rod
+        best_rod_wear()
     end
     if list_inventory_rod["Ghostfinn Rod"] ~= nil and koins > 4000000 then
         auto_buy_bait(20)
+        best_rod_wear()
     end
 end
 local function updateList()
@@ -1188,16 +1171,34 @@ task.spawn(
                 end
             end
             if num % 300 == 0 then -- tiap 5 menit
-                update_inventory()
                 text_lokasi.Text = player:GetAttribute("LocationName")
+                koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
+                text_coin.Text = koin
+                update_inventory()
+                auto_buy()
+                task.wait(1)
                 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
                 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                task.wait(2)
+                task.wait(1)
                 Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
-                task.wait(2)
-                update_quest()
+                task.wait(1)
                 hapus_gui_daily()
-                updateList()
+                print("quest:", select_quest)
+                if select_quest == "jungle" then
+                    progress_quest1 = cek_quest(quest_jungle(1))
+                    progress_quest2 = cek_quest(quest_jungle(2))
+                    progress_quest3 = cek_quest(quest_jungle(3))
+                    progress_quest4 = cek_quest(quest_jungle(4))
+                elseif select_quest == "deep_sea" then
+                    progress_quest1 = cek_quest(quest_deep_sea(1))
+                    progress_quest2 = cek_quest(quest_deep_sea(2))
+                    progress_quest3 = cek_quest(quest_deep_sea(3))
+                    progress_quest4 = cek_quest(quest_deep_sea(4))
+                end
+                text_quest_1.Text = "QUEST 1 -> " .. progress_quest1 .. " %"
+                text_quest_2.Text = "QUEST 2 -> " .. progress_quest2 .. " %"
+                text_quest_3.Text = "QUEST 3 -> " .. progress_quest3 .. " %"
+                text_quest_4.Text = "QUEST 4 -> " .. progress_quest4 .. " %"
             end
             if num % 30 == 0 then -- tiap 30 detik
                 if flag_error == true then
@@ -1223,7 +1224,8 @@ task.spawn(
 -- TWEAK
 Net:WaitForChild("RE/ChangeSetting"):FireServer("Server Notifications", false)
 Net:WaitForChild("RE/ChangeSetting"):FireServer("Global Notifications", false)
-task.wait(5)
+Net:WaitForChild("RF/UpdateAutoSellThreshold"):InvokeServer(5) -- set sell to legendary
+task.wait(3)
 update_inventory()
 
 SetLowGraphics()
@@ -1244,8 +1246,6 @@ else
     select_quest = "deep_sea"
 end
 print(select_quest)
-
-update_quest()
 
 updateList()
 
