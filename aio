@@ -986,6 +986,7 @@ local function auto_enchant()
     text_ikan.Text = "selesai enchant"
 end
 local function best_rod_wear()
+    update_inventory()
     local old_tier = 0
     local current_uuid = ""
     local best = nil
