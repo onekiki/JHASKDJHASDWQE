@@ -303,8 +303,9 @@ local function rejoinSameServer()
 end
 
 local function cek_quest(text)
+    print(text)
     if not text then
-        return nil
+        return 0
     end
     local percent = string.match(text, "(%d+)%%")
     if percent then
@@ -845,16 +846,23 @@ local function quest_deep_sea(index)
     if label and label:IsA("TextLabel") then
         return label.Text
     else
-        return nil
+        print("quest not found")
+        return 0
     end
 end
 local function quest_jungle(index)
-    local path = workspace["!!! MENU RINGS"]["Element Tracker"].Board.Gui.Content
+    local content = workspace
+    :WaitForChild("!!! MENU RINGS")
+    :WaitForChild("Element Tracker")
+    :WaitForChild("Board")
+    :WaitForChild("Gui")
+    :WaitForChild("Content")
     local label = path:FindFirstChild("Label" .. index)
     if label and label:IsA("TextLabel") then
         return label.Text
     else
-        return nil
+        print("quest not found")
+        return 0
     end
 end
 --// ANCHOR UPDATE QUEST
@@ -871,15 +879,7 @@ local function update_quest()
         progress_quest3 = cek_quest(quest_deep_sea(3))
         progress_quest4 = cek_quest(quest_deep_sea(4))
     end
-    if progress_quest_1 < 100 then
-        pesan(quest_deep_sea(1))
-    elseif progress_quest2 < 100 then
-        pesan(quest_deep_sea(2))
-    elseif progress_quest3 < 100 then
-        pesan(quest_deep_sea(3))
-    elseif progress_quest4 < 100 then
-        pesan(quest_deep_sea(4))
-    end
+    
 end
 local function auto_buy()
     print("start auto buy")
@@ -1091,6 +1091,7 @@ if playerList then
 	playerList.Enabled = false
 end
 
+
 task.wait(5)
 update_inventory()
 
@@ -1110,10 +1111,7 @@ else
     select_quest = "deep_sea"
 end
 print(select_quest)
-
 update_quest()
-
-
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
 print("MAIN PROGRAM -------------------------------")
@@ -1124,7 +1122,7 @@ if select_quest == "deep_sea" then
     print(progress_quest3)
     print(progress_quest4)
     if progress_quest1 < 100 then
-        print("deep sea progress 1")
+        pesan("deep sea quest 1")
         teleport(-3602, -283, -1612)
         task.wait(3)
         face(120)
@@ -1136,7 +1134,7 @@ if select_quest == "deep_sea" then
         end
     end
     if ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 then
-        print("deep sea progress 2")
+        pesan("deep sea quest 2 3 4")
         teleport(-3734, -135, -1013)
         task.wait(3)
         face(0)
