@@ -1,4 +1,4 @@
-versi = "KAITUN V1.3"
+versi = "KAITUN V1.3.1"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -42,7 +42,6 @@ local progress_quest3 = 0
 local progress_quest4 = 0
 local status = "RUNNING"
 local list_secret = {}
-local list_trade = {}
 local list_mythic = {}
 local list_display = {}
 local list_trade_batu = {}
@@ -201,7 +200,7 @@ local function pesan(msg)
 end
 
 --// ANCHOR OPTION MENU
-local options = {"Trade Fish", "Trade Stone", "Enchant I", "Listen Trade", "Auto Buy", "Wear Best Rod", "Jobs ID"}
+local options = {"Trade Secret","Trade Mythic", "Trade Stone", "Enchant I", "Listen Trade", "Auto Buy", "Wear Best Rod", "Jobs ID"}
 
 local function opsia(x)
     opsi(x)
@@ -623,7 +622,6 @@ local function update_inventory()
     list_secret = {}
     list_display = {}
     list_mythic = {}
-    list_trade = {}
     list_trade_batu = {}
     list_inv_item_uuid = {}
     for category, items in pairs(inventory) do
@@ -651,19 +649,19 @@ local function update_inventory()
                     local nama = list_ikan[item.Id].nama
                     local uuid = item.UUID
 
-                    if list_ikan[item.Id].tier == 6 then -- total ikan secret
+                    if list_ikan[item.Id].tier == 7 then -- total ikan secret
                         table.insert(list_secret, uuid)
                         total_harga_secret = total_harga_secret + list_ikan[item.Id].harga
-                        local text_sec = "[ " .. listing .. " ] " .. nama .. " - " .. konvert_harga(berat) .. " Kg"
-                        table.insert(list_display, text_sec)
-                        listing = listing + 1
                     end
                     if list_ikan[item.Id].tier == 6 then --total ikan mythic
                         table.insert(list_mythic, uuid)
                         total_harga_mythic = total_harga_mythic + list_ikan[item.Id].harga
                     end
-                    if list_ikan[item.Id].tier == 7 then -- LIST TRADE
-                        table.insert(list_trade, uuid)
+                    if list_ikan[item.Id].tier > 5 then -- LIST TRADE
+                    print("list display item")
+                        local text_sec = "[ " .. listing .. " ] " .. nama .. " - " .. konvert_harga(berat) .. " Kg"
+                        table.insert(list_display, text_sec)
+                        listing = listing + 1
                     end
                 end
                 list_inventory_fishs[item.Id] = {
@@ -672,9 +670,6 @@ local function update_inventory()
                 }
             end
         end
-    end
-    if list_trade == nil then
-        print("TIDAK ADA ITEM TRADEABLE")
     end
 end
 
@@ -943,12 +938,14 @@ end
 
 function opsi(index)
     if index == 1 then
-        custom_trade(list_trade, 0)
+        custom_trade(list_secret, 0)
     elseif index == 2 then
-        custom_trade(list_trade_batu, 5)
+        custom_trade(list_mythic, 0)
     elseif index == 3 then
-        auto_enchant()
+        custom_trade(list_trade_batu, 5)
     elseif index == 4 then
+        auto_enchant()
+    elseif index == 5 then
         pesan("Waiting to trade....")
         local RF = Net:WaitForChild("RF/AwaitTradeResponse")
         RF.OnClientInvoke = function(...)
@@ -961,11 +958,11 @@ function opsi(index)
             pesan("Trade Accepted")
             return "OK"
         end
-    elseif index == 5 then
-        auto_buy()
     elseif index == 6 then
-        best_rod_wear()
+        auto_buy()
     elseif index == 7 then
+        best_rod_wear()
+    elseif index == 8 then
         local jobId = game.JobId
         if setclipboard then
             setclipboard(jobId)
@@ -977,13 +974,13 @@ function opsi(index)
     end
 end
 local function display_inventory()
-    local list
+    local list = ""
     if list_display then
         for i, k in ipairs(list_display) do
             list = list .. "|" .. k
         end
-        print("list display", list)
-        return list
+        local hasil = list:gsub("^|", "")
+        return hasil
     else
         return "tidak ada secret :("
     end
@@ -993,6 +990,7 @@ local function send_Data(status, running_time, koin_secret, koin_myth, activity,
     local nama = player.Name
     local job_id = game.JobId
     local rod = current_rod
+    local list_inv = display_inventory()
     koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
     local lokasi = player:GetAttribute("LocationName")
     local params = string.format(
@@ -1010,7 +1008,7 @@ local function send_Data(status, running_time, koin_secret, koin_myth, activity,
         job_id,
         HttpService:UrlEncode(tostring(progress)),
         HttpService:UrlEncode(tostring(quest)),
-        HttpService:UrlEncode(tostring(display_inventory()))
+        HttpService:UrlEncode(tostring(list_inv))
     )
     local url = SERVER_URL .. params
     task.spawn(function()
@@ -1028,7 +1026,6 @@ end
 --------------------------------------------------------------------
 --- SPAWN
 --------------------------------------------------------------------
-
 task.spawn(
     function()
         local num = 1
@@ -1057,18 +1054,7 @@ task.spawn(
                 end
             end
             -- SEND DATA TO SERVER
-           
-
-            if num % 300 == 0 then
-                Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
-                mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                task.wait(2)
-                Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
-                task.wait(2)
-                hapus_gui_daily()
-                send_Data(status,running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing,select_quest)
-            end
-            if num % 30 == 0 then -- tiap 30 detik
+           if num % 30 == 0 then -- tiap 30 detik
                 if flag_error == true then
                     task.wait(0.5)
                     Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
@@ -1078,6 +1064,18 @@ task.spawn(
                     mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
                 end
             end
+            if num % 180 == 0 then
+                send_Data(status,running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing,select_quest)
+            end
+            if num % 300 == 0 then
+                Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+                mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                task.wait(2)
+                Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
+                task.wait(2)
+                hapus_gui_daily()
+            end
+            
             num = num + 1
             task.wait(1)
         end
