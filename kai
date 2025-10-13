@@ -1,4 +1,4 @@
-versi = "KAITUN V1.3.2"
+versi = "KAITUN V1.4.0"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -46,6 +46,7 @@ local list_mythic = {}
 local list_display = {}
 local list_trade_batu = {}
 local list_inv_item_uuid = {}
+local playing = true
 local url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/quest.json"
 
 local SERVER_URL = "https://hayfishit.dpdns.org/update"
@@ -65,6 +66,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "HAYBOT"
 screenGui.Parent = gui
 
+--//ANCHOR gui
 -- === Frame utama (container) ===
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(1, 0, 1, 100)
@@ -87,9 +89,9 @@ text_jam.TextColor3 = Color3.fromRGB(230, 255, 1)
 text_jam.Parent = mainFrame
 
 local text_info = Instance.new("TextLabel")
-text_info.Size = UDim2.new(1, 0, 0.15, 0)
+text_info.Size = UDim2.new(1, 50, 0.15, 0)
 text_info.Position = UDim2.new(0, 0, 0.65, 0)
-text_info.Text = "QUEST KUNTUL"
+text_info.Text = "activity"
 text_info.Font = Enum.Font.Roboto
 text_info.TextScaled = true
 text_info.BackgroundTransparency = 1
@@ -97,6 +99,18 @@ text_info.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 text_info.TextXAlignment = Enum.TextXAlignment.Center
 text_info.TextColor3 = Color3.fromRGB(255, 255, 255)
 text_info.Parent = mainFrame
+
+local text_progress = Instance.new("TextLabel")
+text_progress.Size = UDim2.new(1, 50, 0.1, 0)
+text_progress.Position = UDim2.new(0, 0, 0.8, 0)
+text_progress.Text = "progress.."
+text_progress.Font = Enum.Font.Roboto
+text_progress.TextScaled = true
+text_progress.BackgroundTransparency = 1
+text_progress.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+text_progress.TextXAlignment = Enum.TextXAlignment.Center
+text_progress.TextColor3 = Color3.fromRGB(255, 255, 255)
+text_progress.Parent = mainFrame
 
 local text_versi = Instance.new("TextLabel")
 text_versi.Size = UDim2.new(0, 0, 0, 0)
@@ -131,7 +145,7 @@ text_nama.Parent = mainFrame
 
 local btn_reload = Instance.new("TextButton")
 btn_reload.Size = UDim2.new(0, 40, 0, 40)
-btn_reload.Position = UDim2.new(0, 180, 0, 100)
+btn_reload.Position = UDim2.new(0, 180, 0, 130)
 btn_reload.Text = "🔄"
 btn_reload.TextScaled = true
 btn_reload.Visible = true
@@ -142,7 +156,7 @@ btn_reload.BackgroundColor3 = Color3.fromRGB(77, 77, 77)
 
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 40, 0, 40)
-closeBtn.Position = UDim2.new(0, 100, 0, 100)
+closeBtn.Position = UDim2.new(0, 100, 0, 130)
 closeBtn.Text = "❌"
 closeBtn.TextScaled = true
 closeBtn.Visible = true
@@ -152,8 +166,8 @@ closeBtn.Parent = mainFrame
 
 local btn_stop = Instance.new("TextButton")
 btn_stop.Size = UDim2.new(0, 40, 0, 40)
-btn_stop.Position = UDim2.new(0, 140, 0, 100)
-btn_stop.Text = "⏹️"
+btn_stop.Position = UDim2.new(0, 140, 0, 130)
+btn_stop.Text = "⏸️"
 btn_stop.TextScaled = true
 btn_stop.Visible = true
 btn_stop.TextXAlignment = Enum.TextXAlignment.Center
@@ -163,7 +177,7 @@ btn_stop.Parent = mainFrame
 
 local render_btn = Instance.new("TextButton")
 render_btn.Size = UDim2.new(0, 40, 0, 40)
-render_btn.Position = UDim2.new(0, 220, 0, 100)
+render_btn.Position = UDim2.new(0, 220, 0, 130)
 render_btn.Text = "👁️"
 render_btn.Visible = true
 render_btn.TextScaled = true
@@ -174,7 +188,7 @@ render_btn.Parent = mainFrame
 -- Buat tombol utama (dropdown)
 local dropdownButton = Instance.new("TextButton")
 dropdownButton.Size = UDim2.new(0, 80, 0, 40)
-dropdownButton.Position = UDim2.new(0, 20, 0, 100)
+dropdownButton.Position = UDim2.new(0, 20, 0, 130)
 dropdownButton.BackgroundColor3 = Color3.fromRGB(141, 61, 161)
 dropdownButton.TextColor3 = Color3.new(1, 1, 1)
 dropdownButton.Font = Enum.Font.Roboto
@@ -185,7 +199,7 @@ dropdownButton.Parent = mainFrame
 -- Frame isi dropdown
 local dropdownFrame = Instance.new("Frame")
 dropdownFrame.Size = UDim2.new(0, 200, 0, 0)
-dropdownFrame.Position = UDim2.new(0, 20, 0, 140)
+dropdownFrame.Position = UDim2.new(0, 20, 0, 180)
 dropdownFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 dropdownFrame.BorderSizePixel = 1
 dropdownFrame.Visible = false
@@ -200,7 +214,7 @@ local function pesan(msg)
 end
 
 --// ANCHOR OPTION MENU
-local options = {"Trade Secret","Trade Mythic", "Trade Stone", "Enchant I", "Listen Trade", "Auto Buy", "Wear Best Rod", "Jobs ID"}
+local options = {"Trade Secret","Trade Mythic", "Trade Stone", "Enchant I", "Enchant II Manual", "Listen Trade", "Auto Buy", "Wear Best Rod", "Jobs ID"}
 
 local function opsia(x)
     opsi(x)
@@ -673,9 +687,11 @@ local function update_inventory()
     end
 end
 
+--//ANCHOR BTN
 closeBtn.MouseButton1Click:Connect(
     function()
         running = false
+        playing = false
         screenGui:Destroy()
     end
 )
@@ -684,9 +700,11 @@ btn_stop.MouseButton1Click:Connect(
     function()
         running = not running
         if not running then
-            btn_stop.Text = "❌"
+            btn_stop.Text = "⏸️"
+            pesan("STOP")
         else
-            btn_stop.Text = "✅"
+            btn_stop.Text = "▶️"
+            pesan("START")
         end
     end
 )
@@ -869,7 +887,7 @@ local function update_quest()
         progress_quest3 = cek_quest(quest_deep_sea(3))
         progress_quest4 = cek_quest(quest_deep_sea(4))
     end
-    
+    text_progress.Text = select_quest .. " > " .. progress_quest1 .. " - " .. progress_quest2 .. " - " .. progress_quest3 .. " - " .. progress_quest4
 end
 local function auto_buy()
     print("start auto buy")
@@ -941,6 +959,8 @@ function opsi(index)
     elseif index == 4 then
         auto_enchant()
     elseif index == 5 then
+        teleport(1486, 128, -592)
+    elseif index == 6 then
         pesan("Waiting to trade....")
         local RF = Net:WaitForChild("RF/AwaitTradeResponse")
         RF.OnClientInvoke = function(...)
@@ -953,11 +973,11 @@ function opsi(index)
             pesan("Trade Accepted")
             return "OK"
         end
-    elseif index == 6 then
-        auto_buy()
     elseif index == 7 then
-        best_rod_wear()
+        auto_buy()
     elseif index == 8 then
+        best_rod_wear()
+    elseif index == 9 then
         local jobId = game.JobId
         if setclipboard then
             setclipboard(jobId)
@@ -1023,7 +1043,7 @@ end
 --------------------------------------------------------------------
 
 --update_inventory()
---send_Data(status,running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing,select_quest)
+send_Data("START","-", 0, 0, "-", 0,"-")
 
 task.spawn(
     function()
@@ -1117,8 +1137,8 @@ if select_quest == "deep_sea" then
     print(progress_quest2)
     print(progress_quest3)
     print(progress_quest4)
-    if progress_quest1 < 100 then
-        pesan("deep sea quest 1")
+    if running and progress_quest1 < 100 then
+        pesan(quest_deep_sea(1))
         teleport(-3602, -283, -1612)
         task.wait(3)
         face(120)
@@ -1129,8 +1149,8 @@ if select_quest == "deep_sea" then
             end
         end
     end
-    if ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 then
-        pesan("deep sea quest 2 3 4")
+    if running and ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 then
+        pesan(quest_deep_sea(3))
         teleport(-3734, -135, -1013)
         task.wait(3)
         face(0)
@@ -1154,7 +1174,7 @@ if select_quest == "jungle" then
         step = 3
     end
 
-    while running do
+    while playing do
         if step == 0 then
             break
         end
@@ -1269,6 +1289,7 @@ if select_quest == "jungle" then
         if step == 3 then
             pesan("STEP 3 !!")
             if running and progress_quest3 < 100 then
+                pesan(quest_jungle(3))
                 teleport(1510, -22, -629)
                 task.wait(3)
                 face(0)
@@ -1280,6 +1301,7 @@ if select_quest == "jungle" then
                 end
             end
             if running and progress_quest2 < 100 then
+                pesan(quest_jungle(2))
                 teleport(878, 4, -351)
                 task.wait(3)
                 face(0)
@@ -1291,14 +1313,15 @@ if select_quest == "jungle" then
                 end
             end
             if running and progress_quest4 < 100 then
+                pesan(quest_jungle(4))
                 -- manual goto altar and give secret 3
                 teleport(1487, 128, -591)
-                pesan("SELESAI QUEST STEP 4 MANUAL ENCHANGED")
+                pesan("SELESAI MANUAL SACRIFICE")
                 break
             end
         end
         text_timer.Text = "waiting running..."
-        task.wait(10)
+        task.wait(15)
     end
 end
 running = false
