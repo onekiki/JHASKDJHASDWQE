@@ -651,7 +651,7 @@ local function update_inventory()
                     local nama = list_ikan[item.Id].nama
                     local uuid = item.UUID
 
-                    if list_ikan[item.Id].tier == 7 then -- total ikan secret
+                    if list_ikan[item.Id].tier == 6 then -- total ikan secret
                         table.insert(list_secret, uuid)
                         total_harga_secret = total_harga_secret + list_ikan[item.Id].harga
                         local text_sec = "[ " .. listing .. " ] " .. nama .. " - " .. konvert_harga(berat) .. " Kg"
@@ -978,6 +978,7 @@ local function display_inventory()
         for i, k in ipairs(list_display) do
             list = list .. "|" .. k
         end
+        print("list display", list)
         return list
     else
         return "tidak ada secret :("
