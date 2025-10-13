@@ -1,4 +1,4 @@
-versi = "KAITUN V1.2"
+versi = "KAITUN V1.3"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -933,6 +933,10 @@ local function hapus_gui_daily()
             print("'!!! Daily Login' ada tapi tidak aktif.")
         end
     end
+    local playerList = game:GetService("CoreGui"):FindFirstChild("PlayerList")
+    if playerList then
+        playerList.Enabled = false
+    end
 end
 
 --//ANCHOR OPSI FUNCTION
@@ -1087,15 +1091,9 @@ task.spawn(
 -- TWEAK
 Net:WaitForChild("RE/ChangeSetting"):FireServer("Server Notifications", false)
 Net:WaitForChild("RE/ChangeSetting"):FireServer("Global Notifications", false)
-local playerList = game:GetService("CoreGui"):FindFirstChild("PlayerList")
-if playerList then
-	playerList.Enabled = false
-end
-
-
 task.wait(5)
 update_inventory()
-
+hapus_gui_daily()
 SetLowGraphics()
 toggle3DAndUI()
 
