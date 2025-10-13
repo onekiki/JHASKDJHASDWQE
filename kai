@@ -1,4 +1,4 @@
-versi = "KAITUN V1.3.1"
+versi = "KAITUN V1.3.2"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -657,9 +657,9 @@ local function update_inventory()
                         table.insert(list_mythic, uuid)
                         total_harga_mythic = total_harga_mythic + list_ikan[item.Id].harga
                     end
-                    if list_ikan[item.Id].tier > 5 then -- LIST TRADE
+                    if list_ikan[item.Id].tier > 6 then -- LIST TRADE
                     print("list display item")
-                        local text_sec = "[ " .. listing .. " ] " .. nama .. " - " .. konvert_harga(berat) .. " Kg"
+                        local text_sec = listing .. ". " .. nama .. " - " .. konvert_harga(berat) .. " Kg <br>"
                         table.insert(list_display, text_sec)
                         listing = listing + 1
                     end
@@ -846,12 +846,7 @@ local function quest_deep_sea(index)
     end
 end
 local function quest_jungle(index)
-    local content = workspace
-    :WaitForChild("!!! MENU RINGS")
-    :WaitForChild("Element Tracker")
-    :WaitForChild("Board")
-    :WaitForChild("Gui")
-    :WaitForChild("Content")
+    local path = workspace["!!! MENU RINGS"]["Element Tracker"].Board.Gui.Content
     local label = path:FindFirstChild("Label" .. index)
     if label and label:IsA("TextLabel") then
         return label.Text
@@ -994,12 +989,12 @@ local function send_Data(status, running_time, koin_secret, koin_myth, activity,
     koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
     local lokasi = player:GetAttribute("LocationName")
     local params = string.format(
-        "?nama=%s&status=%s&lokasi=%s&rod=%s&koin_total=%s&koin_secret=%s&koin_myth=%s&running_time=%s&activity=%s&total_fishing=%s&job_id=%s&progress=%s&quest=%s&inventory=%s",
+        "?nama=%s&status=%s&lokasi=%s&rod=%s&koin=%s&koin_secret=%s&koin_myth=%s&running_time=%s&activity=%s&total_fishing=%s&job_id=%s&progress=%s&quest=%s&inventory=%s",
         nama,
         status,
         HttpService:UrlEncode(tostring(lokasi)),
         HttpService:UrlEncode(tostring(rod)),
-        HttpService:UrlEncode(tostring(koin)),
+        HttpService:UrlEncode(koin),
         HttpService:UrlEncode(tostring(koin_secret)),
         HttpService:UrlEncode(tostring(koin_myth)),
         HttpService:UrlEncode(tostring(running_time)),
@@ -1026,6 +1021,10 @@ end
 --------------------------------------------------------------------
 --- SPAWN
 --------------------------------------------------------------------
+
+--update_inventory()
+--send_Data(status,running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing,select_quest)
+
 task.spawn(
     function()
         local num = 1
