@@ -1,4 +1,4 @@
-versi = "KAITUN V1.4.0"
+versi = "KAITUN V1.4.1"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -214,15 +214,30 @@ local function pesan(msg)
 end
 
 --// ANCHOR OPTION MENU
-local options = {"Trade Secret","Trade Mythic", "Trade Stone", "Enchant I", "Enchant II Manual", "Listen Trade", "Auto Buy", "Wear Best Rod", "Jobs ID"}
+local options = {
+                "Trade Secret","Trade Mythic", "Trade Stone", "Enchant I", "Enchant II", "Listen Trade", 
+                "Auto Buy", "Wear Rod", "Jobs ID", "Fishing", "teleport custom", "show backpack"
+            }
 
 local function opsia(x)
     opsi(x)
 end -- Buat tombol untuk setiap opsi
+-- pengaturan layout
+local maxPerColumn = 6
+local optionHeight = 40
+local columnWidth = 200
+
+-- hitung total kolom
+local numColumns = math.ceil(#options / maxPerColumn)
+dropdownFrame.Size = UDim2.new(0, columnWidth * numColumns, 0, 0)
+
 for i, text in ipairs(options) do
+    local column = math.floor((i - 1) / maxPerColumn)
+    local row = (i - 1) % maxPerColumn
+
     local option = Instance.new("TextButton")
-    option.Size = UDim2.new(1, 0, 0, 30)
-    option.Position = UDim2.new(0, 0, 0, (i - 1) * 30)
+    option.Size = UDim2.new(0, columnWidth, 0, optionHeight)
+    option.Position = UDim2.new(0, column * columnWidth, 0, row * optionHeight)
     option.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
     option.TextColor3 = Color3.new(1, 1, 1)
     option.Font = Enum.Font.Roboto
@@ -231,58 +246,37 @@ for i, text in ipairs(options) do
     option.Parent = dropdownFrame
 
     -- Hover efek
-    option.MouseEnter:Connect(
-        function()
-            option.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-        end
-    )
-    option.MouseLeave:Connect(
-        function()
-            option.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-        end
-    )
+    option.MouseEnter:Connect(function()
+        option.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end)
+    option.MouseLeave:Connect(function()
+        option.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    end)
 
-    -- Saat diklik → panggil fungsi opsi(i)
-    option.MouseButton1Click:Connect(
-        function()
-            dropdownButton.Text = text .. " ▼"
-            dropdownFrame:TweenSize(UDim2.new(0, 150, 0, 0), "Out", "Sine", 0.2, true)
-            task.delay(
-                0.2,
-                function()
-                    dropdownFrame.Visible = false
-                end
-            )
-            opsia(i)
-        end
-    )
+    -- Klik opsi
+    option.MouseButton1Click:Connect(function()
+        dropdownButton.Text = text .. " ▼"
+        dropdownFrame:TweenSize(UDim2.new(0, columnWidth * numColumns, 0, 0), "Out", "Sine", 0.2, true)
+        task.delay(0.2, function()
+            dropdownFrame.Visible = false
+        end)
+        opsia(i)
+    end)
 end
 
--- Status dropdown
-local dropdownOpen = false
-
--- Saat tombol utama diklik
-dropdownButton.MouseButton1Click:Connect(
-    function()
-        dropdownOpen = not dropdownOpen
-
-        if dropdownOpen then
-            dropdownFrame.Visible = true
-            dropdownFrame:TweenSize(UDim2.new(0, 150, 0, #options * 30), "Out", "Sine", 0.2, true)
-        else
-            dropdownFrame:TweenSize(UDim2.new(0, 150, 0, 0), "Out", "Sine", 0.2, true)
-            task.delay(
-                0.2,
-                function()
-                    if not dropdownOpen then
-                        dropdownFrame.Visible = false
-                    end
-                end
-            )
-        end
+-- Fungsi toggle dropdown
+dropdownButton.MouseButton1Click:Connect(function()
+    if dropdownFrame.Visible then
+        dropdownFrame:TweenSize(UDim2.new(0, columnWidth * numColumns, 0, 0), "Out", "Sine", 0.2, true)
+        task.delay(0.2, function()
+            dropdownFrame.Visible = false
+        end)
+    else
+        dropdownFrame.Visible = true
+        local totalHeight = math.min(#options, maxPerColumn) * optionHeight
+        dropdownFrame:TweenSize(UDim2.new(0, columnWidth * numColumns, 0, totalHeight), "Out", "Sine", 0.2, true)
     end
-)
-
+end)
 ----------------------------------------------------------------------------------
 ------------------- MAIN FUNGSI
 ----------------------------------------------------------------------------------
@@ -396,7 +390,7 @@ for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
         end
     end
 end
-
+--//ANCHOR connection
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
 if getconnections then
@@ -407,6 +401,7 @@ end
 
 Event.OnClientEvent:Connect(
     function(itemId, stats, data, flag)
+        fish_caught = true
         if itemId == 265 or itemId == 266 or itemId == 267 or itemId == 271 then
             fav(data.InventoryItem.UUID)
         end
@@ -917,9 +912,9 @@ local function auto_fish()
         end
         math.randomseed(os.time())
         local random_number = math.random() * 2 - 1
-        task.wait(0.2)
+        task.wait(0.01)
         Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(tick())
-        task.wait(0.5)
+        task.wait(0.01)
         Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0)
         for i = 1, 15 do
             if fish_caught == true then
@@ -986,7 +981,19 @@ function opsi(index)
         else
             pesan("gagal copy job id")
         end
+    elseif index == 10 then
+        while playing do
+            auto_fish()
+        end
+    elseif index == 11 then
+        local backpackGui = gui:WaitForChild("Backpack")
+        for _, child in ipairs(backpackGui:GetChildren()) do
+            if child:IsA("GuiObject") then
+                child.Enabled = true
+            end
+        end
     end
+    
 end
 local function display_inventory()
     local list = ""
@@ -1044,7 +1051,6 @@ end
 
 --update_inventory()
 send_Data("START","-", 0, 0, "-", 0,"-")
-
 task.spawn(
     function()
         local num = 1
