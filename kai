@@ -1,4 +1,4 @@
-versi = "KAITUN V1.4.3" -- fix flag
+versi = "KAITUN V1.4.5" -- add random position
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -167,7 +167,7 @@ closeBtn.Parent = mainFrame
 local btn_stop = Instance.new("TextButton")
 btn_stop.Size = UDim2.new(0, 40, 0, 40)
 btn_stop.Position = UDim2.new(0, 140, 0, 130)
-btn_stop.Text = "⏸️"
+btn_stop.Text = "🟢"
 btn_stop.TextScaled = true
 btn_stop.Visible = true
 btn_stop.TextXAlignment = Enum.TextXAlignment.Center
@@ -402,9 +402,6 @@ end
 Event.OnClientEvent:Connect(
     function(itemId, stats, data, flag)
         fish_caught = true
-        if itemId == 265 or itemId == 266 or itemId == 267 or itemId == 271 then
-            fav(data.InventoryItem.UUID)
-        end
     end
 )
 
@@ -1070,7 +1067,7 @@ task.spawn(
                     status = "RUNNING"
                 else
                     flag_error = true
-                    mainFrame.BackgroundColor3 = Color3.fromRGB(39, 22, 22)
+                    mainFrame.BackgroundColor3 = Color3.fromRGB(170, 16, 16)
                     text_timer.Text = "🔴 " .. delta .. " sec."
                     status = "ERROR"
                 end
@@ -1079,17 +1076,15 @@ task.spawn(
                     task.wait(60)
                 end
             end
-            if flag_error == true then
+            if flag_error == true and num % 15 == 0 then
                 task.wait(0.5)
                 Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
                 task.wait(0.5)
                 Net:WaitForChild("RE/FishingCompleted"):FireServer()
                 task.wait(0.5)
                 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-                lastCatchTime = os.clock()
-                flag_error = false --reset flag
             end
-            if num % 180 == 0 then
+            if num % 250 == 0 then
                 send_Data(status,running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing,select_quest)
             end
             if num % 300 == 0 then
@@ -1309,8 +1304,8 @@ if select_quest == "jungle" then
         if step == 3 then
             pesan("STEP 3 !!")
             if running and progress_quest3 < 100 then
-                pesan(quest_jungle(3))
-                teleport(1510, -22, -629)
+                pesan(quest_jungle(3)) -- inside temple
+                teleport(math.random(1491,1516), -22, -630)
                 task.wait(3)
                 face(0)
                 while progress_quest3 < 100 do
@@ -1321,10 +1316,10 @@ if select_quest == "jungle" then
                 end
             end
             if running and progress_quest2 < 100 then
-                pesan(quest_jungle(2))
-                teleport(878, 4, -351)
+                pesan(quest_jungle(2)) -- in the forest
+                teleport(math.random(1472,1479), 8, -345)
                 task.wait(3)
-                face(0)
+                face(30)
                 while progress_quest2 < 100 do
                     auto_fish()
                     if not running then
