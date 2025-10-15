@@ -1,4 +1,4 @@
-versi = "KAITUN V1.4.2" -- fix flag
+versi = "KAITUN V1.4.3" -- fix flag
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -653,6 +653,7 @@ local function update_inventory()
                 if item.Id == 10 then
                     table.insert(list_trade_batu, item.UUID)
                 end
+                
                 if list_ikan[item.Id] then
                     local berat = item.Metadata and item.Metadata.Weight or 0
                     local nama = list_ikan[item.Id].nama
@@ -1255,23 +1256,35 @@ if select_quest == "jungle" then
                     if i == 1 then
                         teleport(897, 8, -361)
                         task.wait(5)
+                        Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
+                        task.wait(1)
+                        Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Arrow Artifact")
+                        task.wait(1)
                     end
                     if i == 2 then
                         teleport(1420, 31, 79)
                         task.wait(5)
+                        Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
+                        task.wait(1)
+                        Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Crescent Artifact")
+                        task.wait(1)
                     end
                     if i == 3 then
                         teleport(1819, 8, -284)
                         task.wait(5)
+                        Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
+                        task.wait(1)
+                        Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Diamond Artifact")
+                        task.wait(1)
                     end
                     if i == 4 then
                         teleport(1485, 8, -861)
                         task.wait(5)
+                        Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
+                        task.wait(1)
+                        Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Hourglass Diamond Artifact")
+                        task.wait(1)
                     end
-                    Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
-                    task.wait(1)
-                    Net:WaitForChild("RE/PlaceLeverItem"):FireServer(list_ikan[k].nama)
-                    task.wait(1)
                 end
             end
 
