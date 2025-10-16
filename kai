@@ -1,4 +1,4 @@
-versi = "KAITUN V1.5.2" -- ADD EVENT! -- fix autosell select to legendary
+versi = "KAITUN V1.5.3" -- ADD EVENT! -- fix autosell select to legendary -- add auto farm stone enchant 1
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -165,7 +165,7 @@ closeBtn.Parent = mainFrame
 local btn_stop = Instance.new("TextButton")
 btn_stop.Size = UDim2.new(0, 40, 0, 40)
 btn_stop.Position = UDim2.new(0, 140, 0, 130)
-btn_stop.Text = "🟢"
+btn_stop.Text = "⛔"
 btn_stop.TextScaled = true
 btn_stop.Visible = true
 btn_stop.TextXAlignment = Enum.TextXAlignment.Center
@@ -1149,7 +1149,23 @@ update_quest()
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
 print("MAIN PROGRAM -------------------------------")
---select_quest = "event"
+
+local cek_stone = #list_trade_batu
+if cek_stone < 20 then
+    pesan("stone < 20 : " .. cek_stone)
+    teleport(3263, -1302, 1409)
+    face(0)
+    task.wait(3)
+    local z = 0
+    while running and cek_stone < 20 do
+        auto_fish()
+        z = z + 1
+        if z % 50 == 0 then
+            cek_stone = #list_trade_batu
+            cetak("farm stone: " .. cek_stone)
+        end
+    end
+end
 
 if select_quest == "deep_sea" then
     Net:WaitForChild("RF/UpdateAutoSellThreshold"):InvokeServer(5) -- autosell switch to legendary
@@ -1162,10 +1178,6 @@ if select_quest == "deep_sea" then
             local z = 1
             while running and progress_quest1 < 100 do
                 auto_fish()
-                z = z + 1
-                if z % 20 == 0 then
-                    print("loop -> progress -> ", progress_quest1)
-                end
             end
         end
         if running and ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 then
