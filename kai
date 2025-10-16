@@ -1166,7 +1166,7 @@ if total_stone < 20 then
         z = z + 1
         if z % 50 == 0 then
             total_stone = #list_trade_batu
-            cetak("farm stone: " .. total_stone)
+            pesan("farm stone: " .. total_stone)
         end
     end
 end
