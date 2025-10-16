@@ -1,4 +1,4 @@
-versi = "KAITUN V1.5.3" -- ADD EVENT! -- fix autosell select to legendary -- add auto farm stone enchant 1
+versi = "KAITUN V1.5.4" -- ADD EVENT! -- fix autosell select to legendary -- add auto farm stone enchant 1
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -35,6 +35,7 @@ local list_inventory_fishs = {}
 local fish_caught = false
 local count_mancing = 0
 local step = 0
+local total_stone = 0
 local progress_quest1 = 0
 local progress_quest2 = 0
 local progress_quest3 = 0
@@ -1150,19 +1151,22 @@ Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
 print("MAIN PROGRAM -------------------------------")
 
-local cek_stone = #list_trade_batu
-if cek_stone < 20 then
-    pesan("stone < 20 : " .. cek_stone)
+
+
+total_stone = #list_trade_batu
+
+if total_stone < 20 then
+    pesan("stone < 20 : " .. total_stone)
     teleport(3263, -1302, 1409)
     face(0)
     task.wait(3)
     local z = 0
-    while running and cek_stone < 20 do
+    while running and total_stone < 20 do
         auto_fish()
         z = z + 1
         if z % 50 == 0 then
-            cek_stone = #list_trade_batu
-            cetak("farm stone: " .. cek_stone)
+            total_stone = #list_trade_batu
+            cetak("farm stone: " .. total_stone)
         end
     end
 end
@@ -1388,7 +1392,6 @@ if select_quest == "event" then
                     if not playing then break end
                 end
                 print("checking new event")
-                pesan("total stone:" .. #list_trade_batu)
                 task.wait(3)
             end
         else
