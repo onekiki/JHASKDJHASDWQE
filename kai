@@ -1,4 +1,4 @@
-versi = "KAITUN V1.5.4" -- ADD EVENT! -- fix autosell select to legendary -- add auto farm stone enchant 1
+versi = "KAITUN V1.5.5" -- ADD EVENT! -- fix autosell select to legendary -- add auto farm stone enchant 1
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -927,8 +927,7 @@ end
 local function hapus_gui_daily()
     if dailyLoginGui and dailyLoginGui:IsA("ScreenGui") then
         if dailyLoginGui.Enabled then
-            dailyLoginGui:Destroy()
-            print("Daily Login' dihapus.")
+            dailyLoginGui.Enabled = false
         end
     end
     local playerList = game:GetService("CoreGui"):FindFirstChild("PlayerList")
@@ -1154,14 +1153,14 @@ print("MAIN PROGRAM -------------------------------")
 
 
 total_stone = #list_trade_batu
-
-if total_stone < 20 then
+local limit_stone = 10
+if total_stone < limit_stone then
     pesan("stone < 20 : " .. total_stone)
     teleport(3263, -1302, 1409)
     face(0)
     task.wait(3)
     local z = 0
-    while running and total_stone < 20 do
+    while running and total_stone < limit_stone do
         auto_fish()
         z = z + 1
         if z % 50 == 0 then
