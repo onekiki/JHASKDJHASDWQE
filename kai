@@ -1,4 +1,4 @@
-versi = "KAITUN V1.5.5" -- ADD EVENT! -- fix autosell select to legendary -- add auto farm stone enchant 1
+versi = "KAITUN V1.5.6" -- CUSTOM TP
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -980,12 +980,11 @@ function opsi(index)
             auto_fish()
         end
     elseif index == 11 then
-        local backpackGui = gui:WaitForChild("Backpack")
-        for _, child in ipairs(backpackGui:GetChildren()) do
-            if child:IsA("GuiObject") then
-                child.Enabled = true
-            end
-        end
+        -- manual teleport
+         pesan("custom teleport")
+        event_action = true
+        select_quest = "custom_teleport"
+
     elseif index == 12 then
         if running then
             pesan("masih running, stop dahulu")
@@ -1155,7 +1154,7 @@ print("MAIN PROGRAM -------------------------------")
 total_stone = #list_trade_batu
 local limit_stone = 10
 if total_stone < limit_stone then
-    pesan("stone < 20 : " .. total_stone)
+    pesan("stone < " .. limit_stone)
     teleport(3263, -1302, 1409)
     face(0)
     task.wait(3)
@@ -1341,11 +1340,12 @@ if select_quest == "jungle" then
                 end
             end
             if running and progress_quest4 < 100 then
-                pesan(quest_jungle(4))
+                --pesan(quest_jungle(4))
                 -- manual goto altar and give secret 3
-                teleport(1487, 128, -591)
+                --teleport(1487, 128, -591)
                 pesan("SELESAI MANUAL SACRIFICE")
-                break
+                --break
+                task.wait(30)
             end
         end
         if event_action == true then
@@ -1400,6 +1400,22 @@ if select_quest == "event" then
         end
     end
 end
+if select_quest == "custom_teleport" then
+    teleport(948, 3, 5114)
+    task.wait(3)
+    face(120)
+    pesan("custom : " .. player:GetAttribute("LocationName"))
+    running = true
+    while playing do 
+        for i=0, 100 do
+            auto_fish()
+            if not running then break end
+        end
+        pesan("waiting running")
+        task.wait(15)
+    end
+end
+
 running = false
 event_action = false
 print("running : ", running)
