@@ -1,4 +1,4 @@
-versi = "KAITUN V1.7.2" -- zombie event
+versi = "KAITUN | ZOMBIE | V1.7.3" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -844,6 +844,7 @@ local function auto_enchant(ids)
         Net:WaitForChild("RE/ActivateEnchantingAltar"):FireServer()
         task.wait(2)
         while wait_enchant ~= true do
+            print("tunggu ", i)
             task.wait(2)
         end
         if i > #list_trade_batu or flag_berhasil_enchant == true then
@@ -1275,17 +1276,22 @@ elseif current_rod == "Element Rod" then
 else
     select_quest = "deep_sea"
 end
-
-select_quest = "custom_teleport"
-
 print(select_quest)
+
+
+--- BYPASS only event!!!!
+if select_quest ~= "deep_sea" then
+    select_quest = "custom_teleport"
+end
+
+
 update_quest()
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
 print("MAIN PROGRAM -------------------------------")
 send_discord("00:00:00",false)
 
-if select_quest == "deep_sea" then
+if select_quest == "deep_sea" then -- FARMING STONE
     total_stone = #list_trade_batu
     local limit_stone = 10
     if total_stone < limit_stone then
