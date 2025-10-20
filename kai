@@ -1,4 +1,4 @@
-versi = "KAITUN V1.6.6" -- FIX time reset
+versi = "KAITUN V1.6.7" -- FIX time reset
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -218,9 +218,9 @@ end
 
 --// ANCHOR OPTION MENU
 local options = {
-                "Trade Secret","Trade Mythic", "Trade Stone", "Enchant I", "Enchant II", "Listen Trade", 
+                "Trade Secret","Trade Mythic", "Trade Stone", "E (empowered 10%)", "Enchant II", "Listen Trade", 
                 "Auto Buy", "Wear Rod", "Jobs ID", "Fishing", "teleport custom", "Farm Event",
-                "backpack", "Merchant"
+                "backpack", "Merchant", "E (cursed 75%)", "E (mutation +30%)", "E (prismatic -8)"
             }
 
 local function opsia(x)
@@ -813,7 +813,7 @@ local function custom_trade(custom_list, limit)
         pesan("player tidak ada")
     end
 end
-local function auto_enchant()
+local function auto_enchant(ids)
     update_inventory()
     teleport(3243, -1302, 1402)
     task.wait(3)
@@ -822,7 +822,7 @@ local function auto_enchant()
     local wait_enchant = false
     RollEnchant.OnClientEvent:Connect(
         function(waktu, id, v, flag)
-            if id == 14 or id == 9 then --hunter
+            if id == ids then --hunter
                 flag_berhasil_enchant = true
             end
             if flag then
@@ -983,7 +983,7 @@ function opsi(index)
     elseif index == 3 then
         custom_trade(list_trade_batu, 5)
     elseif index == 4 then
-        auto_enchant()
+        auto_enchant(9) -- 10% less throw
     elseif index == 5 then
         teleport(1486, 128, -592)
     elseif index == 6 then
@@ -1044,12 +1044,19 @@ function opsi(index)
                     print(itemName .."|".. itemPrice)
                     if itemName == "Singularity Bait" then
                         pesan("! ADA !" .. itemName .. " | " .. itemPrice)
+                        teleport(-135, 3, 2767)
                         return
                     end
                 end
             end
         end
         pesan("tidak ada singularity")
+    elseif index == 15 then
+        auto_enchant(12) -- cursed
+    elseif index == 16 then
+        auto_enchant(14) -- hunter II
+    elseif index == 16 then
+        auto_enchant(13) -- prismatic
     end
     
 end
