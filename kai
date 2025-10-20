@@ -1,4 +1,4 @@
-versi = "KAITUN V1.7.1" -- auto wear bait
+versi = "KAITUN V1.7.1" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -843,10 +843,14 @@ local function auto_enchant(ids)
         task.wait(1)
         Net:WaitForChild("RE/ActivateEnchantingAltar"):FireServer()
         task.wait(2)
+        while wait_enchant ~= true do
+            task.wait(2)
+        end
         if i > #list_trade_batu or flag_berhasil_enchant == true then
             print("selesai enchant")
             break
         end
+       
     end
     pesan("selesai enchant")
 end
@@ -1271,6 +1275,9 @@ elseif current_rod == "Element Rod" then
 else
     select_quest = "deep_sea"
 end
+
+select_quest = "custom_teleport"
+
 print(select_quest)
 update_quest()
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
@@ -1527,9 +1534,9 @@ while playing do
         end
     end
     if select_quest == "custom_teleport" then
-        teleport(948, 3, 5114)
+        teleport(math.random(2147,2165), 80, 3338)
         task.wait(3)
-        face(120)
+        face(180)
         running = true
         while playing do 
             pesan("fishing : " .. player:GetAttribute("LocationName"))
