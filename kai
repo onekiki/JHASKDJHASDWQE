@@ -1,4 +1,4 @@
-versi = "KAITUN V1.6.5" -- FIX time reset
+versi = "KAITUN V1.6.6" -- FIX time reset
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -225,6 +225,7 @@ local options = {
 
 local function opsia(x)
     opsi(x)
+    lastCatchTime = os.clock()
 end -- Buat tombol untuk setiap opsi
 -- pengaturan layout
 local maxPerColumn = 6
