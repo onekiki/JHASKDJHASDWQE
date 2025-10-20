@@ -1,4 +1,4 @@
-versi = "KAITUN V1.6.3" -- FIX time reset
+versi = "KAITUN V1.6.4" -- FIX time reset
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -731,10 +731,12 @@ btn_stop.MouseButton1Click:Connect(
             lastCatchTime = os.clock()
             btn_stop.Text = "⏸️"
             pesan("STOP")
+            mainFrame.BackgroundTransparency = 0
         else
             lastCatchTime = os.clock()
             btn_stop.Text = "▶️"
             pesan("START")
+            mainFrame.BackgroundTransparency = 1
         end
     end
 )
