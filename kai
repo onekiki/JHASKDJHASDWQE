@@ -1266,6 +1266,8 @@ auto_buy()
 current_rod = best_rod_wear()
 if current_rod == "Ghostfinn Rod" then
     select_quest = "jungle"
+elseif current_rod == "Element Rod" then
+    select_quest = "event"
 else
     select_quest = "deep_sea"
 end
@@ -1480,66 +1482,69 @@ if select_quest == "jungle" then
         task.wait(15)
     end
 end
-
-if select_quest == "event" then
-    pesan("farming event")
-    local function getAllMegalodonHuntPivots()
-        local menuRings = workspace:FindFirstChild("!!! MENU RINGS")
-        for _, child in ipairs(menuRings:FindFirstChild("Props"):GetChildren()) do
-            if child.Name == "Megalodon Hunt" and child:IsA("Model") then
-                local pivot = child:GetPivot().Position
-                pesan("Event: " .. child.Name)
-                return pivot.x, pivot.y, pivot.z
+while playing do
+    if select_quest == "event" then
+        pesan("farming event")
+        local function getAllMegalodonHuntPivots()
+            local menuRings = workspace:FindFirstChild("!!! MENU RINGS")
+            for _, child in ipairs(menuRings:FindFirstChild("Props"):GetChildren()) do
+                if child.Name == "Megalodon Hunt" and child:IsA("Model") then
+                    local pivot = child:GetPivot().Position
+                    pesan("Event: " .. child.Name)
+                    return pivot.x, pivot.y, pivot.z
+                end
             end
+            return nil
         end
-        return nil
-    end
-    while playing do
-        local pos = getAllMegalodonHuntPivots()
-        if pos then
-            local old_pos = 0
-            while playing do 
-                x, y , z  = getAllMegalodonHuntPivots()
-                local xx = round(x,1)
-                local zz = round(z,1)
-                if xx == old_pos then
-                    print("posisi masih sama")
-                else
-                    print("new event position", xx, zz)
-                    teleport(xx - 10, 10 ,zz - 10)
+        while playing do
+            local pos = getAllMegalodonHuntPivots()
+            if pos then
+                local old_pos = 0
+                while playing do 
+                    x, y , z  = getAllMegalodonHuntPivots()
+                    local xx = round(x,1)
+                    local zz = round(z,1)
+                    if xx == old_pos then
+                        print("posisi masih sama")
+                    else
+                        print("new event position", xx, zz)
+                        teleport(xx - 10, 10 ,zz - 10)
+                        task.wait(3)
+                        old_pos = xx
+                        running = true
+                    end
+                    for i=0, 50 do
+                        auto_fish()
+                        if not playing then break end
+                    end
+                    print("checking new event")
                     task.wait(3)
-                    old_pos = xx
-                    running = true
                 end
-                for i=0, 100 do
-                    auto_fish()
-                    if not playing then break end
-                end
-                print("checking new event")
-                task.wait(3)
+            else
+                select_quest = "custom_teleport"
+                break
             end
-        else
-            running = false
-            task.wait(60)
-            text_timer.Text = "waiting event show"
         end
     end
-end
-if select_quest == "custom_teleport" then
-    teleport(948, 3, 5114)
-    task.wait(3)
-    face(120)
-    running = true
-    while playing do 
-        pesan("fishing : " .. player:GetAttribute("LocationName"))
-        for i=0, 100 do
-            auto_fish()
-            if not running then break end
+    if select_quest == "custom_teleport" then
+        teleport(948, 3, 5114)
+        task.wait(3)
+        face(120)
+        running = true
+        while playing do 
+            pesan("fishing : " .. player:GetAttribute("LocationName"))
+            for i=0, 50 do
+                auto_fish()
+                if not running then break end
+            end
+            if event_action == true then
+                break
+            end
+            task.wait(15)
         end
-        task.wait(15)
     end
+    task.wait(15)
 end
-
 running = false
 event_action = false
 print("running : ", running)
