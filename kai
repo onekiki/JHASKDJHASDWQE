@@ -1,4 +1,4 @@
-versi = "KAITUN V1.6.7" -- FIX time reset
+versi = "KAITUN V1.7.0" -- auto wear bait
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -352,12 +352,12 @@ local function auto_buy_rod(id)
     print("beli rod id:", id)
     Net:WaitForChild("RF/PurchaseFishingRod"):InvokeServer(id)
 end
-
+local function wear_bait(id)
+    Net:WaitForChild("RE/EquipBait"):FireServer(id)
+end
 local function auto_buy_bait(id)
     print("beli bait id:", id)
     Net:WaitForChild("RF/PurchaseBait"):InvokeServer(id)
-    task.wait(1)
-    Net:WaitForChild("RE/EquipBait"):FireServer(id)
 end
 
 local function konvert_harga(h)
@@ -938,8 +938,13 @@ local function auto_buy()
         best_rod_wear()
         running = true
     end
-    if list_inventory_rod["Ghostfinn Rod"] ~= nil and koins > 4000000 then
+    if koins > 4000000 then
         auto_buy_bait(20)
+        task.wait(2)
+        wear_bait(20) 
+        task.wait(2)
+        wear_bait(18) -- singularity
+        task.wait(2)
     end
 end
 
@@ -1192,7 +1197,6 @@ task.spawn(
                 print("------ update inventory -------")
                 update_inventory()
                 update_quest()
-                auto_buy()
                 local progressed = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4)/4
                 print("quest progress: ", progressed)
                 print("total mythic : ", #list_mythic)
