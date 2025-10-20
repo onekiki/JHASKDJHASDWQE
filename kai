@@ -1,4 +1,4 @@
-versi = "KAITUN V1.6.3" -- FIX time reset
+versi = "KAITUN V1.6.5" -- FIX time reset
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -76,7 +76,7 @@ mainFrame.Size = UDim2.new(1, 0, 1, 100)
 mainFrame.Position = UDim2.new(0, 0, 0, -100)
 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 mainFrame.BorderSizePixel = 0
-mainFrame.BackgroundTransparency = 0
+mainFrame.BackgroundTransparency = 1
 mainFrame.Visible = true
 mainFrame.Parent = screenGui
 
@@ -731,12 +731,10 @@ btn_stop.MouseButton1Click:Connect(
             lastCatchTime = os.clock()
             btn_stop.Text = "⏸️"
             pesan("STOP")
-            mainFrame.BackgroundTransparency = 1
         else
             lastCatchTime = os.clock()
             btn_stop.Text = "▶️"
             pesan("START")
-            mainFrame.BackgroundTransparency = 0
         end
     end
 )
