@@ -792,7 +792,7 @@ local function custom_trade(custom_list, limit)
                     completed = false
                     info_akhir = "TRADE " .. berhasil .. "/" .. #custom_list
                     pesan(info_akhir)
-                    task.wait(1)
+                    task.wait(3)
                     if limit > 0 and i > limit then
                         print("limit trade telah tercapai")
                         break
@@ -816,7 +816,7 @@ end
 local function auto_enchant(ids)
     update_inventory()
     teleport(3243, -1302, 1402)
-    task.wait(3)
+    task.wait(6)
     local RollEnchant = Net:WaitForChild("RE/RollEnchant")
     local flag_berhasil_enchant = false
     local wait_enchant = false
@@ -836,9 +836,9 @@ local function auto_enchant(ids)
         Net:WaitForChild("RE/UnequipItem"):FireServer(k)
         task.wait(0.1)
     end
-    print("wait unequipt all")
+    print("total batu = ", #list_trade_batu)
     for i, k in ipairs(list_trade_batu) do
-        print("enchant ", k)
+        print("enchant ke " .. i .. "/" .. #list_trade_batu)
         Net:WaitForChild("RE/EquipItem"):FireServer(k, "EnchantStones")
         task.wait(1)
         Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(2)
