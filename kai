@@ -1,4 +1,4 @@
-versi = "KAITUN V1.7.1" -- zombie event
+versi = "KAITUN V1.7.2" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1285,23 +1285,26 @@ Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 print("MAIN PROGRAM -------------------------------")
 send_discord("00:00:00",false)
 
-total_stone = #list_trade_batu
-local limit_stone = 10
-if total_stone < limit_stone then
-    pesan("stone < " .. limit_stone)
-    teleport(3263, -1302, 1409)
-    face(0)
-    task.wait(3)
-    local z = 0
-    while running and total_stone < limit_stone do
-        auto_fish()
-        z = z + 1
-        if z % 50 == 0 then
-            total_stone = #list_trade_batu
-            pesan("farm stone: " .. total_stone)
+if select_quest == "deep_sea" then
+    total_stone = #list_trade_batu
+    local limit_stone = 10
+    if total_stone < limit_stone then
+        pesan("stone < " .. limit_stone)
+        teleport(3263, -1302, 1409)
+        face(0)
+        task.wait(3)
+        local z = 0
+        while running and total_stone < limit_stone do
+            auto_fish()
+            z = z + 1
+            if z % 50 == 0 then
+                total_stone = #list_trade_batu
+                pesan("farm stone: " .. total_stone)
+            end
         end
     end
 end
+
 
 if select_quest == "deep_sea" then
     Net:WaitForChild("RF/UpdateAutoSellThreshold"):InvokeServer(5) -- autosell switch to legendary
