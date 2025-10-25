@@ -1,4 +1,4 @@
-versi = "KAITUN | ZOMBIE | V1.7.4" -- zombie event
+versi = "KAITUN | ZOMBIE | V1.7.3" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -63,7 +63,7 @@ local master_user = "hayfish96"
 local current_rod = ""
 local lastCatchTime = nil
 
-local user_index={["x"]={"1429062584899731476","1","13","1"},["KKHAYAPEB"]={"1429062593028292688","1","13","2"},["KKHAYAMZI"]={"id","1","1","1"},["hayfish_003"]={"1429060874634788905","1","1","1"},["KKHAYAKAD"]={"1429060889373446155","1","1","2"},["haya_0003"]={"1429060904414220390","1","2","1"},["hayfish_004"]={"1429060913188700282","1","2","2"},["haya_0007"]={"1429062033675915264","1","3","1"},["hayfish_005"]={"1429062044036108318","1","3","2"},["hayfish_001"]={"1429062062952157269","1","4","1"},["hayfish_007"]={"1429062093872697492","1","4","2"},["hayfish_002"]={"1429062107747319899","1","5","1"},["KKHAYAIFW"]={"1429062120774959145","1","5","2"},["hayaxd_0009"]={"1429062133127053394","1","6","1"},["KKHAYAWHO"]={"1429062149136715868","1","6","2"},["haya_0001"]={"1429062166853718066","1","7","1"},["hayfish_008"]={"1429062185614704660","1","7","2"},["haya_0002"]={"1429062196264177767","1","8","1"},["hayfish_009"]={"1429062211816394823","1","8","2"},["haya_0004"]={"1429062225452077090","1","9","1"},["KKHAYAYTP"]={"1429062241906331651","1","9","2"},["haya_0006"]={"1429062257714794518","1","10","1"},["KKHAYAMZO"]={"1429062276186374174","1","10","2"},["hayaxd_0008"]={"1429062382478430260","1","11","1"},["KKHAYAKKJ"]={"1429062530852196587","1","11","2"},["hayaxd_0010"]={"1429062559805341836","1","12","1"},["KKHAYAWLD"]={"1429062572979781646","1","12","2"},["KKHAYAOAM"]={"1429062584899731476","1","13","1"},["KKHAYARNV"]={"1429062593028292688","1","13","2"},["KKHAYARAZ"]={"1429062608333574308","1","14","1"},["KKHAYATDS"]={"1429062618076942482","1","14","2"},["KKIKANVUN"]={"1429095994787758210","2","1","1"},["KKIKANLIS"]={"1429096008377438238","2","1","2"},["KKIKANCSZ"]={"1429096020503040083","2","2","1"},["KKIKANWXJ"]={"1429096026912063528","2","2","2"},["KKIKANXVE"]={"1429096036583997461","2","3","1"},["KKIKANMZB"]={"1429096047195586681","2","3","2"},["KKIKANCJR"]={"1429096057710841957","2","4","1"},["KKIKANTDO"]={"1429096070893535366","2","4","2"},["kkhayfish0001"]={"1429096081257664605","2","5","1"},["hayfish_010"]={"1429096091034583100","2","5","2"},["hayfish_006"]={"1429096101847498844","2","6","1"},["KKHAYAIQB"]={"1429096113914249299","2","6","2"}}
+local user_index={["KKHAYAPEB"]={"1429062584899731476","1","13","1"},["KKHAYAMZI"]={"1429062593028292688","1","13","2"},["haytest00"]={"1429062706853445734","1","15","2"},["hayfish_003"]={"1429060874634788905","1","1","1"},["KKHAYAKAD"]={"1429060889373446155","1","1","2"},["haya_0003"]={"1429060904414220390","1","2","1"},["hayfish_004"]={"1429060913188700282","1","2","2"},["haya_0007"]={"1429062033675915264","1","3","1"},["hayfish_005"]={"1429062044036108318","1","3","2"},["hayfish_001"]={"1429062062952157269","1","4","1"},["hayfish_007"]={"1429062093872697492","1","4","2"},["hayfish_002"]={"1429062107747319899","1","5","1"},["KKHAYAIFW"]={"1429062120774959145","1","5","2"},["hayaxd_0009"]={"1429062133127053394","1","6","1"},["KKHAYAWHO"]={"1429062149136715868","1","6","2"},["haya_0001"]={"1429062166853718066","1","7","1"},["hayfish_008"]={"1429062185614704660","1","7","2"},["haya_0002"]={"1429062196264177767","1","8","1"},["hayfish_009"]={"1429062211816394823","1","8","2"},["haya_0004"]={"1429062225452077090","1","9","1"},["KKHAYAYTP"]={"1429062241906331651","1","9","2"},["haya_0006"]={"1429062257714794518","1","10","1"},["KKHAYAMZO"]={"1429062276186374174","1","10","2"},["hayaxd_0008"]={"1429062382478430260","1","11","1"},["KKHAYAKKJ"]={"1429062530852196587","1","11","2"},["hayaxd_0010"]={"1429062559805341836","1","12","1"},["KKHAYAWLD"]={"1429062572979781646","1","12","2"},["KKHAYAOAM"]={"1429062584899731476","1","13","1"},["KKHAYARNV"]={"1429062593028292688","1","13","2"},["KKHAYARAZ"]={"1429062608333574308","1","14","1"},["KKHAYATDS"]={"1429062618076942482","1","14","2"},["KKIKANVUN"]={"1429095994787758210","2","1","1"},["KKIKANLIS"]={"1429096008377438238","2","1","2"},["KKIKANCSZ"]={"1429096020503040083","2","2","1"},["KKIKANWXJ"]={"1429096026912063528","2","2","2"},["KKIKANXVE"]={"1429096036583997461","2","3","1"},["KKIKANMZB"]={"1429096047195586681","2","3","2"},["KKIKANCJR"]={"1429096057710841957","2","4","1"},["KKIKANTDO"]={"1429096070893535366","2","4","2"},["kkhayfish0001"]={"1429096081257664605","2","5","1"},["hayfish_010"]={"1429096091034583100","2","5","2"},["hayfish_006"]={"1429096101847498844","2","6","1"},["KKHAYAIQB"]={"1429096113914249299","2","6","2"}}
 -- === ScreenGui utama ===
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "HAYBOT"
@@ -220,7 +220,7 @@ end
 local options = {
                 "Trade Secret","Trade Mythic", "Trade Stone", "E (empowered 10%)", "Enchant II", "Listen Trade", 
                 "Auto Buy", "Wear Rod", "Jobs ID", "Fishing", "teleport custom", "Farm Event",
-                "backpack", "Merchant", "E (cursed 75%)", "E (mutation +30%)", "E (prismatic -8)", "block event"
+                "backpack", "Merchant", "E (cursed 75%)", "E (mutation +30%)", "E (prismatic -8)"
             }
 
 local function opsia(x)
@@ -396,7 +396,6 @@ for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
     end
 end
 --//ANCHOR connection
-
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
 if getconnections then
@@ -625,7 +624,14 @@ end
 
 local function editEmbed(link, message_id, newTitle, newDescription, warna, job_id)
     local headers = { ["Content-Type"] = "application/json" }
-    local timestamp = tostring(os.time(os.date("!*t")))
+    -- Ambil waktu UTC sekarang
+    local utc = os.time(os.date("!*t"))
+
+    -- Tambahkan offset UTC+7 (7 jam = 7 * 3600 detik)
+    local utc_plus7 = utc + (7 * 3600)
+
+    -- Format ke bentuk tanggal dan jam
+    local waktu_wib = os.date("%Y-%m-%d %H:%M:%S", utc_plus7)
     local data = {
         content = "", -- bisa diganti jika mau ubah content juga
         embeds = {{
@@ -633,7 +639,7 @@ local function editEmbed(link, message_id, newTitle, newDescription, warna, job_
             description = newDescription,
             color = warna,
             footer = { 
-                text = "<t:" .. timestamp .. ":R> | " .. job_id
+                text = waktu_wib .. " | " .. job_id
             }
         }}
     }
@@ -1064,24 +1070,8 @@ function opsi(index)
         auto_enchant(14) -- hunter II
     elseif index == 16 then
         auto_enchant(13) -- prismatic
-    elseif index == 17 then
-        if getconnections then
-            for _, conn in ipairs(getconnections(Event.OnClientEvent)) do
-                conn:Disable()
-            end
-        end
-
-        Event.OnClientEvent:Connect(
-            function(itemId, stats, data, flag)
-                fish_caught = true
-            end
-        )
-        onFishCaught(
-            function(name, data)
-                lastCatchTime = os.clock()
-            end
-        )
     end
+    
 end
 local function display_inventory()
     local list = "**Inventory : **"
@@ -1094,8 +1084,8 @@ local function display_inventory()
         return "tidak ada secret :("
     end
 end
-
-local function send_discord(waktu)
+--//ANCHOR discord 
+local function send_discord(waktu,error)
     local progress = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4
     local rod = current_rod
     local list_inv = display_inventory()
@@ -1109,21 +1099,22 @@ local function send_discord(waktu)
         local pc = user_index[usrr][2]
         local no = user_index[usrr][3]
         local bt = user_index[usrr][4]
-        local title = "BOT " .. no .. " - " .. bt .. " | " .. usrr
+        local title = "BOT " .. no .. " - " .. bt .. " | " .. usrr .. " | " .. waktu
         local list_1 = "**" .. select_quest .. "** | " .. lokasi .. " | **" .. rod .. "**"
         local list_2 = " **Progress : ** " .. progress_quest1 .. " - " .. progress_quest2 .. " - " .. progress_quest3 .." - " ..progress_quest4 .. "**( " .. progress .."% )**"
         local list_3 = " **Koin : ** " .. koin .. " **Secret :** " .. konvert_harga(total_harga_secret) .. " **Mythic :** " .. konvert_harga(total_harga_mythic)
-        local list_4 = "**Activity : **" .. last_msg
+        local list_4 = "**Activity :**" .. last_msg
         local list_5 = list_inv
-        local detail = waktu .. "\n" .. list_1 .."\n".. list_2 .."\n" .. list_3 .."\n".. list_4 .. "\n".. list_5
+        local detail =   list_1 .."\n".. list_2 .."\n" .. list_3 .."\n".. list_4 .. "\n".. list_5
         local warna = "6052956"
-        if rod == "Element Rod" then
-            warna = "FFF53C04"
+       if rod == "Element Rod" then
+            warna = "15548997"
         elseif rod == "Ghostfinn Rod" then
-            warna = "FF04F524"
+            warna = "5763719"
         else
-            warna = "FF0489F5"
+            warna = "3447003"
         end
+        
         if pc == "1" then
             link = WEBHOOK_PC1
         elseif pc == "2" then
@@ -1132,6 +1123,7 @@ local function send_discord(waktu)
             print("tidak diketahui", pc)
             return
         end
+        print(warna)
         editEmbed(link, id, title, detail, warna, game.JobId)
     end
 end
@@ -1224,7 +1216,7 @@ task.spawn(
 
             end
             if num % 250 == 0 then
-               send_discord(running_time)
+               send_discord(running_time,flag_error)
 
             end
             if num % 300 == 0 then
@@ -1308,7 +1300,7 @@ update_quest()
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
 print("MAIN PROGRAM -------------------------------")
-send_discord("00:00:00")
+send_discord("00:00:00",false)
 
 if select_quest == "deep_sea" then -- FARMING STONE
     total_stone = #list_trade_batu
