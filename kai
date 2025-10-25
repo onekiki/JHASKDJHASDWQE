@@ -1,4 +1,4 @@
-versi = "KAITUN | ZOMBIE | V1.7.3" -- zombie event
+versi = "KAITUN | ZOMBIE | V1.7.5" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -59,7 +59,7 @@ local placeId = game.PlaceId
 local jobId = game.JobId
 
 local select_quest = "none"
-local master_user = "hayfish96"
+local master_user = "haytest00"
 local current_rod = ""
 local lastCatchTime = nil
 
@@ -761,6 +761,7 @@ local function custom_trade(custom_list, limit)
     local completed = false
     Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
         function(data)
+            print("ADA NOTIF: ", data.Text)
             if data and data.Text == "Trade completed!" then
                 completed = true
             end
@@ -789,7 +790,7 @@ local function custom_trade(custom_list, limit)
                             print("timeout lebih dari 15 detik")
                             break
                         end
-                        task.wait(0.2)
+                        task.wait(0.4)
                     end
                     if timeout < 30 then
                         berhasil = berhasil + 1
@@ -1558,11 +1559,13 @@ while playing do
         task.wait(3)
         face(180)
         running = true
-        while playing do 
-            pesan("fishing : " .. player:GetAttribute("LocationName"))
-            for i=0, 50 do
-                auto_fish()
-                if not running then break end
+        while playing do
+            if running then
+                pesan("fishing : " .. player:GetAttribute("LocationName"))
+                for i=0, 50 do
+                    auto_fish()
+                    if not running then break end
+                end
             end
             if event_action == true then
                 break
