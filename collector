@@ -1,0 +1,332 @@
+-- LocalScript (taruh di StarterGui)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RF = ReplicatedStorage:WaitForChild("Packages")
+            :WaitForChild("_Index")
+            :WaitForChild("sleitnick_net@0.2.0")
+            :WaitForChild("net")
+            :WaitForChild("RF/AwaitTradeResponse")
+local HttpService = game:GetService("HttpService")
+
+
+local url = "https://api.jsonsilo.com/public/4a9f3ece-7c44-4fa6-92f3-98721480bfc0"
+
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "PlayerListGui"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Frame container
+local Frame = Instance.new("Frame")
+Frame.Name = "PlayerListFrame"
+Frame.Size = UDim2.new(0, 250, 0.7, 0)
+Frame.Position = UDim2.new(0, 20, 0, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Frame.BorderSizePixel = 0
+Frame.Visible = true
+Frame.Parent = ScreenGui
+
+-- Judul frame
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 0, 30)
+Title.Position = UDim2.new(0, 10, 0, 5)
+Title.BackgroundTransparency = 1
+Title.Text = "Daftar Pemain"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 20
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = Frame
+
+
+-- Tombol Close
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.TextSize = 18
+CloseButton.Parent = Frame
+
+-- Tombol close action
+CloseButton.MouseButton1Click:Connect(function()
+	Frame.Visible = false
+end)
+
+local ReloadButton = Instance.new("TextButton")
+ReloadButton.Size = UDim2.new(0, 30, 0, 30)
+ReloadButton.Position = UDim2.new(1, -70, 0, 5)
+ReloadButton.BackgroundColor3 = Color3.fromRGB(50, 145, 200)
+ReloadButton.Text = "R"
+ReloadButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ReloadButton.Font = Enum.Font.SourceSansBold
+ReloadButton.TextSize = 18
+ReloadButton.Parent = Frame
+
+-- Tombol close action
+
+
+local Scroll1 = Instance.new("ScrollingFrame")
+Scroll1.Name = "PlayerScroll"
+Scroll1.Size = UDim2.new(1, 0, 1, -50)
+Scroll1.Position = UDim2.new(0, 260, 0, 40)
+Scroll1.BackgroundTransparency = 0.5
+Scroll1.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Scroll1.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll1.ScrollBarThickness = 12
+Scroll1.Parent = Frame
+
+local UIList = Instance.new("UIListLayout")
+UIList.Padding = UDim.new(0, 10)
+UIList.FillDirection = Enum.FillDirection.Vertical
+UIList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIList.VerticalAlignment = Enum.VerticalAlignment.Top
+UIList.Parent = Scroll1
+
+local text1 = Instance.new("TextLabel")
+text1.Size = UDim2.new(1, -40, 0, 30)
+text1.Position = UDim2.new(0, 10, 0, 5)
+text1.BackgroundTransparency = 1
+text1.Text = "Total Ikan: "
+text1.TextColor3 = Color3.fromRGB(255, 255, 255)
+text1.Font = Enum.Font.SourceSansBold
+text1.TextSize = 20
+text1.TextXAlignment = Enum.TextXAlignment.Left
+text1.Parent = Scroll1
+
+
+local function makeList(text)
+    local btn = Instance.new("TextLabel")
+    btn.Size = UDim2.new(1, 0, 0, 30)
+    btn.Text = text
+    btn.TextColor3 = Color3.new(0, 0, 0)
+    btn.Parent = Scroll1
+    btn.BackgroundTransparency = 0
+    return btn
+end
+
+-- ScrollFrame untuk daftar player
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Name = "PlayerScroll"
+Scroll.Size = UDim2.new(1, -20, 1, -50)
+Scroll.Position = UDim2.new(0, 10, 0, 40)
+Scroll.BackgroundTransparency = 1
+Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll.ScrollBarThickness = 12
+Scroll.Parent = Frame
+
+-- Layout agar tombol rapi
+local Layout = Instance.new("UIListLayout")
+Layout.Padding = UDim.new(0, 5)
+Layout.FillDirection = Enum.FillDirection.Vertical
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+Layout.VerticalAlignment = Enum.VerticalAlignment.Top
+Layout.Parent = Scroll
+
+local list_ikan = {}
+for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
+    if child:IsA("ModuleScript") then
+        local success, data = pcall(require, child)
+        if success and data.Data.Type == "Fishes" then
+            list_ikan[data.Data.Id] = {
+                harga = data.SellPrice,
+                tier = data.Data.Tier,
+                nama = data.Data.Name,
+                id = data.Data.Id
+            }
+        end
+    end
+end
+local total_ikan = 0
+RF.OnClientInvoke = function(...)
+    local args = {...}
+    local data = args[2]
+    if type(data) == "table" then
+        print("Trade offer:", data.Id, data.UUID)
+    end
+    local detail = "[ ".. list_ikan[data.Id].Tier .." ] " .. list_ikan[data.Id].nama
+    makeList(detail)
+    total_ikan = total_ikan + 1
+    text1.Text = "Total ikan: " .. total_ikan
+    task.wait(3)
+    Scroll1.CanvasSize = UDim2.new(0, 0, 0, UIList.AbsoluteContentSize.Y)
+    return "OK"
+end
+local function getJSON(url)
+    local response =
+        request(
+        {
+            Url = url,
+            Method = "GET",
+            Headers = {
+                ["Accept"] = "application/json"
+            }
+        }
+    )
+
+    if not response.Success then
+        warn("Request gagal:", response.StatusCode)
+        return nil
+    end
+
+    local ok, data =
+        pcall(
+        function()
+            return HttpService:JSONDecode(response.Body)
+        end
+    )
+
+    if ok then
+        return data
+    else
+        warn("Gagal decode JSON:", data)
+        return nil
+    end
+end
+
+-- contoh pemakaian
+
+local last_json_data = nil
+local function ambilData()
+    for i = 1, 3 do
+        local success, result =
+            pcall(
+            function()
+                return getJSON(url)
+            end
+        )
+        if success and result then
+            last_json_data = result
+            return result
+        else
+            warn(("Percobaan %d gagal"):format(i))
+            task.wait(1)
+        end
+    end
+    warn("Semua percobaan gagal, pakai data lama.")
+    return last_json_data
+end
+local json = ambilData()
+local list_job = {}
+for i, p in ipairs(json) do
+    if p.nama then
+        list_job[p.nama] = {
+            id = p.id,
+            nama = p.nama
+        } 
+    end
+end
+
+local function teleport(x, y, z)
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.CFrame = CFrame.new(Vector3.new(x, y, z))
+        print("✅ Teleported to", x, y, z)
+    end
+end
+local function getPositionByName(name)
+    local plr = Players:FindFirstChild(name)
+    if not plr then return nil, "player not found" end
+
+    local char = plr.Character or plr.CharacterAdded:Wait()
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil, "HumanoidRootPart not found" end
+
+    return hrp.Position
+end
+
+
+--=== Fungsi pembuat tombol player ===--
+local function createPlayerButton(judul, nama)
+	local button = Instance.new("TextButton")
+	button.Name =  nama .. "_Button"
+	button.Size = UDim2.new(1, -10, 0, 30)
+	button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.Text = judul
+	button.Font = Enum.Font.SourceSansBold
+	button.TextSize = 18
+	button.Parent = Scroll
+
+	button.MouseButton1Click:Connect(function()
+        x = list_job[nama].id
+        y = tostring(game.JobId)
+        print(x .. "|" .. y)
+
+        if x == y then
+            print("teleport ke user")
+            local pos, err = getPositionByName(nama)
+            if pos then
+                print("Posisi sekarang:", pos)
+                local x = pos.X
+                local y = pos.Y
+                local z = pos.Z
+                teleport(x,y,z)
+            end
+        else
+            print("join private server")
+            
+            local TeleportService = game:GetService("TeleportService")
+            local player = game.Players.LocalPlayer
+
+            local placeId = game.PlaceId
+            local serverCode = list_job[nama].id
+
+            --TeleportService:TeleportToPrivateServer(placeId, serverCode, {player})
+            TeleportService:TeleportToPlaceInstance(placeId, serverCode, player)
+        end
+	end)
+end
+
+--=== Fungsi update daftar player ===--
+local function refreshPlayerList()
+	for _, child in ipairs(Scroll:GetChildren()) do
+		if child:IsA("TextButton") then
+			child:Destroy()
+		end
+	end
+	-- Update ukuran scroll otomatis
+	task.wait()
+	Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
+end
+
+--=== Event player join/leave ===--
+--Players.PlayerAdded:Connect(refreshPlayerList)
+--Players.PlayerRemoving:Connect(refreshPlayerList)
+
+-- Pertama kali dijalankan
+--refreshPlayerList()
+local function refresh()
+    for i, p in ipairs(json) do
+        if p.nama then
+            local jdl = p.pc .." > ".. p.no .." | ".. p.nama
+            createPlayerButton(jdl, p.nama)
+        end
+    end
+    for _, player in ipairs(Players:GetPlayers()) do
+        if list_job[player.Name] then
+            if player.Name == list_job[player.Name].nama then
+                local btn = Scroll:FindFirstChild(player.Name .. "_Button")
+                if btn then
+                    btn.BackgroundColor3 = Color3.fromRGB(180, 27, 27)
+                end
+            end
+        end
+    end
+    Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
+end
+refresh()
+
+ReloadButton.MouseButton1Click:Connect(function()
+    for _, child in ipairs(Scroll:GetChildren()) do
+		if child:IsA("TextButton") then
+			child:Destroy()
+		end
+	end
+	refresh()
+end)
