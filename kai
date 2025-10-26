@@ -1,4 +1,4 @@
-versi = "KAITUN | ZOMBIE | V1.7.5" -- zombie event
+versi = "KAITUN | ZOMBIE | V1.7.6" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -623,41 +623,45 @@ end
 --]]
 
 local function editEmbed(link, message_id, newTitle, newDescription, warna, job_id)
-    local headers = { ["Content-Type"] = "application/json" }
-    -- Ambil waktu UTC sekarang
-    local utc = os.time(os.date("!*t"))
+	local headers = { ["Content-Type"] = "application/json" }
 
-    -- Tambahkan offset UTC+7 (7 jam = 7 * 3600 detik)
-    local utc_plus7 = utc + (7 * 3600)
+	-- Ambil waktu UTC sekarang
+	local utc = os.time(os.date("!*t"))
+	local utc_plus7 = utc + (7 * 3600)
+	local waktu_wib = os.date("%Y-%m-%d %H:%M:%S", utc_plus7)
 
-    -- Format ke bentuk tanggal dan jam
-    local waktu_wib = os.date("%Y-%m-%d %H:%M:%S", utc_plus7)
-    local data = {
-        content = "", -- bisa diganti jika mau ubah content juga
-        embeds = {{
-            title = newTitle,
-            description = newDescription,
-            color = warna,
-            footer = { 
-                text = waktu_wib .. " | " .. job_id
-            }
-        }}
-    }
+	local data = {
+		content = "",
+		embeds = {{
+			title = newTitle,
+			description = newDescription,
+			color = warna,
+			footer = { text = waktu_wib .. " | " .. job_id .. " | " .. konvert_harga(total_harga_secret) .." | ".. konvert_harga(total_harga_mythic)}
+		}}
+	}
 
-    local res = request({
-        Url = link .. "/messages/" .. message_id,
-        Method = "PATCH",
-        Headers = headers,
-        Body = HttpService:JSONEncode(data)
-    })
+	-- Gunakan pcall agar error HTTP tidak menghentikan skrip
+	local success, res = pcall(function()
+		return request({
+			Url = link .. "/messages/" .. message_id,
+			Method = "PATCH",
+			Headers = headers,
+			Body = HttpService:JSONEncode(data)
+		})
+	end)
 
-    if res.StatusCode == 200 then
-        print("Embed berhasil diedit.")
-        return true
-    else
-        warn("Gagal edit embed:", res.StatusCode, res.Body)
-        return false
-    end
+	if not success then
+		warn("⚠️ SEND DISCORD GAGAL:", res)
+		return false
+	end
+
+	if res and res.StatusCode == 200 then
+		print("✅ Embed berhasil diedit.")
+		return true
+	else
+		warn("❌ Gagal edit embed:", res and res.StatusCode, res and res.Body)
+		return false
+	end
 end
 
 --//ANCHOR UPDATE INVENTORY
