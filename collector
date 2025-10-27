@@ -1,4 +1,4 @@
-local versi = "V1.0.0"
+local versi = "V1.0.2"
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -148,7 +148,7 @@ RF.OnClientInvoke = function(...)
     if type(data) == "table" then
         print("Trade offer:", data.Id, data.UUID)
     end
-    local detail = "[ ".. list_ikan[data.Id].Tier .." ] " .. list_ikan[data.Id].nama
+    local detail = "[ ".. list_ikan[data.Id].tier .." ] " .. list_ikan[data.Id].nama
     makeList(detail)
     total_ikan = total_ikan + 1
     text1.Text = "Total ikan: " .. total_ikan
@@ -283,28 +283,10 @@ local function createPlayerButton(judul, nama)
 	end)
 end
 
---=== Fungsi update daftar player ===--
-local function refreshPlayerList()
-	for _, child in ipairs(Scroll:GetChildren()) do
-		if child:IsA("TextButton") then
-			child:Destroy()
-		end
-	end
-	-- Update ukuran scroll otomatis
-	task.wait()
-	Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
-end
-
---=== Event player join/leave ===--
---Players.PlayerAdded:Connect(refreshPlayerList)
---Players.PlayerRemoving:Connect(refreshPlayerList)
-
--- Pertama kali dijalankan
---refreshPlayerList()
 local function refresh()
     for i, p in ipairs(json) do
         if p.nama then
-            local jdl = p.pc .." > ".. p.no .." | ".. p.nama
+            local jdl = p.nama .." | " .. p.s .." - " .. p.m
             createPlayerButton(jdl, p.nama)
         end
     end
