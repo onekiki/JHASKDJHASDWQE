@@ -1,4 +1,4 @@
-versi = "KAITUN | NEW | V2.0.1" -- zombie event
+versi = "KAITUN | NEW | V2.0.2" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -758,7 +758,7 @@ btn_reload.MouseButton1Click:Connect(
         rejoinSameServer()
     end
 )
-
+--//ANCHOR TRADE 
 local function custom_trade(custom_list, limit)
     local completed = false
     Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
@@ -771,8 +771,7 @@ local function custom_trade(custom_list, limit)
     )
     update_inventory()
     running = false
-    print("RUNNING ", running)
-    pesan("trading di mulai...")
+    pesan("TRADE TO: ", master_user)
     --local targetName = "hayfish96"
     local berhasil = 0
     local info_akhir = ""
@@ -1000,6 +999,8 @@ end
 
 function opsi(index)
     if index == 1 then
+        running = false
+        task.wait(10)
         custom_trade(list_secret, 0)
     elseif index == 2 then
         custom_trade(list_mythic, 0)
@@ -1418,7 +1419,6 @@ if select_quest == "jungle" then
         end
 
         if step == 2 then
-            pesan("STEP 2 !!")
             running  = false
             local list_artifak = {265, 266, 267, 271}
             for i, k in ipairs(list_artifak) do
@@ -1477,7 +1477,6 @@ if select_quest == "jungle" then
         end
 
         if step == 3 then
-            pesan("STEP 3 !!")
             if running and progress_quest3 < 100 then
                 pesan(quest_jungle(3)) -- inside temple
                 teleport(math.random(1491,1516), -22, -630)
@@ -1497,9 +1496,7 @@ if select_quest == "jungle" then
                 end
             end
             if running and progress_quest4 < 100 then
-                --pesan(quest_jungle(4))
-                -- manual goto altar and give secret 3
-                --teleport(1487, 128, -591)
+                teleport(1487, 128, -591)
                 pesan("SELESAI MANUAL SACRIFICE")
                 --break
                 task.wait(30)
