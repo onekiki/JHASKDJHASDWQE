@@ -223,7 +223,7 @@ end
 local options = {
                 "Trade Secret","Trade Mythic", "Trade Stone", "E (empowered 10%)", "Enchant II", "Listen Trade", 
                 "Auto Buy", "Wear Rod", "Jobs ID", "Fishing", "teleport custom", "Farm Event",
-                "backpack", "Merchant", "E (cursed 75%)", "E (mutation +30%)", "E (prismatic -8)"
+                "backpack", "Merchant", "E (cursed 75%)", "E (mutation +30%)", "E (prismatic -8)", "test"
             }
 
 local function opsia(x)
@@ -1075,6 +1075,21 @@ function opsi(index)
         auto_enchant(14) -- hunter II
     elseif index == 16 then
         auto_enchant(13) -- prismatic
+    elseif index == 17 then
+        -- variabel untuk menyimpan koneksi lama
+        if _G.FishCaughtConnection then
+            _G.FishCaughtConnection:Disconnect()
+            _G.FishCaughtConnection = nil
+            print("🔌 Koneksi lama diputus.")
+        end
+
+        -- buat koneksi baru
+        _G.FishCaughtConnection = remote.OnClientEvent:Connect(function(name, data)
+            if running then
+                lastCatchTime = os.clock()
+                text_progress.Text = name .. " (" .. round(data.Weight, 2) .. " Kg)"
+            end
+        end)
     end
     running = true
     lastCatchTime = os.clock()
