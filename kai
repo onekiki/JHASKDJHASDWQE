@@ -1,4 +1,4 @@
-versi = "KAITUN | NEW | V2.0.0" -- zombie event
+versi = "KAITUN | NEW | V2.0.1" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -418,25 +418,13 @@ Event.OnClientEvent:Connect(
     end
 )
 
-local function onFishCaught(callback)
-    local connection
-    local remote = Net:WaitForChild("RE/FishCaught")
-    if not connection then
-        connection =
-            remote.OnClientEvent:Connect(
-            function(name, data)
-                if running then
-                    callback(name, data)
-                end
-            end
-        )
-    end
-end
-
-onFishCaught(
+local remote = Net:WaitForChild("RE/FishCaught")
+remote.OnClientEvent:Connect(
     function(name, data)
-        lastCatchTime = os.clock()
-        text_progress.Text = name .. " (" .. round(data.Weight, 2) .. " Kg)"
+        if running then
+            lastCatchTime = os.clock()
+            text_progress.Text = name .. " (" .. round(data.Weight, 2) .. " Kg)"
+        end
     end
 )
 
