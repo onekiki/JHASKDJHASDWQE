@@ -998,16 +998,16 @@ end
 --//ANCHOR OPSI FUNCTION
 
 function opsi(index)
+    running = false
+    task.wait(10)
     if index == 1 then
-        running = false
-        task.wait(10)
         custom_trade(list_secret, 0)
     elseif index == 2 then
         custom_trade(list_mythic, 0)
     elseif index == 3 then
         custom_trade(list_trade_batu, 5)
     elseif index == 4 then
-        auto_enchant(9) -- 10% less throw
+        auto_enchant(9)
     elseif index == 5 then
         teleport(1486, 128, -592)
     elseif index == 6 then
@@ -1047,10 +1047,6 @@ function opsi(index)
         select_quest = "custom_teleport"
 
     elseif index == 12 then
-        if running then
-            pesan("masih running, stop dahulu")
-            return
-        end
         pesan("switch event")
         event_action = true
         select_quest = "event"
@@ -1082,7 +1078,7 @@ function opsi(index)
     elseif index == 16 then
         auto_enchant(13) -- prismatic
     end
-    
+    running = true
 end
 local function display_inventory()
     local list = "**Inventory : **"
