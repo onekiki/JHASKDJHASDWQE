@@ -322,6 +322,11 @@ local function createPlayerButton(judul, nama)
 	button.Parent = Scroll
 
 	button.MouseButton1Click:Connect(function()
+         for _, child in ipairs(Scroll1:GetChildren()) do
+            if child:IsA("TextButton") then
+                child:Destroy()
+            end
+        end
         x = list_job[nama].id
         y = tostring(game.JobId)
         print(x .. "|" .. y)
