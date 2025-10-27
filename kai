@@ -1,4 +1,4 @@
-versi = "KAITUN | NEW | V2.0.2" -- zombie event
+versi = "KAITUN | NEW | V2.0.3" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -61,7 +61,8 @@ local placeId = game.PlaceId
 local jobId = game.JobId
 
 local select_quest = "none"
-local master_user = "haytest00"
+local master_user = "hayfish96"
+local master_user2 = "hayati_lelah7"
 local current_rod = ""
 local lastCatchTime = nil
 
@@ -227,7 +228,6 @@ local options = {
 
 local function opsia(x)
     opsi(x)
-    lastCatchTime = nil
 end -- Buat tombol untuk setiap opsi
 -- pengaturan layout
 local maxPerColumn = 6
@@ -634,7 +634,7 @@ local function editEmbed(link, message_id, newTitle, newDescription, warna, job_
 			title = newTitle,
 			description = newDescription,
 			color = warna,
-			footer = { text = waktu_wib .. " | " .. job_id .. " | " .. konvert_harga(total_harga_secret) .." | ".. konvert_harga(total_harga_mythic)}
+			footer = { text = waktu_wib .. " | " .. job_id .. " | " .. #list_secret .." - ".. konvert_harga(total_harga_secret) .." | " .. #list_mythic .." - " .. konvert_harga(total_harga_mythic)}
 		}}
 	}
 
@@ -771,51 +771,49 @@ local function custom_trade(custom_list, limit)
     )
     update_inventory()
     running = false
-    pesan("TRADE TO: ", master_user)
     --local targetName = "hayfish96"
     local berhasil = 0
     local info_akhir = ""
-    local targetName = master_user
     local function trade_user(usr)
-        if usr.Name == targetName then
-            print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
-            if custom_list ~= nil then
-                for i, uuid in ipairs(custom_list) do
-                    Net:WaitForChild("RE/EquipItem"):FireServer(uuid, "Fishes")
-                    Net:WaitForChild("RF/InitiateTrade"):InvokeServer(usr.UserId, uuid)
-                    local timeout = 0
-                    while completed ~= true do
-                        print("wait")
-                        timeout = timeout + 1
-                        if timeout > 30 then
-                            print("timeout lebih dari 15 detik")
-                            break
-                        end
-                        task.wait(0.4)
-                    end
-                    if timeout < 30 then
-                        berhasil = berhasil + 1
-                    end
-                    completed = false
-                    info_akhir = "TRADE " .. berhasil .. "/" .. #custom_list
-                    pesan(info_akhir)
-                    task.wait(3)
-                    if limit > 0 and i > limit then
-                        print("limit trade telah tercapai")
+        print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
+        if custom_list ~= nil then
+            for i, uuid in ipairs(custom_list) do
+                Net:WaitForChild("RE/EquipItem"):FireServer(uuid, "Fishes")
+                Net:WaitForChild("RF/InitiateTrade"):InvokeServer(usr.UserId, uuid)
+                local timeout = 0
+                while completed ~= true do
+                    print("wait")
+                    timeout = timeout + 1
+                    if timeout > 30 then
+                        print("timeout lebih dari 15 detik")
                         break
                     end
+                    task.wait(0.4)
                 end
-            else
-                pesan("tidak ada barang lagi")
+                if timeout < 30 then
+                    berhasil = berhasil + 1
+                end
+                completed = false
+                info_akhir = "TRADE " .. berhasil .. "/" .. #custom_list
+                pesan(info_akhir)
+                task.wait(3)
+                if limit > 0 and i > limit then
+                    print("limit trade telah tercapai")
+                    break
+                end
             end
-            pesan("SELESAI SEMUA " .. info_akhir)
-            print("clear list")
-            --running = true
+        else
+            pesan("tidak ada barang lagi")
         end
+        pesan("SELESAI SEMUA " .. info_akhir)
+        print("clear list")
     end
-    local existing = Players:FindFirstChild(targetName)
+    local existing = Players:FindFirstChild(master_user)
+    local existing2 = Players:FindFirstChild(master_user2)
     if existing then
         trade_user(existing)
+    elseif existing2 then
+        trade_user(existing2)
     else
         pesan("player tidak ada")
     end
@@ -1079,6 +1077,7 @@ function opsi(index)
         auto_enchant(13) -- prismatic
     end
     running = true
+    lastCatchTime = os.clock()
 end
 local function display_inventory()
     local list = "**Inventory : **"
@@ -1177,7 +1176,22 @@ end
 --------------------------------------------------------------------
 --- SPAWN
 --------------------------------------------------------------------
-
+local enable_auto_collect = false
+local RF = Net:WaitForChild("RF/AwaitTradeResponse")
+RF.OnClientInvoke = function(...)
+    local args = {...}
+    local maybeData = args[2]
+    if type(maybeData) == "table" then
+        print("Trade offer:", maybeData.Id, maybeData.UUID)
+    end
+    if maybeData.Id ~= 10 then
+        enable_auto_collect = true
+        return "CANCEL"
+    else
+        task.wait(4.5)
+        return "OK"
+    end
+end
 --update_inventory()
 task.spawn(
     function()
@@ -1234,7 +1248,17 @@ task.spawn(
                 task.wait(2)
                 hapus_gui_daily()
             end
-            
+            if enable_auto_collect == true then
+                running = false
+                task.wait(10)
+                    custom_trade(list_secret, 0)
+                    task.wait(1)
+                custom_trade(list_mythic, 10)
+                running = true
+                enable_auto_collect = false -- turn off auto collect
+                lastCatchTime = os.clock()
+                Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+            end
             num = num + 1
             task.wait(1)
         end
