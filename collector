@@ -1,4 +1,4 @@
-local versi = "V1.0.2"
+local versi = "V1.0.3"
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
