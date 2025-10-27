@@ -1,4 +1,4 @@
-versi = "KAITUN | add ANIM | V1.7.9" -- zombie event
+versi = "KAITUN | NEW | V2.0.0" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -982,6 +982,8 @@ local function auto_fish()
         playAnimation("rbxassetid://134965425664034")
         local success, data =  Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0, tick())
         if success and data then
+            local waktu = data.LastShift - data.StartTime
+            task.wait(waktu)
             count_mancing = count_mancing + 1
             Net:WaitForChild("RE/FishingCompleted"):FireServer()
             playAnimation("rbxassetid://117319000848286")
