@@ -1266,9 +1266,9 @@ task.spawn(
             if enable_auto_collect == true then
                 running = false
                 task.wait(10)
-                    custom_trade(list_secret, 0)
-                    task.wait(1)
-                custom_trade(list_mythic, 10)
+                custom_trade(list_secret, 0)
+                task.wait(1)
+                --custom_trade(list_mythic, 10)
                 running = true
                 enable_auto_collect = false -- turn off auto collect
                 lastCatchTime = os.clock()
