@@ -1,4 +1,4 @@
-versi = "KAITUN | ZOMBIE | V1.7.6" -- zombie event
+versi = "KAITUN | FIX SPAM | V1.7.7" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -962,21 +962,16 @@ local function auto_buy()
 end
 
 local function auto_fish()
-        math.randomseed(os.time())
-        local random_number = math.random() * 2 - 1
-        task.wait(0.01)
-        Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(tick())
-        task.wait(0.01)
-        Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0)
-        for i = 1, 15 do
-            if fish_caught == true then
-                break
-            end
-            Net:WaitForChild("RE/FishingCompleted"):FireServer()
-            task.wait(0.3)
-        end
-        fish_caught = false
-        count_mancing = count_mancing + 1
+    math.randomseed(os.time())
+    local random_number = math.random() * 2 - 1
+    local nilai = math.random() * 0.2 + 0.8
+    task.wait(0.2)
+    Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(nil,nil,nil,tick())
+    task.wait(0.5)
+    Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, nilai, tick())
+    task.wait(3)
+    count_mancing = count_mancing + 1
+    Net:WaitForChild("RE/FishingCompleted"):FireServer()
 end
 
 local function hapus_gui_daily()
@@ -1559,9 +1554,9 @@ while playing do
         end
     end
     if select_quest == "custom_teleport" then
-        teleport(math.random(2147,2165), 80, 3338)
+        teleport(-1956, -440, 7389)
         task.wait(3)
-        face(180)
+        face(270)
         running = true
         while playing do
             if running then
