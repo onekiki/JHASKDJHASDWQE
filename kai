@@ -428,6 +428,7 @@ end
 onFishCaught(
     function(name, data)
         lastCatchTime = os.clock()
+        text_progress.Text = name .. " (" .. round(data.Weight, 2) .. " Kg)"
     end
 )
 
@@ -1283,18 +1284,11 @@ current_rod = best_rod_wear()
 if current_rod == "Ghostfinn Rod" then
     select_quest = "jungle"
 elseif current_rod == "Element Rod" then
-    select_quest = "event"
+    select_quest = "custom_teleport"
 else
     select_quest = "deep_sea"
 end
 print(select_quest)
-
-
---- BYPASS only event!!!!
-if select_quest ~= "deep_sea" then
-    select_quest = "custom_teleport"
-end
-
 
 update_quest()
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
