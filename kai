@@ -412,21 +412,22 @@ if getconnections then
     end
 end
 
-Event.OnClientEvent:Connect(
-    function(itemId, stats, data, flag)
-        fish_caught = true
-    end
-)
-
 local remote = Net:WaitForChild("RE/FishCaught")
-remote.OnClientEvent:Connect(
-    function(name, data)
-        if running then
-            lastCatchTime = os.clock()
-            text_progress.Text = name .. " (" .. round(data.Weight, 2) .. " Kg)"
-        end
+
+-- variabel untuk menyimpan koneksi lama
+if _G.FishCaughtConnection then
+    _G.FishCaughtConnection:Disconnect()
+    _G.FishCaughtConnection = nil
+    print("🔌 Koneksi lama diputus.")
+end
+
+-- buat koneksi baru
+_G.FishCaughtConnection = remote.OnClientEvent:Connect(function(name, data)
+    if running then
+        lastCatchTime = os.clock()
+        text_progress.Text = name .. " (" .. round(data.Weight, 2) .. " Kg)"
     end
-)
+end)
 
 local block_bait = Net:WaitForChild("RE/BaitSpawned")
 --local block_text_effect = Net:WaitForChild("RE/ReplicateTextEffect")
