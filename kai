@@ -1,4 +1,4 @@
-versi = "KAITUN | add ANIM | V1.7.8" -- zombie event
+versi = "KAITUN | add ANIM | V1.7.9" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -993,7 +993,7 @@ local function auto_fish()
             Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
         end
     end
-    task.wait(0.2)
+    task.wait(0.5)
 end
 
 local function hapus_gui_daily()
@@ -1416,7 +1416,7 @@ if select_quest == "jungle" then
             end
             if running and list_inventory_fishs[271] == nil then
                 pesan("farming artifak > 4. Hourglass")
-                teleport(1485, 8, -861)
+                teleport(1490, 6, -848)
                 task.wait(5)
                 face(0)
                 while running and list_inventory_fishs[271] == nil do
