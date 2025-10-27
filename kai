@@ -1,4 +1,4 @@
-versi = "KAITUN | FIX SPAM | V1.7.7" -- zombie event
+versi = "KAITUN | add ANIM | V1.7.8" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -14,6 +14,8 @@ local Net =
 local HttpService = game:GetService("HttpService")
 local dailyLoginGui = gui:FindFirstChild("!!! Daily Login")
 local koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
+local humanoid = character:WaitForChild("Humanoid")
+local animator = humanoid:WaitForChild("Animator")
 
 local ok, Replion =
     pcall(
@@ -285,7 +287,13 @@ end)
 ----------------------------------------------------------------------------------
 ------------------- MAIN FUNGSI
 ----------------------------------------------------------------------------------
-
+local function playAnimation(id)
+    local anim = Instance.new("Animation")
+    anim.AnimationId = id
+    local track = animator:LoadAnimation(anim)
+    track:Play()
+    return track
+end
 local function getOnlineTime()
     local elapsed = tick() - startscript
     return elapsed
@@ -962,17 +970,30 @@ local function auto_buy()
     end
 end
 
+--//ANCHOR autofish
+
 local function auto_fish()
     math.randomseed(os.time())
     local random_number = math.random() * 2 - 1
     local nilai = math.random() * 0.2 + 0.8
+    playAnimation("rbxassetid://92624107165273") -- RodThrow
+    local status, data =  Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(nil,nil,nil,tick())
+    if status then
+        playAnimation("rbxassetid://134965425664034")
+        local success, data =  Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0, tick())
+        if success and data then
+            local waktu = data.LastShift - data.StartTime
+            task.wait(waktu)
+            print("waktu:", waktu)
+            count_mancing = count_mancing + 1
+            Net:WaitForChild("RE/FishingCompleted"):FireServer()
+            playAnimation("rbxassetid://117319000848286")
+        else
+            warn("InvokeServer gagal atau tidak mengembalikan data.")
+            Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
+        end
+    end
     task.wait(0.2)
-    Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(nil,nil,nil,tick())
-    task.wait(0.5)
-    Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, nilai, tick())
-    task.wait(3)
-    count_mancing = count_mancing + 1
-    Net:WaitForChild("RE/FishingCompleted"):FireServer()
 end
 
 local function hapus_gui_daily()
@@ -1193,7 +1214,7 @@ task.spawn(
                     mainFrame.BackgroundColor3 = Color3.fromRGB(170, 16, 16)
                     text_timer.Text = "🔴 " .. delta .. " sec."
                 end
-                if delta > 120 then
+                if delta > 180 then
                     rejoinSameServer()
                     task.wait(60)
                 end
@@ -1252,7 +1273,7 @@ SetLowGraphics()
 print("INISIALISASI --------------------------")
 
 
-local countdown = 15
+local countdown = 5
 text_progress.Text = "Auto Play in: "
 if running then
     for i = 1, countdown do
@@ -1272,7 +1293,7 @@ while not running do
     if not playing then break end
 end
 
-toggle3DAndUI()
+--toggle3DAndUI()
 
 text_progress.Text = "Start auto run script "
 player.CharacterAdded:Connect(attachSmartPlatform)
