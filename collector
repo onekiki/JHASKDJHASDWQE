@@ -1,14 +1,17 @@
 local versi = "V1.0.2"
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local RF = ReplicatedStorage:WaitForChild("Packages")
-            :WaitForChild("_Index")
-            :WaitForChild("sleitnick_net@0.2.0")
-            :WaitForChild("net")
-            :WaitForChild("RF/AwaitTradeResponse")
 local HttpService = game:GetService("HttpService")
+local LocalPlayer = Players.LocalPlayer
+local Net =
+    ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild(
+    "net"
+)
+local RF = Net:WaitForChild("RF/AwaitTradeResponse")
 
+local Client = require(ReplicatedStorage.Packages.Replion).Client
+local ItemUtility = require(ReplicatedStorage.Shared.ItemUtility)
+local TierUtility = require(ReplicatedStorage.Shared.TierUtility)
 
 local url = "https://api.jsonsilo.com/public/4a9f3ece-7c44-4fa6-92f3-98721480bfc0"
 
@@ -141,14 +144,22 @@ for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
         end
     end
 end
-local total_ikan = 0
+local function get_tier(tier)
+    if tier == 6 then 
+        return "MYTHIC" 
+    elseif tier == 7 then
+        return "SECRET"
+    end
+end
+
+local total_ikan = 1
 RF.OnClientInvoke = function(...)
     local args = {...}
     local data = args[2]
     if type(data) == "table" then
         print("Trade offer:", data.Id, data.UUID)
     end
-    local detail = "[ ".. list_ikan[data.Id].tier .." ] " .. list_ikan[data.Id].nama
+    local detail = total_ikan .. " - [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
     makeList(detail)
     total_ikan = total_ikan + 1
     text1.Text = "Total ikan: " .. total_ikan
@@ -240,6 +251,63 @@ local function getPositionByName(name)
     return hrp.Position
 end
 
+local data = Client:WaitReplion("Data")
+
+-- ambil inventory pertama kali
+local function getInventory()
+    return data:GetExpect({"Inventory"})
+end
+local item_Data = {}
+local function list_inventory(selected)
+    local inventory = getInventory()
+    local results = {}
+
+    for category, items in pairs(inventory) do
+        if category == selected then
+            for i, item in ipairs(items) do
+                
+                local itemData = ItemUtility:GetItemData(item.Id)
+                    or ItemUtility:GetBaitData(item.Id)
+                    or ItemUtility:GetPotionData(item.Id)
+
+                local tierName = "None"
+                if itemData and itemData.Data and itemData.Data.Tier then
+                    local tierData = TierUtility:GetTier(itemData.Data.Tier)
+                    if tierData and tierData.Name then
+                        tierName = tierData.Name
+                    end
+                end
+                item_Data[item.Id] = itemData
+                local berat = item.Metadata and item.Metadata.Weight or 0
+               -- local varian = item.Metadata.VarianId or "none"
+                
+                table.insert(results, {
+                    nama = itemData.Data.Name,
+                    id = item.Id,
+                    uuid = tostring(item.UUID),
+                    tier = tierName,
+                    berat = tostring(berat)
+                 --   varian = varian
+                })
+            end
+        end
+    end
+    return results
+end
+local function send_handshake(user)
+    local get_uuid = ""
+    for i, item in ipairs(list_inventory("Items")) do
+        if item.id ~= 10 then
+            get_uuid = item.uuid
+            break
+        end
+    end
+    print(get_uuid)
+    print(user)
+    Net:WaitForChild("RE/EquipItem"):FireServer(get_uuid, "Fishes")
+    task.wait(1)
+    Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, get_uuid)
+end
 
 --=== Fungsi pembuat tombol player ===--
 local function createPlayerButton(judul, nama)
@@ -267,6 +335,13 @@ local function createPlayerButton(judul, nama)
                 local y = pos.Y
                 local z = pos.Z
                 teleport(x,y,z)
+                task.wait(5)
+                local existing = Players:FindFirstChild(nama)
+                if existing then
+                    send_handshake(existing.UserId)
+                else
+                    print("player tidak ada")
+                end
             end
         else
             print("join private server")
@@ -286,7 +361,7 @@ end
 local function refresh()
     for i, p in ipairs(json) do
         if p.nama then
-            local jdl = p.nama .." | " .. p.s .." - " .. p.m
+            local jdl = p.nama .."| " .. p.s .."|" .. p.m
             createPlayerButton(jdl, p.nama)
         end
     end
@@ -302,14 +377,29 @@ local function refresh()
     end
     Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
 end
+
 refresh()
 
 ReloadButton.MouseButton1Click:Connect(function()
     for _, child in ipairs(Scroll:GetChildren()) do
-		if child:IsA("TextButton") then
-			child:Destroy()
-		end
-	end
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
     print("reload")
-	refresh()
+
+    -- ambil ulang data terbaru dari server
+    json = ambilData()
+    list_job = {}
+
+    for i, p in ipairs(json) do
+        if p.nama then
+            list_job[p.nama] = {
+                id = p.id,
+                nama = p.nama
+            }
+        end
+    end
+
+    refresh()
 end)
