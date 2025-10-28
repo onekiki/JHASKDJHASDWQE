@@ -1,4 +1,4 @@
-local versi = "V1.0.3"
+local versi = "V1.0.4"
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
@@ -366,7 +366,7 @@ end
 local function refresh()
     for i, p in ipairs(json) do
         if p.nama then
-            local jdl = p.nama .."| " .. p.s .."|" .. p.m
+            local jdl = p.nama .."| " .. p.s[0] .." - " .. p.m[0]
             createPlayerButton(jdl, p.nama)
         end
     end
