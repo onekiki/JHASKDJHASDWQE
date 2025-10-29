@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V3.3" -- SOLASI KONTOL
+versi = "KAITUN | FIGHT! | V3.3.1" -- SOLASI KONTOL
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1352,7 +1352,7 @@ if current_rod == "Ghostfinn Rod" then
     select_quest = "jungle"
 elseif current_rod == "Element Rod" then
     select_quest = "custom_teleport"
-elseif current_rod == "Starter Rod" or current_rod == "Midnight Rod" then
+elseif current_rod == "Starter Rod" then
     select_quest = "farming_coin"
 else
     select_quest = "deep_sea"
