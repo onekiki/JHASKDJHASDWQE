@@ -1,4 +1,4 @@
-versi = "KAITUN | NEW | V2.0.3" -- zombie event
+versi = "KAITUN | FIGHT! | V3.0" -- zombie event
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -404,6 +404,28 @@ for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
     end
 end
 --//ANCHOR connection
+
+local function checkPlayers()
+    local LocalPlayer = Players.LocalPlayer
+	for _, X in pairs(Players:GetPlayers()) do
+        if X.name ~= player.Name then 
+            if X.Name == master_user2 or X.Name == master_user then
+                print("MASTER TELAH GABUNG")
+                return
+            else
+                LocalPlayer:Kick("ADA PLAYER LAIN!! ", X.Name)
+                running = false
+                playing = false
+            end
+        end
+	end
+end
+
+Players.PlayerAdded:Connect(function()
+	checkPlayers()
+end)
+
+
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
 if getconnections then
@@ -1296,7 +1318,6 @@ SetLowGraphics()
 
 print("INISIALISASI --------------------------")
 
-
 local countdown = 5
 text_progress.Text = "Auto Play in: "
 if running then
@@ -1317,6 +1338,7 @@ while not running do
     if not playing then break end
 end
 
+checkPlayers()
 toggle3DAndUI()
 
 text_progress.Text = "Start auto run script "
