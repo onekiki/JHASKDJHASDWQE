@@ -563,12 +563,13 @@ local function toggle3DAndUI()
         mainFrame.BackgroundTransparency = 0
     end
     RunService:Set3dRenderingEnabled(renderEnabled)
-
+    --[[
     for _, gui in ipairs(gui:GetChildren()) do
         if gui:IsA("ScreenGui") and gui ~= screenGui then
             gui.Enabled = false -- kalau render off, UI juga ikut mati
         end
     end
+    --]]
 end
 
 -----------------------------------------------------------------
@@ -985,7 +986,7 @@ local function auto_fish(waktu)
     --playAnimation("rbxassetid://92624107165273") -- RodThrow
     local status, data =  Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(nil,nil,nil,tick())
     if status then
-        playAnimation("rbxassetid://134965425664034")
+        --playAnimation("rbxassetid://134965425664034")
         local success, data =  Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0, tick())
         if success and data then
             waktu = waktu or 2
