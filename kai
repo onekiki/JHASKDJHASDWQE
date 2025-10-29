@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V3.2" -- SOLASI KONTOL
+versi = "KAITUN | FIGHT! | V3.3" -- SOLASI KONTOL
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -954,7 +954,6 @@ local function auto_buy()
     local koins = convert(koin)
     if list_inventory_rod["Midnight Rod"] == nil and koins > 50000 then
         print("beli rod midnight")
-        running  = false
         task.wait(10)
         auto_buy_bait(3) -- corrupt
         auto_buy_rod(80) -- midnight rod
@@ -962,7 +961,6 @@ local function auto_buy()
     end
     if list_inventory_rod["Astral Rod"] == nil and koins > 1150000 then
         print("beli rod astral")
-        running  = false
         task.wait(10)
         auto_buy_bait(15) -- corrupt
         auto_buy_rod(5) -- astral rod
@@ -1354,7 +1352,7 @@ if current_rod == "Ghostfinn Rod" then
     select_quest = "jungle"
 elseif current_rod == "Element Rod" then
     select_quest = "custom_teleport"
-elseif current_rod == "Starter Rod" then
+elseif current_rod == "Starter Rod" or current_rod == "Midnight Rod" then
     select_quest = "farming_coin"
 else
     select_quest = "deep_sea"
@@ -1368,13 +1366,13 @@ print("MAIN PROGRAM -------------------------------")
 
 --send_discord("00:00:00",false)
 
-if select_quest == "farming_coin" then
+if running and select_quest == "farming_coin" then
     pesan("farming koin starter")
     teleport(-650, 46, 169)
     face(0)
     local koins = 0
     local c = 0
-    while running and koins < 50100 do
+    while running and koins < 55000 do
         auto_fish(3.5)
         if c % 100 == 0 then
             local coin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
@@ -1386,9 +1384,9 @@ if select_quest == "farming_coin" then
     if running then
         pesan("selesai farming koin")
         auto_buy()
-        best_rod_wear()
-        select_quest = "deep_sea"
+        current_rod = best_rod_wear()
     end
+    task.wait(10)
 end
 
 if running and select_quest == "deep_sea" then
