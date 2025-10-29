@@ -511,6 +511,7 @@ local function teleport(x, y, z)
     if root then
         root.CFrame = CFrame.new(Vector3.new(x, y, z))
     end
+    task.wait(5)
 end
 local function face(yawDeg)
     local char = player.Character or player.CharacterAdded:Wait()
@@ -521,6 +522,7 @@ local function face(yawDeg)
         local dir = Vector3.new(math.sin(yaw), 0, math.cos(yaw))
         root.CFrame = CFrame.lookAt(pos, pos + dir)
     end
+    task.wait(2)
 end
 
 -----------------------------------------------------------------
@@ -843,7 +845,6 @@ end
 local function auto_enchant(ids)
     update_inventory()
     teleport(3243, -1302, 1402)
-    task.wait(6)
     local RollEnchant = Net:WaitForChild("RE/RollEnchant")
     local flag_berhasil_enchant = false
     local wait_enchant = false
@@ -980,27 +981,27 @@ end
 
 --//ANCHOR autofish
 
-local function auto_fish()
+local function auto_fish(waktu)
     math.randomseed(os.time())
     local random_number = math.random() * 2 - 1
     local nilai = math.random() * 0.2 + 0.8
-    playAnimation("rbxassetid://92624107165273") -- RodThrow
+    --playAnimation("rbxassetid://92624107165273") -- RodThrow
     local status, data =  Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(nil,nil,nil,tick())
     if status then
         playAnimation("rbxassetid://134965425664034")
         local success, data =  Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0, tick())
         if success and data then
-            local waktu = data.LastShift - data.StartTime
+            waktu = waktu or 2
             task.wait(waktu)
             count_mancing = count_mancing + 1
             Net:WaitForChild("RE/FishingCompleted"):FireServer()
-            playAnimation("rbxassetid://117319000848286")
+            --playAnimation("rbxassetid://117319000848286")
         else
             warn("InvokeServer gagal atau tidak mengembalikan data.")
             Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
         end
     end
-    task.wait(0.5)
+    task.wait(1)
 end
 
 local function hapus_gui_daily()
@@ -1347,30 +1348,58 @@ if player.Character then
     attachSmartPlatform(player.Character)
 end
 auto_buy()
+
 current_rod = best_rod_wear()
 if current_rod == "Ghostfinn Rod" then
     select_quest = "jungle"
 elseif current_rod == "Element Rod" then
     select_quest = "custom_teleport"
+elseif current_rod == "Starter Rod" then
+    select_quest = "farming_coin"
 else
     select_quest = "deep_sea"
 end
-print(select_quest)
 
+print(select_quest)
 update_quest()
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
 print("MAIN PROGRAM -------------------------------")
 send_discord("00:00:00",false)
 
-if select_quest == "deep_sea" then -- FARMING STONE
+if select_quest == "farming_coin" then
+    pesan("farming koin starter")
+    teleport(-650, 46, 169)
+    face(0)
+    local koins = 0
+    local c = 0
+    while running and koins < 50100 do
+        auto_fish(3.5)
+        if c % 100 == 0 then
+            local coin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
+            koins = convert(coin)
+            pesan("cek koin: " .. coin)
+        end
+        c = c + 1
+    end
+    if running then
+        pesan("selesai farming koin")
+        auto_buy()
+        best_rod_wear()
+        select_quest = "deep_sea"
+    end
+end
+
+if running and select_quest == "deep_sea" then
+    Net:WaitForChild("RF/UpdateAutoSellThreshold"):InvokeServer(5)  -- autosell switch to legendary
+
+    -- farming stone
     total_stone = #list_trade_batu
     local limit_stone = 10
     if total_stone < limit_stone then
         pesan("stone < " .. limit_stone)
         teleport(3263, -1302, 1409)
         face(0)
-        task.wait(3)
         local z = 0
         while running and total_stone < limit_stone do
             auto_fish()
@@ -1381,16 +1410,11 @@ if select_quest == "deep_sea" then -- FARMING STONE
             end
         end
     end
-end
 
-
-if select_quest == "deep_sea" then
-    Net:WaitForChild("RF/UpdateAutoSellThreshold"):InvokeServer(5) -- autosell switch to legendary
     while playing do
         if running and progress_quest1 < 100 then
             pesan(quest_deep_sea(1))
             teleport(-3602, -283, -1612)
-            task.wait(3)
             face(120)
             local z = 1
             while running and progress_quest1 < 100 do
@@ -1400,7 +1424,6 @@ if select_quest == "deep_sea" then
         if running and ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 then
             pesan(quest_deep_sea(3))
             teleport(-3734, -135, -1013)
-            task.wait(3)
             face(0)
             while running and ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 do
                 auto_fish()
@@ -1418,7 +1441,7 @@ if select_quest == "deep_sea" then
         text_timer.Text = "waiting running deep sea quest"
     end
 end
-if select_quest == "jungle" then
+if running and select_quest == "jungle" then
     local exists = workspace["JUNGLE INTERACTIONS"].Doors.TempleDoor:FindFirstChild("DELETE_ME_AFTER_UNLOCK")
 
     if exists then
@@ -1436,7 +1459,6 @@ if select_quest == "jungle" then
             if running and list_inventory_fishs[265] == nil then
                 pesan("farming artifak > 1. Arrow")
                 teleport(884, 7, -370)
-                task.wait(5)
                 face(270)
                 while running and list_inventory_fishs[265] == nil do
                     auto_fish()
@@ -1445,7 +1467,6 @@ if select_quest == "jungle" then
             if running and list_inventory_fishs[266] == nil then
                 pesan("farming artifak > 2. cressent")
                 teleport(1404, 4, 122)
-                task.wait(5)
                 face(0)
                 while running and list_inventory_fishs[266] == nil do
                     auto_fish()
@@ -1454,7 +1475,6 @@ if select_quest == "jungle" then
             if running and list_inventory_fishs[267] == nil then
                 pesan("farming artifak > 3. diamond")
                 teleport(1840, 4, -296)
-                task.wait(5)
                 face(90)
                 while running and  list_inventory_fishs[267] == nil do
                     auto_fish()
@@ -1463,7 +1483,6 @@ if select_quest == "jungle" then
             if running and list_inventory_fishs[271] == nil then
                 pesan("farming artifak > 4. Hourglass")
                 teleport(1490, 6, -848)
-                task.wait(5)
                 face(0)
                 while running and list_inventory_fishs[271] == nil do
                     auto_fish()
@@ -1482,7 +1501,6 @@ if select_quest == "jungle" then
                 if list_inventory_fishs[k] ~= nil then
                     if i == 1 then
                         teleport(897, 8, -361)
-                        task.wait(5)
                         Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
                         task.wait(1)
                         Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Arrow Artifact")
@@ -1490,7 +1508,6 @@ if select_quest == "jungle" then
                     end
                     if i == 2 then
                         teleport(1420, 31, 79)
-                        task.wait(5)
                         Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
                         task.wait(1)
                         Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Crescent Artifact")
@@ -1498,7 +1515,6 @@ if select_quest == "jungle" then
                     end
                     if i == 3 then
                         teleport(1819, 8, -284)
-                        task.wait(5)
                         Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
                         task.wait(1)
                         Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Diamond Artifact")
@@ -1506,7 +1522,6 @@ if select_quest == "jungle" then
                     end
                     if i == 4 then
                         teleport(1485, 8, -861)
-                        task.wait(5)
                         Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
                         task.wait(1)
                         Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Hourglass Diamond Artifact")
@@ -1537,7 +1552,6 @@ if select_quest == "jungle" then
             if running and progress_quest3 < 100 then
                 pesan(quest_jungle(3)) -- inside temple
                 teleport(math.random(1491,1516), -22, -630)
-                task.wait(3)
                 face(0)
                 while running and progress_quest3 < 100 do
                     auto_fish()
@@ -1546,7 +1560,6 @@ if select_quest == "jungle" then
             if running and progress_quest2 < 100 then
                 pesan(quest_jungle(2)) -- in the forest
                 teleport(math.random(1472,1479), 8, -345)
-                task.wait(3)
                 face(30)
                 while running and progress_quest2 < 100 do
                     auto_fish()
@@ -1593,7 +1606,6 @@ while playing do
                     else
                         print("new event position", xx, zz)
                         teleport(xx - 10, 10 ,zz - 10)
-                        task.wait(3)
                         old_pos = xx
                         running = true
                     end
@@ -1612,7 +1624,6 @@ while playing do
     end
     if select_quest == "custom_teleport" then
         teleport(-1956, -440, 7389)
-        task.wait(3)
         face(270)
         running = true
         while playing do
