@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V3.3.2" -- SOLASI KONTOL
+versi = "KAITUN | FIGHT! | V4. Errr" -- ERROR
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -424,7 +424,7 @@ end
 Players.PlayerAdded:Connect(function()
 	checkPlayers()
 end)
-
+--[[
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
 if getconnections then
@@ -432,7 +432,7 @@ if getconnections then
         conn:Disable()
     end
 end
-
+--]]
 local remote = Net:WaitForChild("RE/FishCaught")
 
 -- variabel untuk menyimpan koneksi lama
