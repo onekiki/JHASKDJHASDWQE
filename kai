@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V3.3.1" -- SOLASI KONTOL
+versi = "KAITUN | FIGHT! | V3.3.2" -- SOLASI KONTOL
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
