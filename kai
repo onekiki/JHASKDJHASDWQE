@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V3.1" -- SOLASI KONTOL
+versi = "KAITUN | FIGHT! | V3.1.1" -- SOLASI KONTOL
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1285,10 +1285,6 @@ task.spawn(
                 print("total uang:", koin)
 
             end
-            if num % 250 == 0 then
-               send_discord(running_time,flag_error)
-
-            end
             if num % 300 == 0 then
                 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
                 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -1381,7 +1377,7 @@ if player_connect == false then
     pesan("PROTECTION NOT ACTIVE!!")
 end
 
-send_discord("00:00:00",false)
+--send_discord("00:00:00",false)
 
 if select_quest == "farming_coin" then
     pesan("farming koin starter")
