@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V3.1.1" -- SOLASI KONTOL
+versi = "KAITUN | FIGHT! | V3.2" -- SOLASI KONTOL
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -66,10 +66,9 @@ local master_user2 = "hayati_lelah7"
 local current_rod = ""
 local lastCatchTime = nil
 
-local user_index={["KKHAYAPEB"]={"1429062584899731476","1","13","1"},["KKHAYAMZI"]={"1429062593028292688","1","13","2"},["haytest00"]={"1429062706853445734","1","15","2"},["hayfish_003"]={"1429060874634788905","1","1","1"},["KKHAYAKAD"]={"1429060889373446155","1","1","2"},["haya_0003"]={"1429060904414220390","1","2","1"},["hayfish_004"]={"1429060913188700282","1","2","2"},["haya_0007"]={"1429062033675915264","1","3","1"},["hayfish_005"]={"1429062044036108318","1","3","2"},["hayfish_001"]={"1429062062952157269","1","4","1"},["hayfish_007"]={"1429062093872697492","1","4","2"},["hayfish_002"]={"1429062107747319899","1","5","1"},["KKHAYAIFW"]={"1429062120774959145","1","5","2"},["hayaxd_0009"]={"1429062133127053394","1","6","1"},["KKHAYAWHO"]={"1429062149136715868","1","6","2"},["haya_0001"]={"1429062166853718066","1","7","1"},["hayfish_008"]={"1429062185614704660","1","7","2"},["haya_0002"]={"1429062196264177767","1","8","1"},["hayfish_009"]={"1429062211816394823","1","8","2"},["haya_0004"]={"1429062225452077090","1","9","1"},["KKHAYAYTP"]={"1429062241906331651","1","9","2"},["haya_0006"]={"1429062257714794518","1","10","1"},["KKHAYAMZO"]={"1429062276186374174","1","10","2"},["hayaxd_0008"]={"1429062382478430260","1","11","1"},["KKHAYAKKJ"]={"1429062530852196587","1","11","2"},["hayaxd_0010"]={"1429062559805341836","1","12","1"},["KKHAYAWLD"]={"1429062572979781646","1","12","2"},["KKHAYAOAM"]={"1429062584899731476","1","13","1"},["KKHAYARNV"]={"1429062593028292688","1","13","2"},["KKHAYARAZ"]={"1429062608333574308","1","14","1"},["KKHAYATDS"]={"1429062618076942482","1","14","2"},["KKIKANVUN"]={"1429095994787758210","2","1","1"},["KKIKANLIS"]={"1429096008377438238","2","1","2"},["KKIKANCSZ"]={"1429096020503040083","2","2","1"},["KKIKANWXJ"]={"1429096026912063528","2","2","2"},["KKIKANXVE"]={"1429096036583997461","2","3","1"},["KKIKANMZB"]={"1429096047195586681","2","3","2"},["KKIKANCJR"]={"1429096057710841957","2","4","1"},["KKIKANTDO"]={"1429096070893535366","2","4","2"},["kkhayfish0001"]={"1429096081257664605","2","5","1"},["hayfish_010"]={"1429096091034583100","2","5","2"},["hayfish_006"]={"1429096101847498844","2","6","1"},["KKHAYAIQB"]={"1429096113914249299","2","6","2"}}
+--local user_index={["KKHAYAPEB"]={"1429062584899731476","1","13","1"},["KKHAYAMZI"]={"1429062593028292688","1","13","2"},["haytest00"]={"1429062706853445734","1","15","2"},["hayfish_003"]={"1429060874634788905","1","1","1"},["KKHAYAKAD"]={"1429060889373446155","1","1","2"},["haya_0003"]={"1429060904414220390","1","2","1"},["hayfish_004"]={"1429060913188700282","1","2","2"},["haya_0007"]={"1429062033675915264","1","3","1"},["hayfish_005"]={"1429062044036108318","1","3","2"},["hayfish_001"]={"1429062062952157269","1","4","1"},["hayfish_007"]={"1429062093872697492","1","4","2"},["hayfish_002"]={"1429062107747319899","1","5","1"},["KKHAYAIFW"]={"1429062120774959145","1","5","2"},["hayaxd_0009"]={"1429062133127053394","1","6","1"},["KKHAYAWHO"]={"1429062149136715868","1","6","2"},["haya_0001"]={"1429062166853718066","1","7","1"},["hayfish_008"]={"1429062185614704660","1","7","2"},["haya_0002"]={"1429062196264177767","1","8","1"},["hayfish_009"]={"1429062211816394823","1","8","2"},["haya_0004"]={"1429062225452077090","1","9","1"},["KKHAYAYTP"]={"1429062241906331651","1","9","2"},["haya_0006"]={"1429062257714794518","1","10","1"},["KKHAYAMZO"]={"1429062276186374174","1","10","2"},["hayaxd_0008"]={"1429062382478430260","1","11","1"},["KKHAYAKKJ"]={"1429062530852196587","1","11","2"},["hayaxd_0010"]={"1429062559805341836","1","12","1"},["KKHAYAWLD"]={"1429062572979781646","1","12","2"},["KKHAYAOAM"]={"1429062584899731476","1","13","1"},["KKHAYARNV"]={"1429062593028292688","1","13","2"},["KKHAYARAZ"]={"1429062608333574308","1","14","1"},["KKHAYATDS"]={"1429062618076942482","1","14","2"},["KKIKANVUN"]={"1429095994787758210","2","1","1"},["KKIKANLIS"]={"1429096008377438238","2","1","2"},["KKIKANCSZ"]={"1429096020503040083","2","2","1"},["KKIKANWXJ"]={"1429096026912063528","2","2","2"},["KKIKANXVE"]={"1429096036583997461","2","3","1"},["KKIKANMZB"]={"1429096047195586681","2","3","2"},["KKIKANCJR"]={"1429096057710841957","2","4","1"},["KKIKANTDO"]={"1429096070893535366","2","4","2"},["kkhayfish0001"]={"1429096081257664605","2","5","1"},["hayfish_010"]={"1429096091034583100","2","5","2"},["hayfish_006"]={"1429096101847498844","2","6","1"},["KKHAYAIQB"]={"1429096113914249299","2","6","2"}}
 -- === ScreenGui utama ===
 local screenGui = Instance.new("ScreenGui")
-local player_connect = false
 screenGui.Name = "HAYBOT"
 screenGui.Parent = gui
 
@@ -407,12 +406,6 @@ end
 --//ANCHOR connection
 
 local function checkPlayers()
-     if #Players:GetPlayers() > 1 then
-        pesan("PLAYER LEBIH DARI 1")
-        running = false
-    else
-        running = true
-    end
     local LocalPlayer = Players.LocalPlayer
 	for _, X in pairs(Players:GetPlayers()) do
         if X.name ~= player.Name then 
@@ -429,11 +422,6 @@ local function checkPlayers()
 end
 
 Players.PlayerAdded:Connect(function()
-    player_connect = true
-	checkPlayers()
-end)
-
-Players.PlayerRemoving:Connect(function()
 	checkPlayers()
 end)
 
@@ -1259,11 +1247,11 @@ task.spawn(
                     text_timer.Text = "🟢 " .. delta .. " sec."
                 else
                     flag_error = true
-                    mainFrame.BackgroundColor3 = Color3.fromRGB(170, 16, 16)
                     text_timer.Text = "🔴 " .. delta .. " sec."
                 end
                 if delta > 180 then
-                    rejoinSameServer()
+                    pesan("! OVER !")
+                    --rejoinSameServer()
                     task.wait(60)
                 end
             end
@@ -1273,7 +1261,6 @@ task.spawn(
                 task.wait(0.5)
                 Net:WaitForChild("RE/FishingCompleted"):FireServer()
                 task.wait(0.5)
-                mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
             end
             if num % 200 == 0 then
                 print("------ update inventory -------")
@@ -1303,6 +1290,12 @@ task.spawn(
                 enable_auto_collect = false -- turn off auto collect
                 lastCatchTime = os.clock()
                 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+            end
+            if num % 3 == 0 then
+                if #Players:GetPlayers() > 1 then
+                    pesan("PLAYER LEBIH DARI 1")
+                    running = false
+                end
             end
             num = num + 1
             task.wait(1)
@@ -1372,10 +1365,6 @@ update_quest()
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
 print("MAIN PROGRAM -------------------------------")
-
-if player_connect == false then
-    pesan("PROTECTION NOT ACTIVE!!")
-end
 
 --send_discord("00:00:00",false)
 
