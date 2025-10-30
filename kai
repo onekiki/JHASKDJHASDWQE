@@ -1238,6 +1238,8 @@ task.spawn(
             local currentTime = os.clock()
             running_time = formatTime(math.floor(getOnlineTime()))
             text_jam.Text = running_time
+            text_timer.Text = gui:WaitForChild("Inventory"):WaitForChild("Main"):WaitForChild("Top"):WaitForChild("Options"):WaitForChild("Fish"):WaitForChild("Label"):WaitForChild("BagSize").Text
+            --[[
             if running and lastCatchTime then
                 local delta = currentTime - lastCatchTime
                 delta = math.floor(delta * 10 + 0.5) / 10
@@ -1254,6 +1256,7 @@ task.spawn(
                     task.wait(60)
                 end
             end
+            --]]
             if flag_error == true and num % 15 == 0 then
                 task.wait(0.5)
                 Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
