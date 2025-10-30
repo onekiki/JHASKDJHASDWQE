@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.0.0"
+versi = "KAITUN | FIGHT! | V4.0.1"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -102,18 +102,18 @@ text_rod.Font = Enum.Font.RobotoMono
 text_rod.TextScaled = true
 text_rod.BackgroundTransparency = 1
 text_rod.TextXAlignment = Enum.TextXAlignment.Center
-text_rod.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_rod.TextColor3 = Color3.fromRGB(123, 72, 218)
 text_rod.Parent = mainFrame
 
 local text_coin = Instance.new("TextLabel")
 text_coin.Size =  UDim2.new(0.5, 0, 0.1, 0)
-text_coin.Position = UDim2.new(0.5, 0, 0.3, 0)
+text_coin.Position = UDim2.new(0.5, 0, 0.35, 0)
 text_coin.Text = "COIN"
 text_coin.Font = Enum.Font.RobotoMono
 text_coin.TextScaled = true
 text_coin.BackgroundTransparency = 1
 text_coin.TextXAlignment = Enum.TextXAlignment.Center
-text_coin.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_coin.TextColor3 = Color3.fromRGB(21, 151, 49)
 text_coin.Parent = mainFrame
 
 local text_info = Instance.new("TextLabel")
