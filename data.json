@@ -1,20 +1,21 @@
 {
-	"listening": true,
-	"global_enable": true,
-	"farm_event": false,
-	"farm_quest": false,
-	"auto_trade": false,
-	"auto_sell": true,
-	"selected_island": "crescent",
-	"island": {
-		"jungle": [
-			"1485, 8, -861, 0"
-		],
-		"custom": [
-			"0, 0, 0, 0"
-		],
-		"crescent": [
-			"1404, 4, 122, 0"
-		]
-	}
+  "FNKAFQUAVB"     : ["2","1","1","https://www.roblox.com/share?code=dc3c87055edb064c8f8312bc03b203ea&type=Server"],
+  "ZEZLKBFHCJ"     : ["2","1","2","https://www.roblox.com/share?code=592635937d40e2499d5e36eace26d48e&type=Server"],
+  "EBNQNVJYDI"     : ["2","1","3","https://www.roblox.com/share?code=8f9bf7f1049aea43b5ee742d1485279f&type=Server"],
+  
+  "HLUUHKQKPM"     : ["2","2","1","https://www.roblox.com/share?code=50a3a7a1c94284478e53e150598d9315&type=Server"],
+  "HVCGPRAUJN"     : ["2","2","2","https://www.roblox.com/share?code=8d73148776e52445ae3dba8578e3c0ae&type=Server"],
+  "KFIBFJKXJY"     : ["2","2","3","https://www.roblox.com/share?code=138131bc0c48a44fb17ef07aa1627d24&type=Server"],
+  
+  "JTLHVBYGHD"     : ["2","3","1","https://www.roblox.com/share?code=06db3eacb80ff545b6dd7d8300ca6507&type=Server"],
+  "NCGPQIOZSM"     : ["2","3","2","https://www.roblox.com/share?code=2102133b49820f4ab031537bda34eb1d&type=Server"],
+  "FVEEKNASES"     : ["2","3","3","https://www.roblox.com/share?code=a2b8dffba956bc4185e1742868c66898&type=Server"],
+  
+  "ASNGTDFZQA"    : ["2","4","1","https://www.roblox.com/share?code=58df7dbb8894354a898a86980987c85f&type=Server"],
+  "BDTXXLVSAY"    : ["2","4","2","https://www.roblox.com/share?code=fc26726b38790f4faf0e8c5b64a5e708&type=Server"],
+  "EVPREZSUDC"    : ["2","4","3","https://www.roblox.com/share?code=d40282a84e753c41896801f4aa90db2b&type=Server"],
+  
+  "AJNHWSOIBI"    : ["2","5","1","https://www.roblox.com/share?code=7084f7bb7a5cea498a064bdb4284471f&type=Server"],
+  "TVNYUDPATY"    : ["2","5","2","https://www.roblox.com/share?code=354aa1f452508d44816e730a46d0e421&type=Server"],
+  "GBYCCLTPTQ"    : ["2","5","3","https://www.roblox.com/share?code=34e1bf520c7c574f85e04c0f53912c14&type=Server"]
 }
