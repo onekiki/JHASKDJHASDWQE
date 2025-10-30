@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.0.1"
+versi = "KAITUN | FIGHT! | V4.0.2"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1149,6 +1149,7 @@ local function display_inventory()
         return "tidak ada secret :("
     end
 end
+
 --//ANCHOR discord 
 local function send_discord(waktu,error)
     local progress = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4
@@ -1192,7 +1193,7 @@ local function send_discord(waktu,error)
         editEmbed(link, id, title, detail, warna, game.JobId)
     end
 end
---[[
+
 local function send_Data(running_time, koin_secret, koin_myth, activity, total_fishing,quest)
     local progress = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4
     local nama = player.Name
@@ -1298,7 +1299,7 @@ task.spawn(
                 print("quest progress: ", progressed)
                 print("total mythic : ", #list_mythic)
                 print("total uang:", koin)
-
+                
             end
             if num % 300 == 0 then
                 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
@@ -1325,6 +1326,9 @@ task.spawn(
                     running = false
                 end
             end
+            if num % 30 == 0 then
+                send_Data(running_time, konvert_harga(total_harga_secret), konvert_harga(total_harga_mythic), last_msg, 0,select_quest)
+            end
             num = num + 1
             task.wait(1)
         end
@@ -1346,7 +1350,6 @@ hapus_gui_daily()
 SetLowGraphics()
 
 print("INISIALISASI --------------------------")
-
 local countdown = 5
 text_progress.Text = "Auto Play in: "
 if running then
@@ -1360,7 +1363,7 @@ if running then
         end
     end
 end
-
+send_Data("0", "0", "0", "0", "0","0")
 while not running do
     text_progress.Text = "Waiting Running..."
     task.wait(15)
