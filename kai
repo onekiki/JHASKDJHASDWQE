@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | FIX 1"
+versi = "KAITUN | FIGHT! | V4.0.0"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -85,7 +85,7 @@ mainFrame.Parent = screenGui
 
 local text_jam = Instance.new("TextLabel")
 text_jam.Size =  UDim2.new(1, 0, 0.1, 0)
-text_jam.Position = UDim2.new(0, 0, 0.3, 0)
+text_jam.Position = UDim2.new(0, 0, 0.2, 0)
 text_jam.Text = "00:00:00"
 text_jam.Font = Enum.Font.RobotoMono
 text_jam.TextScaled = true
@@ -93,6 +93,28 @@ text_jam.BackgroundTransparency = 1
 text_jam.TextXAlignment = Enum.TextXAlignment.Center
 text_jam.TextColor3 = Color3.fromRGB(230, 255, 1)
 text_jam.Parent = mainFrame
+
+local text_rod = Instance.new("TextLabel")
+text_rod.Size =  UDim2.new(0.5, 0, 0.1, 0)
+text_rod.Position = UDim2.new(0, 0, 0.35, 0)
+text_rod.Text = "ROD"
+text_rod.Font = Enum.Font.RobotoMono
+text_rod.TextScaled = true
+text_rod.BackgroundTransparency = 1
+text_rod.TextXAlignment = Enum.TextXAlignment.Center
+text_rod.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_rod.Parent = mainFrame
+
+local text_coin = Instance.new("TextLabel")
+text_coin.Size =  UDim2.new(0.5, 0, 0.1, 0)
+text_coin.Position = UDim2.new(0.5, 0, 0.3, 0)
+text_coin.Text = "COIN"
+text_coin.Font = Enum.Font.RobotoMono
+text_coin.TextScaled = true
+text_coin.BackgroundTransparency = 1
+text_coin.TextXAlignment = Enum.TextXAlignment.Center
+text_coin.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_coin.Parent = mainFrame
 
 local text_info = Instance.new("TextLabel")
 text_info.Size = UDim2.new(1, 50, 0.15, 0)
@@ -947,6 +969,7 @@ local function update_quest()
     text_progress.Text = x
     print(x)
 end
+--//ANCHOR auto buy
 local function auto_buy()
     print("start auto buy")
     koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
@@ -955,6 +978,7 @@ local function auto_buy()
         print("beli rod midnight")
         task.wait(10)
         auto_buy_bait(3) -- corrupt
+        wear_bait(3)
         auto_buy_rod(80) -- midnight rod
         best_rod_wear()
     end
@@ -962,6 +986,7 @@ local function auto_buy()
         print("beli rod astral")
         task.wait(10)
         auto_buy_bait(15) -- corrupt
+        wear_bait(15)
         auto_buy_rod(5) -- astral rod
         best_rod_wear()
     end
@@ -975,7 +1000,7 @@ local function auto_buy()
     end
 end
 
---//ANCHOR autofish
+--//ANCHOR auto fish
 
 local function auto_fish(waktu)
     math.randomseed(os.time())
@@ -1226,7 +1251,7 @@ RF.OnClientInvoke = function(...)
         return "OK"
     end
 end
---update_inventory()
+
 task.spawn(
     function()
         local num = 1
@@ -1267,6 +1292,9 @@ task.spawn(
                 update_inventory()
                 update_quest()
                 local progressed = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4)/4
+                koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
+                text_coin.Text = koin
+                text_rod.Text = current_rod
                 print("quest progress: ", progressed)
                 print("total mythic : ", #list_mythic)
                 print("total uang:", koin)
@@ -1359,7 +1387,9 @@ elseif current_rod == "Astral Rod" then
 else
     select_quest = "farming_coin"
 end
-
+text_rod.Text = current_rod
+koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
+text_coin.Text = koin
 print(select_quest)
 update_quest()
 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
