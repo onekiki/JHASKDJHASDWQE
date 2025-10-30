@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4. Errr" -- ERROR
+versi = "KAITUN | FIGHT! | FIX 1"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -424,7 +424,6 @@ end
 Players.PlayerAdded:Connect(function()
 	checkPlayers()
 end)
---[[
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
 if getconnections then
@@ -432,7 +431,6 @@ if getconnections then
         conn:Disable()
     end
 end
---]]
 local remote = Net:WaitForChild("RE/FishCaught")
 
 -- variabel untuk menyimpan koneksi lama
@@ -1238,8 +1236,8 @@ task.spawn(
             local currentTime = os.clock()
             running_time = formatTime(math.floor(getOnlineTime()))
             text_jam.Text = running_time
-            text_timer.Text = gui:WaitForChild("Inventory"):WaitForChild("Main"):WaitForChild("Top"):WaitForChild("Options"):WaitForChild("Fish"):WaitForChild("Label"):WaitForChild("BagSize").Text
-            --[[
+            --text_timer.Text = gui:WaitForChild("Inventory"):WaitForChild("Main"):WaitForChild("Top"):WaitForChild("Options"):WaitForChild("Fish"):WaitForChild("Label"):WaitForChild("BagSize").Text
+            
             if running and lastCatchTime then
                 local delta = currentTime - lastCatchTime
                 delta = math.floor(delta * 10 + 0.5) / 10
@@ -1256,7 +1254,7 @@ task.spawn(
                     task.wait(60)
                 end
             end
-            --]]
+           
             if flag_error == true and num % 15 == 0 then
                 task.wait(0.5)
                 Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
@@ -1356,10 +1354,10 @@ if current_rod == "Ghostfinn Rod" then
     select_quest = "jungle"
 elseif current_rod == "Element Rod" then
     select_quest = "custom_teleport"
-elseif current_rod == "Starter Rod" then
-    select_quest = "farming_coin"
-else
+elseif current_rod == "Astral Rod" then
     select_quest = "deep_sea"
+else
+    select_quest = "farming_coin"
 end
 
 print(select_quest)
@@ -1374,21 +1372,21 @@ if running and select_quest == "farming_coin" then
     pesan("farming koin starter")
     teleport(-650, 46, 169)
     face(0)
-    local koins = 0
     local c = 0
-    while running and koins < 55000 do
+    while running do
         auto_fish(3.5)
-        if c % 100 == 0 then
-            local coin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
-            koins = convert(coin)
-            pesan("cek koin: " .. coin)
+        if c % 200 == 0 then
+            auto_buy()
+            current_rod = best_rod_wear()
+            if current_rod == "Astral Rod" then
+                break
+            end
         end
         c = c + 1
     end
     if running then
         pesan("selesai farming koin")
-        auto_buy()
-        current_rod = best_rod_wear()
+        select_quest = "deep_sea"
     end
     task.wait(10)
 end
