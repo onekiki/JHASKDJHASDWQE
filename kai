@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.0.2"
+versi = "KAITUN | FIGHT! | V4.1.0"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1150,7 +1150,6 @@ local function display_inventory()
     end
 end
 
---//ANCHOR discord 
 local function send_discord(waktu,error)
     local progress = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4
     local rod = current_rod
@@ -1193,7 +1192,7 @@ local function send_discord(waktu,error)
         editEmbed(link, id, title, detail, warna, game.JobId)
     end
 end
-
+--//ANCHOR send web data 
 local function send_Data(running_time, koin_secret, koin_myth, activity, total_fishing,quest)
     local progress = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4
     local nama = player.Name
@@ -1326,8 +1325,9 @@ task.spawn(
                     running = false
                 end
             end
-            if num % 30 == 0 then
-                send_Data(running_time, konvert_harga(total_harga_secret), konvert_harga(total_harga_mythic), last_msg, 0,select_quest)
+            if num % 100 == 0 then
+                print("kirim data at: ", running_time)
+                send_Data(running_time, konvert_harga(total_harga_secret), konvert_harga(total_harga_mythic), last_msg, count_mancing, select_quest)
             end
             num = num + 1
             task.wait(1)
@@ -1363,7 +1363,7 @@ if running then
         end
     end
 end
-send_Data("0", "0", "0", "0", "0","0")
+send_Data("0", "0", "0", "START", "0","0")
 while not running do
     text_progress.Text = "Waiting Running..."
     task.wait(15)
