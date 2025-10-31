@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.1.0"
+versi = "KAITUN | FIGHT! | V4.2.0"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -62,7 +62,7 @@ local jobId = game.JobId
 
 local select_quest = "none"
 local master_user = "hayfish96"
-local master_user2 = "hayati_lelah7"
+local master_user2 = "haycollector"
 local current_rod = ""
 local lastCatchTime = nil
 
@@ -445,6 +445,11 @@ end
 
 Players.PlayerAdded:Connect(function()
 	checkPlayers()
+end)
+Players.PlayerRemoving:Connect(function()
+    if #Players:GetPlayers() == 1 then
+        running = true
+    end
 end)
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
@@ -1313,7 +1318,7 @@ task.spawn(
                 task.wait(10)
                 custom_trade(list_secret, 0)
                 task.wait(1)
-                --custom_trade(list_mythic, 10)
+                custom_trade(list_mythic, 0)
                 running = true
                 enable_auto_collect = false -- turn off auto collect
                 lastCatchTime = os.clock()
@@ -1327,7 +1332,7 @@ task.spawn(
             end
             if num % 100 == 0 then
                 print("kirim data at: ", running_time)
-                send_Data(running_time, konvert_harga(total_harga_secret), konvert_harga(total_harga_mythic), last_msg, count_mancing, select_quest)
+                send_Data(running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing, select_quest)
             end
             num = num + 1
             task.wait(1)
