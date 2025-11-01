@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.2.1"
+versi = "KAITUN | FIGHT! | V4.2.2" -- disable autobuy bait for astral
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1012,8 +1012,8 @@ local function auto_buy()
     if list_inventory_rod["Astral Rod"] == nil and koins > 1150000 then
         print("beli rod astral")
         task.wait(10)
-        auto_buy_bait(15) -- corrupt
-        wear_bait(15)
+        --auto_buy_bait(15) -- corrupt
+        --wear_bait(15)
         auto_buy_rod(5) -- astral rod
         best_rod_wear()
     end
