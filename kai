@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.2.0"
+versi = "KAITUN | FIGHT! | V4.2.1"
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -408,8 +408,9 @@ local list_rod = {}
 for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
     if child:IsA("ModuleScript") then
         local success, data = pcall(require, child)
-        if success and data.Data.Type == "Fishes" then
+        if success and data.Data.Type == "Fish" then
             list_ikan[data.Data.Id] = {
+                type = data.Data.Type,
                 harga = data.SellPrice,
                 tier = data.Data.Tier,
                 nama = data.Data.Name,
@@ -710,7 +711,25 @@ local function editEmbed(link, message_id, newTitle, newDescription, warna, job_
 		return false
 	end
 end
+local function dump_table(t, indent)
+    indent = indent or 0
+    local formatting = string.rep("  ", indent)
 
+    if type(t) ~= "table" then
+        print(formatting .. tostring(t))
+        return
+    end
+
+    for k, v in pairs(t) do
+        if type(v) == "table" then
+            print(formatting .. tostring(k) .. " = {")
+            dump_table(v, indent + 1)
+            print(formatting .. "}")
+        else
+            print(formatting .. tostring(k) .. " = " .. tostring(v))
+        end
+    end
+end
 --//ANCHOR UPDATE INVENTORY
 local function update_inventory()
     local Client = Replion.Client
@@ -745,7 +764,6 @@ local function update_inventory()
                 if item.Id == 10 then
                     table.insert(list_trade_batu, item.UUID)
                 end
-                
                 if list_ikan[item.Id] then
                     local berat = item.Metadata and item.Metadata.Weight or 0
                     local nama = list_ikan[item.Id].nama
@@ -753,11 +771,15 @@ local function update_inventory()
 
                     if list_ikan[item.Id].tier == 7 then -- total ikan secret
                         table.insert(list_secret, uuid)
-                        total_harga_secret = total_harga_secret + list_ikan[item.Id].harga
+                        if list_ikan[item.Id].harga then
+                            total_harga_secret = total_harga_secret + list_ikan[item.Id].harga
+                        end
                     end
                     if list_ikan[item.Id].tier == 6 then --total ikan mythic
                         table.insert(list_mythic, uuid)
-                        total_harga_mythic = total_harga_mythic + list_ikan[item.Id].harga
+                        if list_ikan[item.Id].harga then
+                            total_harga_mythic = total_harga_mythic + list_ikan[item.Id].harga
+                        end
                     end
                     if list_ikan[item.Id].tier > 6 then -- LIST TRADE
                         local text_sec = listing .. ". " .. nama .. " - " .. konvert_harga(berat) .. " Kg"
@@ -1368,7 +1390,7 @@ if running then
         end
     end
 end
-send_Data("0", "0", "0", "START", "0","0")
+send_Data("0", total_harga_secret, total_harga_mythic, "START", "0","0")
 while not running do
     text_progress.Text = "Waiting Running..."
     task.wait(15)
