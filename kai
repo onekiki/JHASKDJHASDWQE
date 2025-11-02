@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.2.4" -- fix auto trade 
+versi = "KAITUN | FIGHT! | V4.2.5" -- fix auto trade 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -49,6 +49,8 @@ local list_trade_batu = {}
 local list_inv_item_uuid = {}
 local playing = true
 local event_action = false
+local enable_auto_collect = false
+
 local url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/quest.json"
 local WEBHOOK_PC1 = "https://discord.com/api/webhooks/1429060824663593055/rITUSfaZzK-Q5fYr0DeGRu3kvWnDg8jro9vQmnNS6x6h6qVFMLEzDqi9LY6cFAW_I54w"
 local WEBHOOK_PC2 = "https://discord.com/api/webhooks/1429095665866375322/Oj7vQ74IH2HvNwUIGklYRIMjLmkUqdYhHU_pn4_IBh_UpnI_9w1xAGX6fiV4kXSnULZd"
@@ -1065,8 +1067,10 @@ end
 --//ANCHOR OPSI FUNCTION
 
 function opsi(index)
-    running = false
-    task.wait(10)
+    if running then
+        pesan("please stop running !")
+        return
+    end
     if index == 1 then
         custom_trade(list_secret, 0)
     elseif index == 2 then
@@ -1160,7 +1164,6 @@ function opsi(index)
             end
         end)
     end
-    running = true
     lastCatchTime = os.clock()
 end
 local function display_inventory()
@@ -1260,23 +1263,6 @@ end
 --------------------------------------------------------------------
 --- SPAWN
 --------------------------------------------------------------------
-local enable_auto_collect = false
-local RF = Net:WaitForChild("RF/AwaitTradeResponse")
-RF.OnClientInvoke = function(...)
-    local args = {...}
-    local maybeData = args[2]
-    if type(maybeData) == "table" then
-        print("Trade offer:", maybeData.Id, maybeData.UUID)
-    end
-    if maybeData.Id ~= 10 then
-        enable_auto_collect = true
-        return "CANCEL"
-    else
-        task.wait(4.5)
-        return "OK"
-    end
-end
-
 task.spawn(
     function()
         local num = 1
@@ -1313,19 +1299,16 @@ task.spawn(
             if num % 200 == 0 then
                 print("------ update inventory -------")
                 update_inventory()
-                update_quest()
-                local progressed = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4)/4
                 koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
                 text_coin.Text = koin
                 text_rod.Text = current_rod
-                print("quest progress: ", progressed)
                 print("total mythic : ", #list_mythic)
                 print("total uang:", koin)
                 
             end
             if running and num % 300 == 0 then
+                update_quest()
                 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
-                mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
                 task.wait(2)
                 Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
                 task.wait(2)
@@ -1375,7 +1358,7 @@ update_inventory()
 hapus_gui_daily()
 SetLowGraphics()
 
-print("INISIALISASI --------------------------")
+print("INISIALISASI ------COUNTDOWN")
 local countdown = 5
 text_progress.Text = "Auto Play in: "
 if running then
@@ -1397,6 +1380,22 @@ while not running do
 end
 
 if running then
+
+    local RF = Net:WaitForChild("RF/AwaitTradeResponse")
+    RF.OnClientInvoke = function(...)
+        local args = {...}
+        local maybeData = args[2]
+        if type(maybeData) == "table" then
+            print("Trade offer:", maybeData.Id, maybeData.UUID)
+        end
+        if maybeData.Id ~= 10 then
+            enable_auto_collect = true
+            return "CANCEL"
+        else
+            task.wait(4.5)
+            return "OK"
+        end
+    end
 
     checkPlayers()
     toggle3DAndUI()
