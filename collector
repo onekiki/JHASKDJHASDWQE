@@ -1,7 +1,6 @@
-local versi = "V1.0.6"
+local versi = "V2.0.0"
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
 local LocalPlayer = Players.LocalPlayer
 local Net =
     ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild(
@@ -13,8 +12,7 @@ local Client = require(ReplicatedStorage.Packages.Replion).Client
 local ItemUtility = require(ReplicatedStorage.Shared.ItemUtility)
 local TierUtility = require(ReplicatedStorage.Shared.TierUtility)
 
-local url = "https://api.jsonsilo.com/public/4a9f3ece-7c44-4fa6-92f3-98721480bfc0"
-
+print("halo")
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "PlayerListGui"
@@ -129,12 +127,13 @@ Layout.FillDirection = Enum.FillDirection.Vertical
 Layout.HorizontalAlignment = Enum.HorizontalAlignment.Left
 Layout.VerticalAlignment = Enum.VerticalAlignment.Top
 Layout.Parent = Scroll
+Layout.SortOrder = Enum.SortOrder.LayoutOrder
 
 local list_ikan = {}
 for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
     if child:IsA("ModuleScript") then
         local success, data = pcall(require, child)
-        if success and data.Data.Type == "Fishes" then
+        if success and data.Data.Type == "Fish" then
             list_ikan[data.Data.Id] = {
                 harga = data.SellPrice,
                 tier = data.Data.Tier,
@@ -167,70 +166,6 @@ RF.OnClientInvoke = function(...)
     Scroll1.CanvasSize = UDim2.new(0, 0, 0, UIList.AbsoluteContentSize.Y)
     return "OK"
 end
-local function getJSON(url)
-    local response =
-        request(
-        {
-            Url = url,
-            Method = "GET",
-            Headers = {
-                ["Accept"] = "application/json"
-            }
-        }
-    )
-
-    if not response.Success then
-        warn("Request gagal:", response.StatusCode)
-        return nil
-    end
-
-    local ok, data =
-        pcall(
-        function()
-            return HttpService:JSONDecode(response.Body)
-        end
-    )
-
-    if ok then
-        return data
-    else
-        warn("Gagal decode JSON:", data)
-        return nil
-    end
-end
-
--- contoh pemakaian
-
-local last_json_data = nil
-local function ambilData()
-    for i = 1, 3 do
-        local success, result =
-            pcall(
-            function()
-                return getJSON(url)
-            end
-        )
-        if success and result then
-            last_json_data = result
-            return result
-        else
-            warn(("Percobaan %d gagal"):format(i))
-            task.wait(1)
-        end
-    end
-    warn("Semua percobaan gagal, pakai data lama.")
-    return last_json_data
-end
-local json = ambilData()
-local list_job = {}
-for i, p in ipairs(json) do
-    if p.nama then
-        list_job[p.nama] = {
-            id = p.id,
-            nama = p.nama
-        } 
-    end
-end
 
 local function teleport(x, y, z)
     local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -240,6 +175,7 @@ local function teleport(x, y, z)
         print("✅ Teleported to", x, y, z)
     end
 end
+
 local function getPositionByName(name)
     local plr = Players:FindFirstChild(name)
     if not plr then return nil, "player not found" end
@@ -309,102 +245,28 @@ local function send_handshake(user)
     Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, get_uuid)
 end
 
---=== Fungsi pembuat tombol player ===--
-local function createPlayerButton(judul, nama)
-	local button = Instance.new("TextButton")
-	button.Name =  nama .. "_Button"
-	button.Size = UDim2.new(1, -10, 0, 30)
-	button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-	button.TextColor3 = Color3.fromRGB(255, 255, 255)
-	button.Text = judul
-	button.Font = Enum.Font.SourceSansBold
-	button.TextSize = 18
-	button.Parent = Scroll
+print("auto teleport")
+nama = nil
+for i, player in ipairs(Players:GetPlayers()) do
+	if player ~= LocalPlayer then
+		nama = player.Name
+	end
+end
 
-	button.MouseButton1Click:Connect(function()
-         for _, child in ipairs(Scroll1:GetChildren()) do
-            if child:IsA("TextButton") then
-                child:Destroy()
-            end
-        end
-        x = list_job[nama].id
-        y = tostring(game.JobId)
-        print(x .. "|" .. y)
-
-        if x == y then
-            print("teleport ke user")
-            local pos, err = getPositionByName(nama)
-            if pos then
-                print("Posisi sekarang:", pos)
-                local x = pos.X
-                local y = pos.Y
-                local z = pos.Z
-                teleport(x,y,z)
-                task.wait(5)
-                local existing = Players:FindFirstChild(nama)
-                if existing then
-                    send_handshake(existing.UserId)
-                else
-                    print("player tidak ada")
-                end
-            end
+if nama then
+    local pos, err = getPositionByName(nama)
+    if pos then
+        print("Posisi sekarang:", pos)
+        local x = pos.X
+        local y = pos.Y
+        local z = pos.Z
+        teleport(x,y,z)
+        task.wait(5)
+        local existing = Players:FindFirstChild(nama)
+        if existing then
+            send_handshake(existing.UserId)
         else
-            print("join private server")
-            
-            local TeleportService = game:GetService("TeleportService")
-            local player = game.Players.LocalPlayer
-
-            local placeId = game.PlaceId
-            local serverCode = list_job[nama].id
-
-            --TeleportService:TeleportToPrivateServer(placeId, serverCode, {player})
-            TeleportService:TeleportToPlaceInstance(placeId, serverCode, player)
+            print("player tidak ada")
         end
-	end)
+    end
 end
-
-local function refresh()
-    for i, p in ipairs(json) do
-        if p.nama then
-            local jdl = p.nama .." |s ".. p.s[1] .." - m ".. p.m[2]
-            createPlayerButton(jdl, p.nama)
-        end
-    end
-    for _, player in ipairs(Players:GetPlayers()) do
-        if list_job[player.Name] then
-            if player.Name == list_job[player.Name].nama then
-                local btn = Scroll:FindFirstChild(player.Name .. "_Button")
-                if btn then
-                    btn.BackgroundColor3 = Color3.fromRGB(180, 27, 27)
-                end
-            end
-        end
-    end
-    Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
-end
-
-refresh()
-
-ReloadButton.MouseButton1Click:Connect(function()
-    for _, child in ipairs(Scroll:GetChildren()) do
-        if child:IsA("TextButton") then
-            child:Destroy()
-        end
-    end
-    print("reload")
-
-    -- ambil ulang data terbaru dari server
-    json = ambilData()
-    list_job = {}
-
-    for i, p in ipairs(json) do
-        if p.nama then
-            list_job[p.nama] = {
-                id = p.id,
-                nama = p.nama
-            }
-        end
-    end
-
-    refresh()
-end)
