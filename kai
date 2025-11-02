@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.2.2" -- disable autobuy bait for astral
+versi = "KAITUN | FIGHT! | V4.2.3" -- fix auto trade 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1327,7 +1327,7 @@ task.spawn(
                 print("total uang:", koin)
                 
             end
-            if num % 300 == 0 then
+            if running and num % 300 == 0 then
                 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
                 mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
                 task.wait(2)
@@ -1336,17 +1336,20 @@ task.spawn(
                 hapus_gui_daily()
             end
             if enable_auto_collect == true then
+                pesan("start auto collect")
+                enable_auto_collect = false -- turn off auto collect
                 running = false
                 task.wait(10)
                 custom_trade(list_secret, 0)
                 task.wait(1)
                 custom_trade(list_mythic, 0)
                 running = true
-                enable_auto_collect = false -- turn off auto collect
                 lastCatchTime = os.clock()
                 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+                pesan("SELESAI TRADE")
+                send_Data(running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing, select_quest)
             end
-            if num % 3 == 0 then
+            if running and num % 5 == 0 then
                 if #Players:GetPlayers() > 1 then
                     pesan("PLAYER LEBIH DARI 1")
                     running = false
