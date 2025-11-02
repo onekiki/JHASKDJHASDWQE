@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.2.3" -- fix auto trade 
+versi = "KAITUN | FIGHT! | V4.2.4" -- fix auto trade 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -980,7 +980,6 @@ local function quest_jungle(index)
 end
 --// ANCHOR UPDATE QUEST
 local function update_quest()
-    print("quest:", select_quest)
     if select_quest == "jungle" then
         progress_quest1 = cek_quest(quest_jungle(1))
         progress_quest2 = cek_quest(quest_jungle(2))
@@ -994,7 +993,6 @@ local function update_quest()
     end
     local x = select_quest .. " > " .. progress_quest1 .. " - " .. progress_quest2 .. " - " .. progress_quest3 .. " - " .. progress_quest4
     text_progress.Text = x
-    print(x)
 end
 --//ANCHOR auto buy
 local function auto_buy()
@@ -1288,8 +1286,6 @@ task.spawn(
             local currentTime = os.clock()
             running_time = formatTime(math.floor(getOnlineTime()))
             text_jam.Text = running_time
-            --text_timer.Text = gui:WaitForChild("Inventory"):WaitForChild("Main"):WaitForChild("Top"):WaitForChild("Options"):WaitForChild("Fish"):WaitForChild("Label"):WaitForChild("BagSize").Text
-            
             if running and lastCatchTime then
                 local delta = currentTime - lastCatchTime
                 delta = math.floor(delta * 10 + 0.5) / 10
@@ -1335,7 +1331,7 @@ task.spawn(
                 task.wait(2)
                 hapus_gui_daily()
             end
-            if enable_auto_collect == true then
+            if running and enable_auto_collect == true then
                 pesan("start auto collect")
                 enable_auto_collect = false -- turn off auto collect
                 running = false
@@ -1400,33 +1396,36 @@ while not running do
     if not playing then break end
 end
 
-checkPlayers()
-toggle3DAndUI()
+if running then
 
-text_progress.Text = "Start auto run script "
-player.CharacterAdded:Connect(attachSmartPlatform)
-if player.Character then
-    attachSmartPlatform(player.Character)
+    checkPlayers()
+    toggle3DAndUI()
+
+    text_progress.Text = "Start auto run script "
+    player.CharacterAdded:Connect(attachSmartPlatform)
+    if player.Character then
+        attachSmartPlatform(player.Character)
+    end
+    auto_buy()
+
+    current_rod = best_rod_wear()
+    if current_rod == "Ghostfinn Rod" then
+        select_quest = "jungle"
+    elseif current_rod == "Element Rod" then
+        select_quest = "custom_teleport"
+    elseif current_rod == "Astral Rod" then
+        select_quest = "deep_sea"
+    else
+        select_quest = "farming_coin"
+    end
+    text_rod.Text = current_rod
+    koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
+    text_coin.Text = koin
+    print(select_quest)
+    update_quest()
+    Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+
 end
-auto_buy()
-
-current_rod = best_rod_wear()
-if current_rod == "Ghostfinn Rod" then
-    select_quest = "jungle"
-elseif current_rod == "Element Rod" then
-    select_quest = "custom_teleport"
-elseif current_rod == "Astral Rod" then
-    select_quest = "deep_sea"
-else
-    select_quest = "farming_coin"
-end
-text_rod.Text = current_rod
-koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
-text_coin.Text = koin
-print(select_quest)
-update_quest()
-Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
-
 print("MAIN PROGRAM -------------------------------")
 
 --send_discord("00:00:00",false)
@@ -1708,7 +1707,6 @@ while playing do
 end
 running = false
 event_action = false
-print("running : ", running)
 print("-----------------end-------------")
 --]]
 -----------------------------------------------------------------
