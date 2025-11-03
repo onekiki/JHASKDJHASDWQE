@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.2.5" -- fix auto trade 
+versi = "KAITUN | FIGHT! | V4.2.6" -- teleport NEW EVENT mountain hallow
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -451,6 +451,7 @@ Players.PlayerAdded:Connect(function()
 end)
 Players.PlayerRemoving:Connect(function()
     if #Players:GetPlayers() == 1 then
+        print("player sudah keluar, lanjut running")
         running = true
     end
 end)
@@ -1427,7 +1428,10 @@ if running then
 end
 print("MAIN PROGRAM -------------------------------")
 
---send_discord("00:00:00",false)
+-- TEMP EVENT !!!!!
+if current_rod == "Ghostfinn Rod" or current_rod == "Element Rod" then
+    select_quest = "custom_teleport"
+end
 
 if running and select_quest == "farming_coin" then
     pesan("farming koin starter")
@@ -1685,8 +1689,8 @@ while playing do
         end
     end
     if select_quest == "custom_teleport" then
-        teleport(-1956, -440, 7389)
-        face(270)
+        teleport(2144, 81, 3271) --mountain hallow
+        face(0)
         running = true
         while playing do
             if running then
