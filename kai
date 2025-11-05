@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.3.1" -- add variant in fish info 
+versi = "KAITUN | FIGHT! | V4.3.2" -- changing step 3 position
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1282,7 +1282,7 @@ end
 --- SPAWN
 --------------------------------------------------------------------
 ---
-
+---
 task.spawn(
     function()
         local num = 1
@@ -1626,8 +1626,8 @@ if running and select_quest == "jungle" then
             end
             if running and progress_quest2 < 100 then
                 pesan(quest_jungle(2)) -- in the forest
-                teleport(math.random(1472,1479), 8, -345)
-                face(30)
+                teleport(1066, 5, 157)
+                face(0)
                 while running and progress_quest2 < 100 do
                     auto_fish()
                 end
@@ -1635,7 +1635,8 @@ if running and select_quest == "jungle" then
             if running and progress_quest4 < 100 then
                 teleport(1487, 128, -591)
                 pesan("SELESAI MANUAL SACRIFICE")
-                --break
+                playing = false
+                running = false
                 task.wait(30)
             end
         end
