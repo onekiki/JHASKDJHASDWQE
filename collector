@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.0.1"
+local versi = "NEW UI - V1.0.2"
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -584,42 +584,47 @@ update_inventory()
 
 if auto_collect then
     cetak("start auto collect")
+    local ready = true
     if #Players:GetPlayers() > 2 then
         cetak("PLAYER LEBIH DARI 1")
+        ready = false
     end
-    local total_ikan = 1
-    RF.OnClientInvoke = function(...)
-        local args = {...}
-        local data = args[2]
-        if type(data) == "table" then
-            print("Trade offer:", data.Id, data.UUID)
+    if ready then
+        local total_ikan = 1
+        RF.OnClientInvoke = function(...)
+            local args = {...}
+            local data = args[2]
+            if type(data) == "table" then
+                print("Trade offer:", data.Id, data.UUID)
+            end
+            local detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
+            cetak(detail)
+            total_ikan = total_ikan + 1
+            task.wait(3)
+            return "OK"
         end
-        local detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
-        cetak(detail)
-        total_ikan = total_ikan + 1
-        task.wait(3)
-        return "OK"
-    end
-    local nama = nil
-    for i, user in ipairs(Players:GetPlayers()) do
-        if user ~= player then
-            nama = user.Name
+        local nama = nil
+        for i, user in ipairs(Players:GetPlayers()) do
+            if user ~= player then
+                nama = user.Name
+            end
         end
-    end
-    if nama then
-        local pos, err = getPositionByName(nama)
-        if pos then
-            print("Posisi sekarang:", pos)
-            local x = pos.X
-            local y = pos.Y
-            local z = pos.Z
-            teleport(x,y,z)
-            task.wait(5)
-            local existing = Players:FindFirstChild(nama)
-            if existing then
-                send_handshake(existing.UserId)
-            else
-                print("player tidak ada")
+        if nama then
+            local pos, err = getPositionByName(nama)
+            if pos then
+                print("Posisi sekarang:", pos)
+                local x = pos.X
+                local y = pos.Y
+                local z = pos.Z
+                teleport(x,y,z)
+                task.wait(5)
+                local existing = Players:FindFirstChild(nama)
+                if existing then
+                    cetak("kirim handshake")
+                    send_handshake(existing.UserId)
+                else
+                    print("player tidak ada")
+                end
             end
         end
     end
