@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.2.7" -- fix trade
+versi = "KAITUN | FIGHT! | V4.2.8" -- fix PINTU TERBUKA
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1592,23 +1592,9 @@ if running and select_quest == "jungle" then
                     end
                 end
             end
-
-            while true do
-                local pintu = workspace["JUNGLE INTERACTIONS"].Doors.TempleDoor:FindFirstChild("DELETE_ME_AFTER_UNLOCK")
-                if pintu then
-                    print("menunggu")
-                    pesan("menunggu pintu terbuka")
-                else
-                    break
-                end
-                task.wait(20)
-            end
-            running = true
-            pesan("WAITING REJOIN GAME !!")
-            step = step + 1
-            rejoinSameServer()
             task.wait(60)
-            break
+            pesan("TUNGGU PINTU TERBUKA")
+            step = step + 1
         end
 
         if step == 3 then
