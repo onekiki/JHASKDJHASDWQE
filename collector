@@ -1,1 +1,633 @@
+local versi = "NEW UI - V1.0.0"
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local player = Players.LocalPlayer
+local gui = player:WaitForChild("PlayerGui")
+local Net =
+    ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild(
+    "net"
+)
+local RF = Net:WaitForChild("RF/AwaitTradeResponse")
 
+local Client = require(ReplicatedStorage.Packages.Replion).Client
+local ItemUtility = require(ReplicatedStorage.Shared.ItemUtility)
+local TierUtility = require(ReplicatedStorage.Shared.TierUtility)
+
+
+local trade_stop = false
+-- ScreenGui utama
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "CollectorUI"
+screenGui.Parent = gui
+
+-- Frame utama (putih)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 600, 0, 400)
+mainFrame.Position = UDim2.new(0, 10, 0, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+
+-- Tombol Close
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 25, 0, 25)
+closeBtn.Position = UDim2.new(1, -30, 0, 5)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeBtn.Parent = mainFrame
+
+closeBtn.MouseButton1Click:Connect(function()
+    trade_stop = true
+	screenGui:Destroy()
+end)
+
+-- === KIRI : PLAYER LIST ===
+local playerFrame = Instance.new("Frame")
+playerFrame.Size = UDim2.new(0.35, 0, 1, -10)
+playerFrame.Position = UDim2.new(0, 5, 0, 5)
+playerFrame.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+playerFrame.Parent = mainFrame
+
+local listLabel = Instance.new("TextLabel")
+listLabel.Size = UDim2.new(1, 0, 0, 20)
+listLabel.BackgroundTransparency = 1
+listLabel.Text = "Collector " .. versi
+listLabel.TextXAlignment = Enum.TextXAlignment.Left
+listLabel.TextColor3 = Color3.new(0, 0, 0)
+listLabel.Font = Enum.Font.RobotoMono
+listLabel.TextSize = 16
+listLabel.Parent = playerFrame
+
+local listScroll = Instance.new("ScrollingFrame")
+listScroll.Size = UDim2.new(1, -10, 1, -30)
+listScroll.Position = UDim2.new(0, 5, 0, 25)
+listScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+listScroll.ScrollBarThickness = 6
+listScroll.BackgroundTransparency = 1
+listScroll.Parent = playerFrame
+
+local listLayout = Instance.new("UIListLayout")
+listLayout.Padding = UDim.new(0, 5)
+listLayout.Parent = listScroll
+
+listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	listScroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 10)
+end)
+
+-- === KANAN : INFO DAN KONTROL ===
+local rightFrame = Instance.new("Frame")
+rightFrame.Size = UDim2.new(0.6, 0, 1, -10)
+rightFrame.Position = UDim2.new(0.4, 0, 0, 5)
+rightFrame.BackgroundTransparency = 1
+rightFrame.Parent = mainFrame
+
+-- Statistik info
+local statsLabel = Instance.new("TextLabel")
+statsLabel.Text = "Statistik Info\n\nData A: XXXX\nData B: XXXX\nData C: XXXX"
+statsLabel.Size = UDim2.new(1, 0, 0, 80)
+statsLabel.TextXAlignment = Enum.TextXAlignment.Left
+statsLabel.BackgroundTransparency = 1
+statsLabel.TextColor3 = Color3.new(0,0,0)
+statsLabel.Font = Enum.Font.RobotoMono
+statsLabel.TextSize = 16
+statsLabel.Parent = rightFrame
+
+-- Player yang dipilih
+local selectedLabel = Instance.new("TextLabel")
+selectedLabel.Text = "Selected Player: -"
+selectedLabel.Size = UDim2.new(1, 0, 0, 20)
+selectedLabel.Position = UDim2.new(0, 0, 0, 90)
+selectedLabel.BackgroundTransparency = 1
+selectedLabel.TextColor3 = Color3.new(0,0,0)
+selectedLabel.Font = Enum.Font.RobotoMono
+selectedLabel.TextSize = 16
+selectedLabel.Parent = rightFrame
+
+-- Input jumlah
+local amountBox = Instance.new("TextBox")
+amountBox.PlaceholderText = "in K"
+amountBox.Size = UDim2.new(0, 60, 0, 25)
+amountBox.Position = UDim2.new(0, 0, 0, 120)
+amountBox.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+amountBox.TextColor3 = Color3.new(0,0,0)
+amountBox.Font = Enum.Font.RobotoMono
+amountBox.TextSize = 16
+amountBox.Parent = rightFrame
+
+-- Tombol Trade
+local tradeBtn = Instance.new("TextButton")
+tradeBtn.Text = "Trade"
+tradeBtn.Size = UDim2.new(0, 80, 0, 25)
+tradeBtn.Position = UDim2.new(0, 70, 0, 120)
+tradeBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+tradeBtn.TextColor3 = Color3.new(1,1,1)
+tradeBtn.Font = Enum.Font.RobotoMono
+tradeBtn.TextSize = 16
+tradeBtn.Parent = rightFrame
+
+local allBtn = Instance.new("TextButton")
+allBtn.Text = "All"
+allBtn.Size = UDim2.new(0, 40, 0, 25)
+allBtn.Position = UDim2.new(0, 150, 0, 120)
+allBtn.BackgroundColor3 = Color3.fromRGB(243, 219, 6)
+allBtn.TextColor3 = Color3.fromRGB(34, 34, 34)
+allBtn.Font = Enum.Font.RobotoMono
+allBtn.TextSize = 16
+allBtn.Parent = rightFrame
+
+local stopBtn = Instance.new("TextButton")
+stopBtn.Text = "STOP"
+stopBtn.Size = UDim2.new(0, 60, 0, 25)
+stopBtn.Position = UDim2.new(0, 220, 0, 120)
+stopBtn.BackgroundColor3 = Color3.fromRGB(243, 6, 6)
+stopBtn.TextColor3 = Color3.fromRGB(253, 253, 253)
+stopBtn.Font = Enum.Font.RobotoMono
+stopBtn.TextSize = 16
+stopBtn.Parent = rightFrame
+
+-- === LOG FRAME ===
+local logFrame = Instance.new("ScrollingFrame")
+logFrame.Size = UDim2.new(1, -10, 0, 150)
+logFrame.Position = UDim2.new(0, 0, 0, 160)
+logFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+logFrame.ScrollBarThickness = 8
+logFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+logFrame.Parent = rightFrame
+
+local logLayout = Instance.new("UIListLayout")
+logLayout.Parent = logFrame
+logLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+logLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	logFrame.CanvasSize = UDim2.new(0, 0, 0, logLayout.AbsoluteContentSize.Y)
+	logFrame.CanvasPosition = Vector2.new(0, logFrame.CanvasSize.Y.Offset)
+end)
+
+local detail_harga = Instance.new("TextLabel")
+detail_harga.Text = "JUMLAH: "
+detail_harga.Size = UDim2.new(0, 0, 0, 0)
+detail_harga.Position = UDim2.new(0, 240, 0, 320)
+detail_harga.TextColor3 = Color3.new(0, 0, 0)
+detail_harga.Font = Enum.Font.RobotoMono
+detail_harga.TextSize = 16
+detail_harga.Parent = rightFrame
+----------------------------------------------------
+---fungsi 
+---
+
+local list_ikan = {}
+for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
+    if child:IsA("ModuleScript") then
+        local success, data = pcall(require, child)
+        if success and data.Data.Type == "Fish" then
+            list_ikan[data.Data.Id] = {
+                harga = data.SellPrice,
+                tier = data.Data.Tier,
+                nama = data.Data.Name,
+                id = data.Data.Id
+            }
+        end
+    end
+end
+
+local function round(num, numDecimalPlaces)
+	local mult = 10^(numDecimalPlaces or 0)
+	return math.floor(num * mult + 0.5) / mult
+end
+local function konvert_harga(h)
+    if h then
+        local result
+        local kk
+        if h < 999 then
+            result = tostring(h)
+        elseif h < 1000000 then
+            kk = h / 1000
+            result = tostring(round(kk, 2)) .. " K"
+        else
+            kk = h / 1000000
+            result = tostring(round(kk, 2)) .. " M"
+        end
+        return result
+    end
+end
+
+local function get_tier(tier)
+    if tier == 6 then 
+        return "MYTHIC" 
+    elseif tier == 7 then
+        return "SECRET"
+    end
+end
+
+local function teleport(x, y, z)
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.CFrame = CFrame.new(Vector3.new(x, y, z))
+        print("✅eleported to", x, y, z)
+    end
+end
+
+local function getPositionByName(name)
+    local plr = Players:FindFirstChild(name)
+    if not plr then return nil, "player not found" end
+
+    local char = plr.Character or plr.CharacterAdded:Wait()
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil, "HumanoidRootPart not found" end
+
+    return hrp.Position
+end
+
+local data = Client:WaitReplion("Data")
+
+-- ambil inventory pertama kali
+local function getInventory()
+    return data:GetExpect({"Inventory"})
+end
+
+local list_mitik = {}
+local list_sekret = {}
+local list_all = {}
+
+local total_semua = 0
+local hitung_ikan = 0
+local total_secret = 0
+local total_mitik = 0
+
+--// ANCHOR update_inventory
+
+local function update_inventory()
+    local inventory = getInventory()
+    for category, items in pairs(inventory) do
+        if category == "Items" then
+            for i, item in ipairs(items) do
+                
+                local itemData = ItemUtility:GetItemData(item.Id)
+                    or ItemUtility:GetBaitData(item.Id)
+                    or ItemUtility:GetPotionData(item.Id)
+
+                local tierName = "None"
+                if itemData and itemData.Data and itemData.Data.Tier then
+                    local tierData = TierUtility:GetTier(itemData.Data.Tier)
+                    if tierData and tierData.Name then
+                        tierName = tierData.Name
+                    end
+                end
+                local berat = item.Metadata and item.Metadata.Weight or 0
+               -- local varian = item.Metadata.VarianId or "none"
+                
+               if itemData.Data.Type == "Fish" then
+                    if itemData.SellPrice then
+                        total_semua = total_semua + itemData.SellPrice
+                        hitung_ikan = hitung_ikan + 1
+                        table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                    end
+                end
+                if itemData.Data.Type == "Fish" and tierName == "Secret" then
+                    if itemData.SellPrice then
+                        total_secret = total_secret + itemData.SellPrice
+                        table.insert(list_sekret, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                    end
+                end
+                if itemData.Data.Type == "Fish" and tierName == "Mythic" then
+                    if itemData.SellPrice then
+                        total_mitik = total_mitik + itemData.SellPrice
+                        table.insert(list_mitik, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                    end
+                end
+                --[[
+                table.insert(results, {
+                    nama = itemData.Data.Name,
+                    id = item.Id,
+                    uuid = tostring(item.UUID),
+                    tier = tierName,
+                    berat = tostring(berat),
+                    harga = itemData.SellPrice,
+                    type = itemData.Data.Type
+                })]]
+            end
+        end
+    end
+    local cetak = "Total semua : ".. konvert_harga(total_semua) .. " | " .. konvert_harga(hitung_ikan) .. " Ikan \n" .. "Secret : ".. konvert_harga(total_secret) .. "\n" .. "Mitik : ".. konvert_harga(total_mitik)
+    statsLabel.Text = cetak
+end
+
+local function send_handshake(user)
+    local get_uuid = ""
+    for i, item in ipairs(list_inventory("Items")) do
+        if item.id ~= 10 then
+            get_uuid = item.uuid
+            break
+        end
+    end
+    print(get_uuid)
+    print(user)
+    Net:WaitForChild("RE/EquipItem"):FireServer(get_uuid, "Fishes")
+    task.wait(1)
+    Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, get_uuid)
+end
+
+-- === Fungsi Cetak Log ===
+local function cetak(teks)
+	local logLine = Instance.new("TextLabel")
+	logLine.Size = UDim2.new(1, -10, 0, 14)
+	logLine.BackgroundTransparency = 1
+	logLine.Text = tostring(teks)
+	logLine.TextSize = 14
+	logLine.TextColor3 = Color3.fromRGB(0, 255, 0)
+	logLine.Font = Enum.Font.RobotoMono
+	logLine.TextXAlignment = Enum.TextXAlignment.Left
+	logLine.Parent = logFrame
+end
+
+-- === PLAYER MANAGEMENT ===
+local selectedPlayer = nil
+
+local function createPlayerButton(name)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, -10, 0, 30)
+	btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
+	btn.Text = name
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Font = Enum.Font.RobotoMono
+	btn.TextSize = 16
+	btn.Parent = listScroll
+
+	btn.MouseButton1Click:Connect(function()
+		if selectedPlayer == name then
+			selectedPlayer = nil
+			btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
+			selectedLabel.Text = "Selected Player: -"
+		else
+			selectedPlayer = name
+			selectedLabel.Text = "Selected Player: " .. name
+			btn.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
+			cetak("Selected: " .. name)
+		end
+	end)
+end
+
+for _, p in ipairs(Players:GetPlayers()) do
+	if p ~= player then
+		createPlayerButton(p.Name)
+	end
+end
+
+Players.PlayerAdded:Connect(function(p)
+	if p ~= player then
+		createPlayerButton(p.Name)
+		cetak(p.Name .. " joined")
+	end
+end)
+
+Players.PlayerRemoving:Connect(function(p)
+	for _, btn in ipairs(listScroll:GetChildren()) do
+		if btn:IsA("TextButton") and btn.Text == p.Name then
+			btn:Destroy()
+		end
+	end
+	if selectedPlayer == p.Name then
+		selectedPlayer = nil
+		selectedLabel.Text = "Selected Player: -"
+	end
+	cetak(p.Name .. " left")
+end)
+
+--//ANCHOR - Trade
+local function trade(target, jumlah, type)
+	cetak("Trade ke " .. target .. " sejumlah " .. jumlah)
+    local completed = false
+    Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
+        function(data)
+            print("ADA NOTIF: ", data.Text)
+            if data and data.Text == "Trade completed!" then
+                completed = true
+            end
+        end
+    )
+    local pos, err = getPositionByName(target)
+    if pos then
+        print("Posisi sekarang:", pos)
+        local x = pos.X
+        local y = pos.Y
+        local z = pos.Z
+        teleport(x,y,z)
+        task.wait(5)
+    end
+
+    update_inventory()
+    if jumlah > 0 and total_semua < round(jumlah / 100000,2) then
+        cetak("!! total ikan tidak memenuhi target !!")
+        return
+    end
+    local custom_list = nil
+    if type then
+        if type == "sekret" then
+            cetak("trade sekret dipilih")
+            custom_list = list_sekret
+        elseif type == "mitik" then
+            cetak("trade mitik dipilih")
+            custom_list = list_mitik
+        else
+            cetak("trade all dipilih")
+            custom_list = list_all
+        end
+    end
+    
+    local berhasil = 0
+    local info_akhir = ""
+    local current_harga = 0
+    local function trade_user(usr)
+        print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
+        if custom_list ~= nil then
+            for i, info in ipairs(custom_list) do
+                Net:WaitForChild("RE/EquipItem"):FireServer(info.uuid, "Fishes")
+                Net:WaitForChild("RF/InitiateTrade"):InvokeServer(usr.UserId, info.uuid)
+                local timeout = 0
+                while completed ~= true do
+                    print("wait")
+                    timeout = timeout + 1
+                    if timeout > 30 then
+                        print("timeout lebih dari 15 detik")
+                        break
+                    end
+                    task.wait(0.4)
+                end
+                if timeout < 30 then
+                    berhasil = berhasil + 1
+                    info_akhir = "Total: " .. berhasil .. "/" .. #custom_list
+                    current_harga = current_harga  + info.harga
+                    local info_ikan = i ..". " .. info.nama .. " (" .. info.berat .. " kg) "
+                    cetak(info_ikan)
+                    detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
+                end
+                completed = false
+                task.wait(3)
+                local mm = current_harga / 100000
+                local limit = round(mm, 2)
+                if jumlah > 0 and limit > jumlah then
+                    cetak("jumlah tercapai ! " .. current_harga)
+                    break
+                end
+                if trade_stop == true then
+                    cetak("! TRADE STOPED !")
+                    break
+                end
+            end
+        else
+            cetak("tidak ada barang lagi")
+        end
+        cetak("SELESAI SEMUA " .. info_akhir)
+        update_inventory()
+    end
+    local existing = Players:FindFirstChild(target)
+    if existing then
+        trade_user(existing)
+    else
+        cetak("player tidak ada")
+    end
+end
+
+tradeBtn.MouseButton1Click:Connect(function()
+	if not selectedPlayer then
+		cetak("❌ Pilih player dulu!")
+		return
+	end
+	local jumlah = tonumber(amountBox.Text)
+	if not jumlah or jumlah <= 0 then
+		cetak("❌ Masukkan jumlah valid!")
+		return
+	end
+	trade(selectedPlayer, jumlah, "mitik")
+end)
+allBtn.MouseButton1Click:Connect(function()
+	if not selectedPlayer then
+		cetak("❌ Pilih player dulu!")
+		return
+	end
+	trade(selectedPlayer, 0, "all")
+end)
+
+stopBtn.MouseButton1Click:Connect(function()
+	trade_stop = not trade_stop
+    if trade_stop then
+        stopBtn.BackgroundColor3 = Color3.fromRGB(109, 0, 0)
+        cetak("trade stopped ON")
+    else
+        stopBtn.BackgroundColor3 = Color3.fromRGB(243, 6, 6)
+        cetak("trade stopped OFF")
+    end
+end)
+
+local auto_collect = nil
+-- === SETTING AUTO TRADE ===
+local HttpService = game:GetService("HttpService")
+local settingsFile = "settings.json"
+local settings = { auto_trade = false }
+
+-- Load settings dari file
+local function loadSettings()
+    if isfile and isfile(settingsFile) then
+        local data = readfile(settingsFile)
+        local decoded = HttpService:JSONDecode(data)
+        if decoded then
+            settings = decoded
+            cetak("Settings loaded: auto_trade = " .. tostring(settings.auto_trade))
+            auto_collect = settings.auto_trade
+        end
+    else
+        cetak("No settings file found, using default.")
+    end
+end
+
+-- Simpan settings ke file
+local function saveSettings()
+    if writefile then
+        local data = HttpService:JSONEncode(settings)
+        writefile(settingsFile, data)
+        cetak("Settings saved.")
+    else
+        cetak("❌ writefile() not supported in this environment.")
+    end
+end
+
+-- === Buat tombol toggle ===
+local settingBtn = Instance.new("TextButton")
+settingBtn.Text = "Auto Collect: OFF"
+settingBtn.Size = UDim2.new(0, 150, 0, 25)
+settingBtn.Position = UDim2.new(0, 0, 0, 320) -- di bawah tombol trade / log
+settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+settingBtn.TextColor3 = Color3.new(1,1,1)
+settingBtn.Font = Enum.Font.RobotoMono
+settingBtn.TextSize = 16
+settingBtn.Parent = rightFrame
+
+local function updateButton()
+	if settings.auto_trade then
+		settingBtn.Text = "Auto Collect: ON"
+		settingBtn.BackgroundColor3 = Color3.fromRGB(74, 158, 74)
+	else
+		settingBtn.Text = "Auto Collect: OFF"
+		settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+	end
+end
+
+-- Klik toggle
+settingBtn.MouseButton1Click:Connect(function()
+	settings.auto_trade = not settings.auto_trade
+	updateButton()
+	saveSettings()
+end)
+
+-- === Jalankan load saat awal ===
+loadSettings()
+updateButton()
+-- Tes awal
+cetak("Collector GUI loaded.")
+
+update_inventory()
+
+if auto_collect then
+    cetak("start auto collect")
+    if #Players:GetPlayers() > 2 then
+        cetak("PLAYER LEBIH DARI 1")
+    end
+    local total_ikan = 1
+    RF.OnClientInvoke = function(...)
+        local args = {...}
+        local data = args[2]
+        if type(data) == "table" then
+            print("Trade offer:", data.Id, data.UUID)
+        end
+        local detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
+        cetak(detail)
+        total_ikan = total_ikan + 1
+        task.wait(3)
+        return "OK"
+    end
+    local nama = nil
+    for i, user in ipairs(Players:GetPlayers()) do
+        if user ~= player then
+            nama = user.Name
+        end
+    end
+    if nama then
+        local pos, err = getPositionByName(nama)
+        if pos then
+            print("Posisi sekarang:", pos)
+            local x = pos.X
+            local y = pos.Y
+            local z = pos.Z
+            teleport(x,y,z)
+            task.wait(5)
+            local existing = Players:FindFirstChild(nama)
+            if existing then
+                send_handshake(existing.UserId)
+            else
+                print("player tidak ada")
+            end
+        end
+    end
+end
