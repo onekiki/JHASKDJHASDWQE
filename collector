@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.0.0"
+local versi = "NEW UI - V1.0.1"
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -272,7 +272,7 @@ local function update_inventory()
                 if itemData and itemData.Data and itemData.Data.Tier then
                     local tierData = TierUtility:GetTier(itemData.Data.Tier)
                     if tierData and tierData.Name then
-                        tierName = tierData.Name
+                        tierName = string.gsub(tierData.Name, "%s+", "")
                     end
                 end
                 local berat = item.Metadata and item.Metadata.Weight or 0
@@ -315,18 +315,11 @@ local function update_inventory()
 end
 
 local function send_handshake(user)
-    local get_uuid = ""
-    for i, item in ipairs(list_inventory("Items")) do
-        if item.id ~= 10 then
-            get_uuid = item.uuid
-            break
-        end
-    end
-    print(get_uuid)
     print(user)
-    Net:WaitForChild("RE/EquipItem"):FireServer(get_uuid, "Fishes")
+    local uuid = "0c0130a7-4a59-4747-972a-d7b7bd63bfa2"
+    Net:WaitForChild("RE/EquipItem"):FireServer(uuid, "Fishes")
     task.wait(1)
-    Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, get_uuid)
+    Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, uuid)
 end
 
 -- === Fungsi Cetak Log ===
