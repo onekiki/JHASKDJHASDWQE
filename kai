@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.2.6" -- teleport NEW EVENT mountain hallow
+versi = "KAITUN | FIGHT! | V4.2.7" -- fix trade
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -733,7 +733,7 @@ local function dump_table(t, indent)
         end
     end
 end
---//ANCHOR UPDATE INVENTORY
+--//ANCHOR INVENTORY
 local function update_inventory()
     local Client = Replion.Client
     local replion_data = Client:WaitReplion("Data")
@@ -1315,20 +1315,6 @@ task.spawn(
                 task.wait(2)
                 hapus_gui_daily()
             end
-            if running and enable_auto_collect == true then
-                pesan("start auto collect")
-                enable_auto_collect = false -- turn off auto collect
-                running = false
-                task.wait(10)
-                custom_trade(list_secret, 0)
-                task.wait(1)
-                custom_trade(list_mythic, 0)
-                running = true
-                lastCatchTime = os.clock()
-                Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
-                pesan("SELESAI TRADE")
-                send_Data(running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing, select_quest)
-            end
             if running and num % 5 == 0 then
                 if #Players:GetPlayers() > 1 then
                     pesan("PLAYER LEBIH DARI 1")
@@ -1346,6 +1332,34 @@ task.spawn(
     end
 )
 
+local RF = Net:WaitForChild("RF/AwaitTradeResponse")
+RF.OnClientInvoke = function(...)
+    local args = {...}
+    local maybeData = args[2]
+    if type(maybeData) == "table" then
+        print("ada trade:", maybeData.Id, maybeData.UUID)
+    end
+    if maybeData.Id == 163 then -- vyper fish
+        print("start kirim ikan")
+        running = false
+        task.wait(10)
+        custom_trade(list_secret, 0)
+        task.wait(1)
+        custom_trade(list_mythic, 0)
+        running = true
+        lastCatchTime = os.clock()
+        Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+        pesan("SELESAI TRADE")
+        send_Data("", 0, 0, last_msg, count_mancing, select_quest)
+        return "CANCEL"
+    else
+        if list_ikan[maybeData.Id] then
+            pesan(list_ikan[maybeData.Id].nama)
+        end
+        task.wait(3)
+        return "OK"
+    end
+end
 --//ANCHOR MAIN
 ---------------------------------------------
 ---MULAI ALGORITMA
@@ -1381,23 +1395,6 @@ while not running do
 end
 
 if running then
-
-    local RF = Net:WaitForChild("RF/AwaitTradeResponse")
-    RF.OnClientInvoke = function(...)
-        local args = {...}
-        local maybeData = args[2]
-        if type(maybeData) == "table" then
-            print("Trade offer:", maybeData.Id, maybeData.UUID)
-        end
-        if maybeData.Id ~= 10 then
-            enable_auto_collect = true
-            return "CANCEL"
-        else
-            task.wait(4.5)
-            return "OK"
-        end
-    end
-
     checkPlayers()
     toggle3DAndUI()
 
