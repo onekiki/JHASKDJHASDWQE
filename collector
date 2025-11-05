@@ -15,6 +15,8 @@ local TierUtility = require(ReplicatedStorage.Shared.TierUtility)
 
 
 local trade_stop = false
+local running = true
+
 -- ScreenGui utama
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "CollectorUI"
@@ -39,6 +41,7 @@ closeBtn.Parent = mainFrame
 
 closeBtn.MouseButton1Click:Connect(function()
     trade_stop = true
+    running = false
 	screenGui:Destroy()
 end)
 
@@ -165,7 +168,7 @@ logLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 end)
 
 local detail_harga = Instance.new("TextLabel")
-detail_harga.Text = "JUMLAH: "
+detail_harga.Text = ""
 detail_harga.Size = UDim2.new(0, 0, 0, 0)
 detail_harga.Position = UDim2.new(0, 240, 0, 320)
 detail_harga.TextColor3 = Color3.new(0, 0, 0)
@@ -310,7 +313,9 @@ local function update_inventory()
             end
         end
     end
-    local cetak = "Total semua : ".. konvert_harga(total_semua) .. " | " .. konvert_harga(hitung_ikan) .. " Ikan \n" .. "Secret : ".. konvert_harga(total_secret) .. "\n" .. "Mitik : ".. konvert_harga(total_mitik)
+    local cetak = "Total semua : ".. konvert_harga(total_semua) .. " | " .. konvert_harga(hitung_ikan) .. " Ikan \n"
+    .. "Secret : ".. konvert_harga(total_secret) .. " | " .. #list_sekret .. " Ikan \n"
+    .. "Mitik : ".. konvert_harga(total_mitik) .." | " .. #list_mitik .. " Ikan"
     statsLabel.Text = cetak
 end
 
@@ -557,6 +562,19 @@ settingBtn.Font = Enum.Font.RobotoMono
 settingBtn.TextSize = 16
 settingBtn.Parent = rightFrame
 
+local Handshake = Instance.new("TextButton")
+Handshake.Text = "Handshake"
+Handshake.Size = UDim2.new(0, 150, 0, 25)
+Handshake.Position = UDim2.new(0, 0, 0, 360) -- di bawah tombol trade / log
+Handshake.BackgroundColor3 = Color3.fromRGB(122, 190, 12)
+Handshake.TextColor3 = Color3.new(1,1,1)
+Handshake.Font = Enum.Font.RobotoMono
+Handshake.TextSize = 16
+Handshake.Parent = rightFrame
+
+-- Klik toggle
+
+
 local function updateButton()
 	if settings.auto_trade then
 		settingBtn.Text = "Auto Collect: ON"
@@ -581,51 +599,63 @@ updateButton()
 cetak("Collector GUI loaded.")
 
 update_inventory()
-
-if auto_collect then
-    cetak("start auto collect")
-    local ready = true
-    if #Players:GetPlayers() > 2 then
-        cetak("PLAYER LEBIH DARI 1")
-        ready = false
-    end
-    if ready then
-        local total_ikan = 1
-        RF.OnClientInvoke = function(...)
-            local args = {...}
-            local data = args[2]
-            if type(data) == "table" then
-                print("Trade offer:", data.Id, data.UUID)
-            end
-            local detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
-            cetak(detail)
-            total_ikan = total_ikan + 1
-            task.wait(3)
-            return "OK"
+local function auto_collecting()
+        cetak("start auto collect")
+        local ready = true
+        if #Players:GetPlayers() > 2 then
+            cetak("PLAYER LEBIH DARI 1")
+            ready = false
         end
-        local nama = nil
-        for i, user in ipairs(Players:GetPlayers()) do
-            if user ~= player then
-                nama = user.Name
+        if ready then
+            local total_ikan = 1
+            RF.OnClientInvoke = function(...)
+                local args = {...}
+                local data = args[2]
+                if type(data) == "table" then
+                    print("Trade offer:", data.Id, data.UUID)
+                end
+                local detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
+                cetak(detail)
+                total_ikan = total_ikan + 1
+                task.wait(3)
+                return "OK"
             end
-        end
-        if nama then
-            local pos, err = getPositionByName(nama)
-            if pos then
-                print("Posisi sekarang:", pos)
-                local x = pos.X
-                local y = pos.Y
-                local z = pos.Z
-                teleport(x,y,z)
-                task.wait(5)
-                local existing = Players:FindFirstChild(nama)
-                if existing then
-                    cetak("kirim handshake")
-                    send_handshake(existing.UserId)
-                else
-                    print("player tidak ada")
+            local nama = nil
+            for i, user in ipairs(Players:GetPlayers()) do
+                if user ~= player then
+                    nama = user.Name
+                end
+            end
+            if nama then
+                local pos, err = getPositionByName(nama)
+                if pos then
+                    print("Posisi sekarang:", pos)
+                    local x = pos.X
+                    local y = pos.Y
+                    local z = pos.Z
+                    teleport(x,y,z)
+                    task.wait(5)
+                    local existing = Players:FindFirstChild(nama)
+                    if existing then
+                        cetak("kirim handshake")
+                        send_handshake(existing.UserId)
+                    else
+                        print("player tidak ada")
+                    end
                 end
             end
         end
-    end
+end
+
+Handshake.MouseButton1Click:Connect(function()
+	auto_collecting()
+end)
+
+
+if auto_collect then
+    auto_collecting()
+end
+while running do
+    print("running..")
+    task.wait(100)
 end
