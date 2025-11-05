@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.2.8" -- fix PINTU TERBUKA
+versi = "KAITUN | FIGHT! | V4.3.0" -- add bait info 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -11,6 +11,7 @@ local Net =
     ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild(
     "net"
 )
+local ItemUtility = require(ReplicatedStorage.Shared.ItemUtility)
 local HttpService = game:GetService("HttpService")
 local dailyLoginGui = gui:FindFirstChild("!!! Daily Login")
 local koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
@@ -33,6 +34,7 @@ local OFFSET = -3
 local startscript = tick()
 local running = true
 local list_inventory_rod = {}
+local list_inventory_bait = {}
 local list_inventory_fishs = {}
 local fish_caught = false
 local count_mancing = 0
@@ -50,6 +52,7 @@ local list_inv_item_uuid = {}
 local playing = true
 local event_action = false
 local enable_auto_collect = false
+local lastest_bait = "None"
 
 local url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/quest.json"
 local WEBHOOK_PC1 = "https://discord.com/api/webhooks/1429060824663593055/rITUSfaZzK-Q5fYr0DeGRu3kvWnDg8jro9vQmnNS6x6h6qVFMLEzDqi9LY6cFAW_I54w"
@@ -107,16 +110,16 @@ text_rod.TextXAlignment = Enum.TextXAlignment.Center
 text_rod.TextColor3 = Color3.fromRGB(123, 72, 218)
 text_rod.Parent = mainFrame
 
-local text_coin = Instance.new("TextLabel")
-text_coin.Size =  UDim2.new(0.5, 0, 0.1, 0)
-text_coin.Position = UDim2.new(0.5, 0, 0.35, 0)
-text_coin.Text = "COIN"
-text_coin.Font = Enum.Font.RobotoMono
-text_coin.TextScaled = true
-text_coin.BackgroundTransparency = 1
-text_coin.TextXAlignment = Enum.TextXAlignment.Center
-text_coin.TextColor3 = Color3.fromRGB(21, 151, 49)
-text_coin.Parent = mainFrame
+local text_bait = Instance.new("TextLabel")
+text_bait.Size =  UDim2.new(0.5, 0, 0.1, 0)
+text_bait.Position = UDim2.new(0.5, 0, 0.35, 0)
+text_bait.Text = "COIN"
+text_bait.Font = Enum.Font.RobotoMono
+text_bait.TextScaled = true
+text_bait.BackgroundTransparency = 1
+text_bait.TextXAlignment = Enum.TextXAlignment.Center
+text_bait.TextColor3 = Color3.fromRGB(21, 151, 49)
+text_bait.Parent = mainFrame
 
 local text_info = Instance.new("TextLabel")
 text_info.Size = UDim2.new(1, 50, 0.15, 0)
@@ -734,6 +737,7 @@ local function dump_table(t, indent)
     end
 end
 --//ANCHOR INVENTORY
+
 local function update_inventory()
     local Client = Replion.Client
     local replion_data = Client:WaitReplion("Data")
@@ -759,6 +763,17 @@ local function update_inventory()
                         Tier = rod_info.tier
                     }
                 end
+            end
+        end
+        if category == "Baits" then
+            for i, item in ipairs(items) do
+                local baits = ItemUtility:GetBaitData(item.Id)
+                list_inventory_bait[baits.Data.Id] = {
+                    Id = baits.Data.Id,
+                    Name = baits.Data.Name,
+                    Tier = baits.Data.Tier
+                }
+                lastest_bait = baits.Data.Name
             end
         end
         if category == "Items" then
@@ -1010,21 +1025,23 @@ local function auto_buy()
         auto_buy_rod(80) -- midnight rod
         best_rod_wear()
     end
-    if list_inventory_rod["Astral Rod"] == nil and koins > 1150000 then
+    if koins > 1150000 and list_inventory_rod["Astral Rod"] == nil then
         print("beli rod astral")
         task.wait(10)
-        --auto_buy_bait(15) -- corrupt
-        --wear_bait(15)
         auto_buy_rod(5) -- astral rod
         best_rod_wear()
     end
-    if koins > 4000000 then
+    -- buy corrupt bait
+    if  koins > 1150000 and list_inventory_bait[15] == nil then
+        auto_buy_bait(15)
+        task.wait(2)
+        wear_bait(15)
+    end
+    -- buy floral bait
+    if  koins > 4000000 and list_inventory_bait[20] == nil then
         auto_buy_bait(20)
         task.wait(2)
-        wear_bait(20) 
-        task.wait(2)
-        wear_bait(18) -- singularity
-        task.wait(2)
+        wear_bait(20)
     end
 end
 
@@ -1225,7 +1242,7 @@ end
 local function send_Data(running_time, koin_secret, koin_myth, activity, total_fishing,quest)
     local progress = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4
     local nama = player.Name
-    local job_id = game.JobId
+    local job_id = lastest_bait
     local rod = current_rod
     local list_inv = display_inventory()
     koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
@@ -1259,11 +1276,12 @@ local function send_Data(running_time, koin_secret, koin_myth, activity, total_f
     end)
 end
 --]]
-
 -- //ANCHOR SPAWN
 --------------------------------------------------------------------
 --- SPAWN
 --------------------------------------------------------------------
+---
+
 task.spawn(
     function()
         local num = 1
@@ -1300,9 +1318,8 @@ task.spawn(
             if num % 200 == 0 then
                 print("------ update inventory -------")
                 update_inventory()
-                koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
-                text_coin.Text = koin
                 text_rod.Text = current_rod
+                text_bait.Text = lastest_bait
                 print("total mythic : ", #list_mythic)
                 print("total uang:", koin)
                 
@@ -1343,9 +1360,9 @@ RF.OnClientInvoke = function(...)
         print("start kirim ikan")
         running = false
         task.wait(10)
-        custom_trade(list_secret, 0)
-        task.wait(1)
         custom_trade(list_mythic, 0)
+        task.wait(10)
+        custom_trade(list_secret, 0)
         running = true
         lastCatchTime = os.clock()
         Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
@@ -1416,8 +1433,6 @@ if running then
         select_quest = "farming_coin"
     end
     text_rod.Text = current_rod
-    koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
-    text_coin.Text = koin
     print(select_quest)
     update_quest()
     Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
@@ -1426,9 +1441,11 @@ end
 print("MAIN PROGRAM -------------------------------")
 
 -- TEMP EVENT !!!!!
+--[[
 if current_rod == "Ghostfinn Rod" or current_rod == "Element Rod" then
     select_quest = "custom_teleport"
 end
+--]]
 
 if running and select_quest == "farming_coin" then
     pesan("farming koin starter")
