@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.3.0" -- add bait info 
+versi = "KAITUN | FIGHT! | V4.3.1" -- add variant in fish info 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -113,7 +113,7 @@ text_rod.Parent = mainFrame
 local text_bait = Instance.new("TextLabel")
 text_bait.Size =  UDim2.new(0.5, 0, 0.1, 0)
 text_bait.Position = UDim2.new(0.5, 0, 0.35, 0)
-text_bait.Text = "COIN"
+text_bait.Text = "BAIT"
 text_bait.Font = Enum.Font.RobotoMono
 text_bait.TextScaled = true
 text_bait.BackgroundTransparency = 1
@@ -784,6 +784,7 @@ local function update_inventory()
                 end
                 if list_ikan[item.Id] then
                     local berat = item.Metadata and item.Metadata.Weight or 0
+                    local variant = item.Metadata and item.Metadata.VariantId or " "
                     local nama = list_ikan[item.Id].nama
                     local uuid = item.UUID
 
@@ -800,7 +801,7 @@ local function update_inventory()
                         end
                     end
                     if list_ikan[item.Id].tier > 6 then -- LIST TRADE
-                        local text_sec = listing .. ". " .. nama .. " - " .. konvert_harga(berat) .. " Kg"
+                        local text_sec = listing .. ". " .. nama .. " - " .. konvert_harga(berat) .. " Kg "  .. variant
                         table.insert(list_display, text_sec)
                         listing = listing + 1
                     end
