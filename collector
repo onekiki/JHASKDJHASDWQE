@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.0.7"
+local versi = "NEW UI - V1.0.8"
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -666,7 +666,7 @@ end)
 updateButton()
 -- Tes awal
 cetak("Collector GUI loaded.")
-if total_transaksi ~= 0 then
+if total_transaksi and total_transaksi ~= 0 then
     detail_harga.Text = "Load Trade: " .. total_transaksi
 end
 local total_ikan = 1
