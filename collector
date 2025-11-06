@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.0.6"
+local versi = "NEW UI - V1.0.7"
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -260,7 +260,7 @@ local function loadSettings()
         cetak("No settings file found, using default.")
     end
 end
-
+loadSettings()
 -- Simpan settings ke file
 local function saveSettings()
     if writefile then
@@ -663,7 +663,6 @@ settingBtn.MouseButton1Click:Connect(function()
 end)
 
 -- === Jalankan load saat awal ===
-loadSettings()
 updateButton()
 -- Tes awal
 cetak("Collector GUI loaded.")
