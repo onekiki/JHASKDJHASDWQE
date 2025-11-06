@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.4.0" -- add enchant
+versi = "KAITUN | FIGHT! | V4.4.1" -- add benchmark speed
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -117,6 +117,17 @@ text_rod_enchant.BackgroundTransparency = 1
 text_rod_enchant.TextXAlignment = Enum.TextXAlignment.Center
 text_rod_enchant.TextColor3 = Color3.fromRGB(85, 145, 255)
 text_rod_enchant.Parent = mainFrame
+
+local text_rod_speed = Instance.new("TextLabel")
+text_rod_speed.Size =  UDim2.new(0.5, 0, 0.05, 0)
+text_rod_speed.Position = UDim2.new(0, 0, 0.35, 130)
+text_rod_speed.Text = "speed: "
+text_rod_speed.Font = Enum.Font.RobotoMono
+text_rod_speed.TextScaled = true
+text_rod_speed.BackgroundTransparency = 1
+text_rod_speed.TextXAlignment = Enum.TextXAlignment.Center
+text_rod_speed.TextColor3 = Color3.fromRGB(238, 157, 7)
+text_rod_speed.Parent = mainFrame
 
 local text_bait = Instance.new("TextLabel")
 text_bait.Size =  UDim2.new(0.5, 0, 0.1, 0)
@@ -1060,18 +1071,14 @@ end
 local function auto_fish(waktu)
     math.randomseed(os.time())
     local random_number = math.random() * 2 - 1
-    local nilai = math.random() * 0.2 + 0.8
-    --playAnimation("rbxassetid://92624107165273") -- RodThrow
     local status, data =  Net:WaitForChild("RF/ChargeFishingRod"):InvokeServer(nil,nil,nil,tick())
     if status then
-        --playAnimation("rbxassetid://134965425664034")
         local success, data =  Net:WaitForChild("RF/RequestFishingMinigameStarted"):InvokeServer(random_number, 1.0, tick())
         if success and data then
             waktu = waktu or 2
             task.wait(waktu)
             count_mancing = count_mancing + 1
             Net:WaitForChild("RE/FishingCompleted"):FireServer()
-            --playAnimation("rbxassetid://117319000848286")
         else
             warn("InvokeServer gagal atau tidak mengembalikan data.")
             Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
@@ -1235,13 +1242,25 @@ task.spawn(
         local num = 1
         local flag_error = false
         local running_time
+        local benchmark_speed = 0.0
+        local count_benchmark = 0
+        local total_benchmark = 0
+        local old_catch
+        local last_delta = 0
         while playing do
             local currentTime = os.clock()
             running_time = formatTime(math.floor(getOnlineTime()))
             text_jam.Text = running_time
-            if running and lastCatchTime then
+            if lastCatchTime then
                 local delta = currentTime - lastCatchTime
                 delta = math.floor(delta * 10 + 0.5) / 10
+                if old_catch == lastCatchTime then
+                    last_delta = delta
+                else
+                    count_benchmark = count_benchmark + 1
+                    total_benchmark = total_benchmark + last_delta
+                end
+                old_catch = lastCatchTime
                 if delta < 30 then
                     flag_error = false
                     text_timer.Text = "🟢 " .. delta .. " sec."
@@ -1255,7 +1274,13 @@ task.spawn(
                     task.wait(60)
                 end
             end
-           
+            if count_benchmark >= 10 then
+                benchmark_speed = round(total_benchmark / (count_benchmark),2)
+                count_benchmark = 0
+                total_benchmark = 0
+                print("rod speed : ", benchmark_speed)
+                text_rod_speed.Text = "⚡ : " .. tostring(benchmark_speed)
+            end
             if flag_error == true and num % 15 == 0 then
                 task.wait(0.5)
                 Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
