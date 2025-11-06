@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.3.2" -- changing step 3 position
+versi = "KAITUN | FIGHT! | V4.4.0" -- add enchant
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -54,9 +54,6 @@ local event_action = false
 local enable_auto_collect = false
 local lastest_bait = "None"
 
-local url = "https://raw.githubusercontent.com/onekiki/JHASKDJHASDWQE/refs/heads/main/quest.json"
-local WEBHOOK_PC1 = "https://discord.com/api/webhooks/1429060824663593055/rITUSfaZzK-Q5fYr0DeGRu3kvWnDg8jro9vQmnNS6x6h6qVFMLEzDqi9LY6cFAW_I54w"
-local WEBHOOK_PC2 = "https://discord.com/api/webhooks/1429095665866375322/Oj7vQ74IH2HvNwUIGklYRIMjLmkUqdYhHU_pn4_IBh_UpnI_9w1xAGX6fiV4kXSnULZd"
 local SERVER_URL = "https://hayfishit.dpdns.org/update"
 
 local total_harga_secret = 0
@@ -69,9 +66,9 @@ local select_quest = "none"
 local master_user = "hayfish96"
 local master_user2 = "haycollector"
 local current_rod = ""
+local current_rod_enchant = nil
 local lastCatchTime = nil
 
---local user_index={["KKHAYAPEB"]={"1429062584899731476","1","13","1"},["KKHAYAMZI"]={"1429062593028292688","1","13","2"},["haytest00"]={"1429062706853445734","1","15","2"},["hayfish_003"]={"1429060874634788905","1","1","1"},["KKHAYAKAD"]={"1429060889373446155","1","1","2"},["haya_0003"]={"1429060904414220390","1","2","1"},["hayfish_004"]={"1429060913188700282","1","2","2"},["haya_0007"]={"1429062033675915264","1","3","1"},["hayfish_005"]={"1429062044036108318","1","3","2"},["hayfish_001"]={"1429062062952157269","1","4","1"},["hayfish_007"]={"1429062093872697492","1","4","2"},["hayfish_002"]={"1429062107747319899","1","5","1"},["KKHAYAIFW"]={"1429062120774959145","1","5","2"},["hayaxd_0009"]={"1429062133127053394","1","6","1"},["KKHAYAWHO"]={"1429062149136715868","1","6","2"},["haya_0001"]={"1429062166853718066","1","7","1"},["hayfish_008"]={"1429062185614704660","1","7","2"},["haya_0002"]={"1429062196264177767","1","8","1"},["hayfish_009"]={"1429062211816394823","1","8","2"},["haya_0004"]={"1429062225452077090","1","9","1"},["KKHAYAYTP"]={"1429062241906331651","1","9","2"},["haya_0006"]={"1429062257714794518","1","10","1"},["KKHAYAMZO"]={"1429062276186374174","1","10","2"},["hayaxd_0008"]={"1429062382478430260","1","11","1"},["KKHAYAKKJ"]={"1429062530852196587","1","11","2"},["hayaxd_0010"]={"1429062559805341836","1","12","1"},["KKHAYAWLD"]={"1429062572979781646","1","12","2"},["KKHAYAOAM"]={"1429062584899731476","1","13","1"},["KKHAYARNV"]={"1429062593028292688","1","13","2"},["KKHAYARAZ"]={"1429062608333574308","1","14","1"},["KKHAYATDS"]={"1429062618076942482","1","14","2"},["KKIKANVUN"]={"1429095994787758210","2","1","1"},["KKIKANLIS"]={"1429096008377438238","2","1","2"},["KKIKANCSZ"]={"1429096020503040083","2","2","1"},["KKIKANWXJ"]={"1429096026912063528","2","2","2"},["KKIKANXVE"]={"1429096036583997461","2","3","1"},["KKIKANMZB"]={"1429096047195586681","2","3","2"},["KKIKANCJR"]={"1429096057710841957","2","4","1"},["KKIKANTDO"]={"1429096070893535366","2","4","2"},["kkhayfish0001"]={"1429096081257664605","2","5","1"},["hayfish_010"]={"1429096091034583100","2","5","2"},["hayfish_006"]={"1429096101847498844","2","6","1"},["KKHAYAIQB"]={"1429096113914249299","2","6","2"}}
 -- === ScreenGui utama ===
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "HAYBOT"
@@ -102,13 +99,24 @@ text_jam.Parent = mainFrame
 local text_rod = Instance.new("TextLabel")
 text_rod.Size =  UDim2.new(0.5, 0, 0.1, 0)
 text_rod.Position = UDim2.new(0, 0, 0.35, 0)
-text_rod.Text = "ROD"
+text_rod.Text = "RiD"
 text_rod.Font = Enum.Font.RobotoMono
 text_rod.TextScaled = true
 text_rod.BackgroundTransparency = 1
 text_rod.TextXAlignment = Enum.TextXAlignment.Center
 text_rod.TextColor3 = Color3.fromRGB(123, 72, 218)
 text_rod.Parent = mainFrame
+
+local text_rod_enchant = Instance.new("TextLabel")
+text_rod_enchant.Size =  UDim2.new(0.5, 0, 0.05, 0)
+text_rod_enchant.Position = UDim2.new(0, 0, 0.35, 80)
+text_rod_enchant.Text = "enchant"
+text_rod_enchant.Font = Enum.Font.RobotoMono
+text_rod_enchant.TextScaled = true
+text_rod_enchant.BackgroundTransparency = 1
+text_rod_enchant.TextXAlignment = Enum.TextXAlignment.Center
+text_rod_enchant.TextColor3 = Color3.fromRGB(85, 145, 255)
+text_rod_enchant.Parent = mainFrame
 
 local text_bait = Instance.new("TextLabel")
 text_bait.Size =  UDim2.new(0.5, 0, 0.1, 0)
@@ -248,9 +256,9 @@ end
 
 --// ANCHOR OPTION MENU
 local options = {
-                "Trade Secret","Trade Mythic", "Trade Stone", "E (empowered 10%)", "Enchant II", "Listen Trade", 
-                "Auto Buy", "Wear Rod", "Jobs ID", "Fishing", "teleport custom", "Farm Event",
-                "backpack", "Merchant", "E (cursed 75%)", "E (mutation +30%)", "E (prismatic -8)", "test"
+                "Trade Secret","Trade Mythic", "Trade Stone", "-", "TEST", "Listen Trade",
+                "Auto Buy", "Merchant", "Jobs ID", "Fishing", "teleport custom", "Farm Event",
+                "Enhant I", "E (empowered 10%)", "E (mutation +30%)", "E (cursed 75%)", "E (prismatic -8)", "Enchant II"
             }
 
 local function opsia(x)
@@ -431,6 +439,21 @@ for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
         end
     end
 end
+local Enchants = ReplicatedStorage:WaitForChild("Enchants")
+
+-- Fungsi untuk mendapatkan info enchant dari Id
+local function info_enchant(id)
+	for _, module in ipairs(Enchants:GetChildren()) do
+		if module:IsA("ModuleScript") then
+			local success, data = pcall(require, module)
+			if success and type(data) == "table" and data.Data and data.Data.Id == id then
+				return data -- mengembalikan seluruh isi module (Data + Modifiers)
+			end
+		end
+	end
+	return nil -- kalau tidak ditemukan
+end
+
 --//ANCHOR connection
 
 local function checkPlayers()
@@ -675,48 +698,6 @@ if config_auto_running == false then
     running = false
 end
 --]]
-
-local function editEmbed(link, message_id, newTitle, newDescription, warna, job_id)
-	local headers = { ["Content-Type"] = "application/json" }
-
-	-- Ambil waktu UTC sekarang
-	local utc = os.time(os.date("!*t"))
-	local utc_plus7 = utc + (7 * 3600)
-	local waktu_wib = os.date("%Y-%m-%d %H:%M:%S", utc_plus7)
-
-	local data = {
-		content = "",
-		embeds = {{
-			title = newTitle,
-			description = newDescription,
-			color = warna,
-			footer = { text = waktu_wib .. " | " .. job_id .. " | " .. #list_secret .." - ".. konvert_harga(total_harga_secret) .." | " .. #list_mythic .." - " .. konvert_harga(total_harga_mythic)}
-		}}
-	}
-
-	-- Gunakan pcall agar error HTTP tidak menghentikan skrip
-	local success, res = pcall(function()
-		return request({
-			Url = link .. "/messages/" .. message_id,
-			Method = "PATCH",
-			Headers = headers,
-			Body = HttpService:JSONEncode(data)
-		})
-	end)
-
-	if not success then
-		warn("⚠️ SEND DISCORD GAGAL:", res)
-		return false
-	end
-
-	if res and res.StatusCode == 200 then
-		print("✅ Embed berhasil diedit.")
-		return true
-	else
-		warn("❌ Gagal edit embed:", res and res.StatusCode, res and res.Body)
-		return false
-	end
-end
 local function dump_table(t, indent)
     indent = indent or 0
     local formatting = string.rep("  ", indent)
@@ -760,7 +741,8 @@ local function update_inventory()
                         Id = item.Id,
                         UUID = item.UUID,
                         Name = rod_info.nama,
-                        Tier = rod_info.tier
+                        Tier = rod_info.tier,
+                        Enchant = item.Metadata and item.Metadata.EnchantId or 0
                     }
                 end
             end
@@ -908,20 +890,20 @@ local function custom_trade(custom_list, limit)
         pesan("player tidak ada")
     end
 end
+--//ANCHOR - Enchant
 local function auto_enchant(ids)
     update_inventory()
+    pesan("set enchant to " .. info_enchant(ids).Data.Name)
     teleport(3243, -1302, 1402)
     local RollEnchant = Net:WaitForChild("RE/RollEnchant")
     local flag_berhasil_enchant = false
-    local wait_enchant = false
     RollEnchant.OnClientEvent:Connect(
         function(waktu, id, v, flag)
-            if id == ids then --hunter
+            if id == ids then 
                 flag_berhasil_enchant = true
+                pesan("berhasil : " .. info_enchant(id).Data.Name)
             end
-            if flag then
-                wait_enchant = true
-            end
+            print("hasil enchant: " .. info_enchant(id).Data.Name)
         end
     )
 
@@ -933,21 +915,21 @@ local function auto_enchant(ids)
     print("total batu = ", #list_trade_batu)
     for i, k in ipairs(list_trade_batu) do
         print("enchant ke " .. i .. "/" .. #list_trade_batu)
-        Net:WaitForChild("RE/EquipItem"):FireServer(k, "EnchantStones")
+        Net:WaitForChild("RE/EquipItem"):FireServer(k, "Enchant Stones")
         task.wait(1)
         Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(2)
         task.wait(1)
         Net:WaitForChild("RE/ActivateEnchantingAltar"):FireServer()
         task.wait(2)
-        while wait_enchant ~= true do
+        for i = 1, 10 do
             print("tunggu ", i)
-            task.wait(2)
+            task.wait(1)
         end
         if i > #list_trade_batu or flag_berhasil_enchant == true then
             print("selesai enchant")
             break
         end
-       
+       print("next enchant >>")
     end
     pesan("selesai enchant")
 end
@@ -955,19 +937,46 @@ local function best_rod_wear()
     local old_tier = 0
     local current_uuid = ""
     local best = nil
+    local current_enchant_id = 0
     for name, v in pairs(list_inventory_rod) do
         if v.Tier > old_tier then
             old_tier = v.Tier
             current_uuid = v.UUID
             best = v.Name
+            current_enchant_id = v.Enchant
         end
     end
     if current_uuid ~= "" then
-        print(best)
+        if current_enchant_id ~= 0 then
+            current_rod_enchant = info_enchant(current_enchant_id).Data.Name
+        end
+        print(best .."|".. current_rod_enchant)
         Net:WaitForChild("RE/EquipItem"):FireServer(current_uuid, "Fishing Rods")
         return best
     else
         print("⚠️ Tidak ada rod ditemukan.")
+    end
+end
+local function cek_merchant()
+local scrollingFrame = gui:WaitForChild("Merchant").Main.Background.Items.ScrollingFrame
+    koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
+    local koins = convert(koin)
+    if list_inventory_bait[18] == nil and koins > 8000000 then
+        for _, imageLabel in ipairs(scrollingFrame:GetDescendants()) do
+            if imageLabel:IsA("ImageLabel") then
+                if imageLabel.Name == "Template" then
+                    local itemName = imageLabel:WaitForChild("Frame"):FindFirstChild("ItemName").Text
+                    local itemPrice = imageLabel:WaitForChild("Frame"):FindFirstChild("Frame"):FindFirstChild("Price").Text
+                    print(itemName .."|".. itemPrice)
+                    if itemName == "Singularity Bait" then
+                        pesan("! ADA !" .. itemName .. " | " .. itemPrice)
+                        teleport(-135, 3, 2767)
+                        running = false
+                        return
+                    end
+                end
+            end
+        end
     end
 end
 local numbers = {}
@@ -1090,16 +1099,28 @@ function opsi(index)
         pesan("please stop running !")
         return
     end
-    if index == 1 then
+    if index == 1 then -- ROW I
         custom_trade(list_secret, 0)
     elseif index == 2 then
         custom_trade(list_mythic, 0)
     elseif index == 3 then
         custom_trade(list_trade_batu, 5)
     elseif index == 4 then
-        auto_enchant(9)
     elseif index == 5 then
-        teleport(1486, 128, -592)
+        -- variabel untuk menyimpan koneksi lama
+        if _G.FishCaughtConnection then
+            _G.FishCaughtConnection:Disconnect()
+            _G.FishCaughtConnection = nil
+            print("🔌 Koneksi lama diputus.")
+        end
+
+        -- buat koneksi baru
+        _G.FishCaughtConnection = remote.OnClientEvent:Connect(function(name, data)
+            if running then
+                lastCatchTime = os.clock()
+                text_progress.Text = name .. " (" .. round(data.Weight, 2) .. " Kg)"
+            end
+        end)
     elseif index == 6 then
         pesan("Waiting to trade....")
         local RF = Net:WaitForChild("RF/AwaitTradeResponse")
@@ -1113,10 +1134,10 @@ function opsi(index)
             pesan("Trade Accepted")
             return "OK"
         end
-    elseif index == 7 then
+    elseif index == 7 then -- ROW 2
         auto_buy()
     elseif index == 8 then
-        best_rod_wear()
+        cek_merchant()
     elseif index == 9 then
         local jobId = game.JobId
         if setclipboard then
@@ -1140,48 +1161,18 @@ function opsi(index)
         pesan("switch event")
         event_action = true
         select_quest = "event"
-    elseif index == 13 then
-        local bp = gui:WaitForChild("Backpack")
-        bp.Enabled = true
+    elseif index == 13 then -- ROW II
+        teleport(3243, -1302, 1402) -- enchant I
     elseif index == 14 then
-        local scrollingFrame = gui:WaitForChild("Merchant").Main.Background.Items.ScrollingFrame
-
-        for _, imageLabel in ipairs(scrollingFrame:GetDescendants()) do
-            if imageLabel:IsA("ImageLabel") then
-                if imageLabel.Name == "Template" then
-                    local itemName = imageLabel:WaitForChild("Frame"):FindFirstChild("ItemName").Text
-                    local itemPrice = imageLabel:WaitForChild("Frame"):FindFirstChild("Frame"):FindFirstChild("Price").Text
-                    print(itemName .."|".. itemPrice)
-                    if itemName == "Singularity Bait" then
-                        pesan("! ADA !" .. itemName .. " | " .. itemPrice)
-                        teleport(-135, 3, 2767)
-                        return
-                    end
-                end
-            end
-        end
-        pesan("tidak ada singularity")
+         auto_enchant(9) --empowered
     elseif index == 15 then
-        auto_enchant(12) -- cursed
+        auto_enchant(14) -- mutation ii
     elseif index == 16 then
-        auto_enchant(14) -- hunter II
-    elseif index == 16 then
-        auto_enchant(13) -- prismatic
+        auto_enchant(12) --cursed
     elseif index == 17 then
-        -- variabel untuk menyimpan koneksi lama
-        if _G.FishCaughtConnection then
-            _G.FishCaughtConnection:Disconnect()
-            _G.FishCaughtConnection = nil
-            print("🔌 Koneksi lama diputus.")
-        end
-
-        -- buat koneksi baru
-        _G.FishCaughtConnection = remote.OnClientEvent:Connect(function(name, data)
-            if running then
-                lastCatchTime = os.clock()
-                text_progress.Text = name .. " (" .. round(data.Weight, 2) .. " Kg)"
-            end
-        end)
+        auto_enchant(13) -- prismatic
+    elseif index == 18 then
+        teleport(1486, 128, -592) -- enchant II 
     end
     lastCatchTime = os.clock()
 end
@@ -1194,49 +1185,6 @@ local function display_inventory()
         return list
     else
         return "tidak ada secret :("
-    end
-end
-
-local function send_discord(waktu,error)
-    local progress = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4
-    local rod = current_rod
-    local list_inv = display_inventory()
-    koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
-    local lokasi = player:GetAttribute("LocationName")
-    local usrr =  player.Name
-    local link = nil
-    if user_index[usrr] ~= nil then
-        print("send hook")
-        local id = user_index[usrr][1]
-        local pc = user_index[usrr][2]
-        local no = user_index[usrr][3]
-        local bt = user_index[usrr][4]
-        local title = "BOT " .. no .. " - " .. bt .. " | " .. usrr .. " | " .. waktu
-        local list_1 = "**" .. select_quest .. "** | " .. lokasi .. " | **" .. rod .. "**"
-        local list_2 = " **Progress : ** " .. progress_quest1 .. " - " .. progress_quest2 .. " - " .. progress_quest3 .." - " ..progress_quest4 .. "**( " .. progress .."% )**"
-        local list_3 = " **Koin : ** " .. koin .. " **Secret :** " .. konvert_harga(total_harga_secret) .. " **Mythic :** " .. konvert_harga(total_harga_mythic)
-        local list_4 = "**Activity :**" .. last_msg
-        local list_5 = list_inv
-        local detail =   list_1 .."\n".. list_2 .."\n" .. list_3 .."\n".. list_4 .. "\n".. list_5
-        local warna = "6052956"
-       if rod == "Element Rod" then
-            warna = "15548997"
-        elseif rod == "Ghostfinn Rod" then
-            warna = "5763719"
-        else
-            warna = "3447003"
-        end
-        
-        if pc == "1" then
-            link = WEBHOOK_PC1
-        elseif pc == "2" then
-            link = WEBHOOK_PC2
-        else
-            print("tidak diketahui", pc)
-            return
-        end
-        print(warna)
-        editEmbed(link, id, title, detail, warna, game.JobId)
     end
 end
 --//ANCHOR send web data 
@@ -1281,8 +1229,7 @@ end
 --------------------------------------------------------------------
 --- SPAWN
 --------------------------------------------------------------------
----
----
+
 task.spawn(
     function()
         local num = 1
@@ -1388,6 +1335,7 @@ Net:WaitForChild("RE/ChangeSetting"):FireServer("Global Notifications", false)
 
 task.wait(5)
 update_inventory()
+cek_merchant()
 hapus_gui_daily()
 SetLowGraphics()
 
@@ -1423,7 +1371,7 @@ if running then
     end
     auto_buy()
 
-    current_rod = best_rod_wear()
+    current_rod = best_rod_wear() or "-"
     if current_rod == "Ghostfinn Rod" then
         select_quest = "jungle"
     elseif current_rod == "Element Rod" then
@@ -1433,7 +1381,12 @@ if running then
     else
         select_quest = "farming_coin"
     end
+    
     text_rod.Text = current_rod
+    if current_rod_enchant then
+        text_rod_enchant.Text = "(" .. current_rod_enchant .. ")"
+    end
+
     print(select_quest)
     update_quest()
     Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
