@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.0.4"
+local versi = "NEW UI - V1.0.5"
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -318,17 +318,17 @@ local function update_inventory()
 
                     total_semua = total_semua + itemData.SellPrice
                     hitung_ikan = hitung_ikan + 1
-                    table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                    table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat),mutasi = variant})
                     if tierName == "SECRET" then
                         total_secret = total_secret + itemData.SellPrice
                         table.insert(list_sekret, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
                     end
                     if tierName == "Mythic" and variant == nil then
                         total_mitik = total_mitik + itemData.SellPrice
-                        table.insert(list_mitik, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                        table.insert(list_mitik, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat), mutasi = variant})
                     end
                     if variant or tierName == "SECRET" then
-                        table.insert(list_master, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                        table.insert(list_master, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat),mutasi = variant})
                     end
                     if variant then
                         total_mutasi = total_mutasi + 1
@@ -500,7 +500,8 @@ local function trade(target, jumlah, type)
                     berhasil = berhasil + 1
                     info_akhir = "Total: " .. berhasil .. "/" .. #custom_list
                     current_harga = current_harga  + info.harga
-                    local info_ikan = i ..". " .. info.nama .. " (" .. info.berat .. " kg) "
+                    local current_mutasi = info.mutasi or "-"
+                    local info_ikan = i ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
                     cetak(info_ikan)
                     detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
                 end
@@ -626,7 +627,19 @@ loadSettings()
 updateButton()
 -- Tes awal
 cetak("Collector GUI loaded.")
-
+local total_ikan = 1
+RF.OnClientInvoke = function(...)
+    local args = {...}
+    local data = args[2]
+    if type(data) == "table" then
+        print("Trade offer:", data.Id, data.UUID)
+    end
+    local detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
+    cetak(detail)
+    total_ikan = total_ikan + 1
+    task.wait(3)
+    return "OK"
+end
 update_inventory()
 local function auto_collecting()
         cetak("start auto collect")
@@ -636,19 +649,6 @@ local function auto_collecting()
             ready = false
         end
         if ready then
-            local total_ikan = 1
-            RF.OnClientInvoke = function(...)
-                local args = {...}
-                local data = args[2]
-                if type(data) == "table" then
-                    print("Trade offer:", data.Id, data.UUID)
-                end
-                local detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
-                cetak(detail)
-                total_ikan = total_ikan + 1
-                task.wait(3)
-                return "OK"
-            end
             local nama = nil
             for i, user in ipairs(Players:GetPlayers()) do
                 if user ~= player then
@@ -679,7 +679,6 @@ end
 Handshake.MouseButton1Click:Connect(function()
 	auto_collecting()
 end)
-
 
 if auto_collect then
     auto_collecting()
