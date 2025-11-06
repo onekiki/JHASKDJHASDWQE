@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.0.2"
+local versi = "NEW UI - V1.0.4"
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -149,6 +149,39 @@ stopBtn.Font = Enum.Font.RobotoMono
 stopBtn.TextSize = 16
 stopBtn.Parent = rightFrame
 
+
+-- === Buat tombol toggle ===
+local settingBtn = Instance.new("TextButton")
+settingBtn.Text = "Auto Collect: OFF"
+settingBtn.Size = UDim2.new(0, 150, 0, 25)
+settingBtn.Position = UDim2.new(0, 0, 0, 320) -- di bawah tombol trade / log
+settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+settingBtn.TextColor3 = Color3.new(1,1,1)
+settingBtn.Font = Enum.Font.RobotoMono
+settingBtn.TextSize = 16
+settingBtn.Parent = rightFrame
+
+local SendMaster = Instance.new("TextButton")
+SendMaster.Text = "Send"
+SendMaster.Size = UDim2.new(0, 150, 0, 25)
+SendMaster.Position = UDim2.new(0, 160, 0, 320) -- di bawah tombol trade / log
+SendMaster.BackgroundColor3 = Color3.fromRGB(167, 28, 167)
+SendMaster.TextColor3 = Color3.new(1,1,1)
+SendMaster.Font = Enum.Font.RobotoMono
+SendMaster.TextSize = 16
+SendMaster.Parent = rightFrame
+
+local Handshake = Instance.new("TextButton")
+Handshake.Text = "Handshake"
+Handshake.Size = UDim2.new(0, 150, 0, 25)
+Handshake.Position = UDim2.new(0, 0, 0, 360) -- di bawah tombol trade / log
+Handshake.BackgroundColor3 = Color3.fromRGB(122, 190, 12)
+Handshake.TextColor3 = Color3.new(1,1,1)
+Handshake.Font = Enum.Font.RobotoMono
+Handshake.TextSize = 16
+Handshake.Parent = rightFrame
+
+
 -- === LOG FRAME ===
 local logFrame = Instance.new("ScrollingFrame")
 logFrame.Size = UDim2.new(1, -10, 0, 150)
@@ -253,12 +286,12 @@ end
 local list_mitik = {}
 local list_sekret = {}
 local list_all = {}
-
+local list_master = {}
 local total_semua = 0
 local hitung_ikan = 0
 local total_secret = 0
 local total_mitik = 0
-
+local total_mutasi = 0
 --// ANCHOR update_inventory
 
 local function update_inventory()
@@ -279,25 +312,26 @@ local function update_inventory()
                     end
                 end
                 local berat = item.Metadata and item.Metadata.Weight or 0
-               -- local varian = item.Metadata.VarianId or "none"
+                local variant = item.Metadata and item.Metadata.VariantId or nil
                 
-               if itemData.Data.Type == "Fish" then
-                    if itemData.SellPrice then
-                        total_semua = total_semua + itemData.SellPrice
-                        hitung_ikan = hitung_ikan + 1
-                        table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
-                    end
-                end
-                if itemData.Data.Type == "Fish" and tierName == "Secret" then
-                    if itemData.SellPrice then
+                if itemData.Data.Type == "Fish" and itemData.SellPrice then
+
+                    total_semua = total_semua + itemData.SellPrice
+                    hitung_ikan = hitung_ikan + 1
+                    table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                    if tierName == "SECRET" then
                         total_secret = total_secret + itemData.SellPrice
                         table.insert(list_sekret, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
                     end
-                end
-                if itemData.Data.Type == "Fish" and tierName == "Mythic" then
-                    if itemData.SellPrice then
+                    if tierName == "Mythic" and variant == nil then
                         total_mitik = total_mitik + itemData.SellPrice
                         table.insert(list_mitik, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                    end
+                    if variant or tierName == "SECRET" then
+                        table.insert(list_master, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                    end
+                    if variant then
+                        total_mutasi = total_mutasi + 1
                     end
                 end
                 --[[
@@ -311,11 +345,14 @@ local function update_inventory()
                     type = itemData.Data.Type
                 })]]
             end
+            print("sekret =", total_secret)
+            print("mitik =", total_mitik)
         end
     end
     local cetak = "Total semua : ".. konvert_harga(total_semua) .. " | " .. konvert_harga(hitung_ikan) .. " Ikan \n"
     .. "Secret : ".. konvert_harga(total_secret) .. " | " .. #list_sekret .. " Ikan \n"
-    .. "Mitik : ".. konvert_harga(total_mitik) .." | " .. #list_mitik .. " Ikan"
+    .. "Mitik : ".. konvert_harga(total_mitik) .." | " .. #list_mitik .. " Ikan \n"
+    .. "Mutasi: " .. total_mutasi .. " Ikan"
     statsLabel.Text = cetak
 end
 
@@ -422,7 +459,13 @@ local function trade(target, jumlah, type)
     end
     local custom_list = nil
     if type then
-        if type == "sekret" then
+        if type == "master" then
+            if target ~= "hayfish96" then
+                cetak("master tidak sesuai")
+                return
+            end
+            custom_list = list_master
+        elseif type == "sekret" then
             cetak("trade sekret dipilih")
             custom_list = list_sekret
         elseif type == "mitik" then
@@ -507,7 +550,13 @@ allBtn.MouseButton1Click:Connect(function()
 	end
 	trade(selectedPlayer, 0, "all")
 end)
-
+SendMaster.MouseButton1Click:Connect(function()
+	if not selectedPlayer then
+		cetak("❌ Pilih player dulu!")
+		return
+	end
+	trade(selectedPlayer, 0, "master")
+end)
 stopBtn.MouseButton1Click:Connect(function()
 	trade_stop = not trade_stop
     if trade_stop then
@@ -551,26 +600,6 @@ local function saveSettings()
     end
 end
 
--- === Buat tombol toggle ===
-local settingBtn = Instance.new("TextButton")
-settingBtn.Text = "Auto Collect: OFF"
-settingBtn.Size = UDim2.new(0, 150, 0, 25)
-settingBtn.Position = UDim2.new(0, 0, 0, 320) -- di bawah tombol trade / log
-settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-settingBtn.TextColor3 = Color3.new(1,1,1)
-settingBtn.Font = Enum.Font.RobotoMono
-settingBtn.TextSize = 16
-settingBtn.Parent = rightFrame
-
-local Handshake = Instance.new("TextButton")
-Handshake.Text = "Handshake"
-Handshake.Size = UDim2.new(0, 150, 0, 25)
-Handshake.Position = UDim2.new(0, 0, 0, 360) -- di bawah tombol trade / log
-Handshake.BackgroundColor3 = Color3.fromRGB(122, 190, 12)
-Handshake.TextColor3 = Color3.new(1,1,1)
-Handshake.Font = Enum.Font.RobotoMono
-Handshake.TextSize = 16
-Handshake.Parent = rightFrame
 
 -- Klik toggle
 
