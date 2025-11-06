@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.4.1" -- add benchmark speed
+versi = "KAITUN | FIGHT! | V4.4.3" -- add benchmark speed
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -960,8 +960,9 @@ local function best_rod_wear()
     if current_uuid ~= "" then
         if current_enchant_id ~= 0 then
             current_rod_enchant = info_enchant(current_enchant_id).Data.Name
+        else
+            text_rod_enchant.Text = "no enchant"
         end
-        print(best .."|".. current_rod_enchant)
         Net:WaitForChild("RE/EquipItem"):FireServer(current_uuid, "Fishing Rods")
         return best
     else
