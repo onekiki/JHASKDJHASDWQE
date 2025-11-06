@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.0.5"
+local versi = "NEW UI - V1.0.6"
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -162,18 +162,28 @@ settingBtn.TextSize = 16
 settingBtn.Parent = rightFrame
 
 local SendMaster = Instance.new("TextButton")
-SendMaster.Text = "Send"
-SendMaster.Size = UDim2.new(0, 150, 0, 25)
-SendMaster.Position = UDim2.new(0, 160, 0, 320) -- di bawah tombol trade / log
+SendMaster.Text = "Master"
+SendMaster.Size = UDim2.new(0, 80, 0, 25)
+SendMaster.Position = UDim2.new(0, 140, 0, 360) -- di bawah tombol trade / log
 SendMaster.BackgroundColor3 = Color3.fromRGB(167, 28, 167)
 SendMaster.TextColor3 = Color3.new(1,1,1)
 SendMaster.Font = Enum.Font.RobotoMono
 SendMaster.TextSize = 16
 SendMaster.Parent = rightFrame
 
+local resetBtn = Instance.new("TextButton")
+resetBtn.Text = "reset"
+resetBtn.Size = UDim2.new(0, 80, 0, 25)
+resetBtn.Position = UDim2.new(0, 230, 0, 360) -- di bawah tombol trade / log
+resetBtn.BackgroundColor3 = Color3.fromRGB(172, 54, 54)
+resetBtn.TextColor3 = Color3.new(1,1,1)
+resetBtn.Font = Enum.Font.RobotoMono
+resetBtn.TextSize = 16
+resetBtn.Parent = rightFrame
+
 local Handshake = Instance.new("TextButton")
 Handshake.Text = "Handshake"
-Handshake.Size = UDim2.new(0, 150, 0, 25)
+Handshake.Size = UDim2.new(0, 130, 0, 25)
 Handshake.Position = UDim2.new(0, 0, 0, 360) -- di bawah tombol trade / log
 Handshake.BackgroundColor3 = Color3.fromRGB(122, 190, 12)
 Handshake.TextColor3 = Color3.new(1,1,1)
@@ -201,16 +211,79 @@ logLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 end)
 
 local detail_harga = Instance.new("TextLabel")
-detail_harga.Text = ""
+detail_harga.Text = "no load"
 detail_harga.Size = UDim2.new(0, 0, 0, 0)
 detail_harga.Position = UDim2.new(0, 240, 0, 320)
 detail_harga.TextColor3 = Color3.new(0, 0, 0)
 detail_harga.Font = Enum.Font.RobotoMono
 detail_harga.TextSize = 16
 detail_harga.Parent = rightFrame
+
+-- === Fungsi Cetak Log ===
+local function cetak(teks)
+	local logLine = Instance.new("TextLabel")
+	logLine.Size = UDim2.new(1, -10, 0, 14)
+	logLine.BackgroundTransparency = 1
+	logLine.Text = tostring(teks)
+	logLine.TextSize = 14
+	logLine.TextColor3 = Color3.fromRGB(0, 255, 0)
+	logLine.Font = Enum.Font.RobotoMono
+	logLine.TextXAlignment = Enum.TextXAlignment.Left
+	logLine.Parent = logFrame
+end
+
+
 ----------------------------------------------------
 ---fungsi 
 ---
+local auto_collect = nil
+-- === SETTING AUTO TRADE ===
+local HttpService = game:GetService("HttpService")
+local settingsFile = "settings.json"
+local settings = { auto_trade = false }
+local total_transaksi = nil
+-- Load settings dari file
+local function loadSettings()
+    if isfile and isfile(settingsFile) then
+        local data = readfile(settingsFile)
+        local decoded = HttpService:JSONDecode(data)
+        if decoded then
+            settings = decoded
+            auto_collect = settings.auto_trade
+            total_transaksi = settings.total_transaksi
+            if total_transaksi == nil then
+                total_transaksi = 0
+                detail_harga.Text = "no save"
+            end
+        end
+    else
+        cetak("No settings file found, using default.")
+    end
+end
+
+-- Simpan settings ke file
+local function saveSettings()
+    if writefile then
+        local data = HttpService:JSONEncode(settings)
+        writefile(settingsFile, data)
+        cetak("Settings saved.")
+    else
+        cetak("❌ writefile() not supported in this environment.")
+    end
+end
+
+-- === Tambahan fitur: simpan jumlah transaksi ===
+
+-- Fungsi untuk menyimpan jumlah transaksi
+local function simpan_transaksi(nilai)
+    if type(nilai) ~= "number" then
+        cetak("❌ Nilai transaksi harus berupa angka!")
+        return
+    end
+    settings.total_transaksi = nilai
+    saveSettings()
+    cetak("💾 Transaksi tersimpan. Total sekarang: " .. settings.total_transaksi)
+end
 
 local list_ikan = {}
 for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetChildren()) do
@@ -364,18 +437,6 @@ local function send_handshake(user)
     Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, uuid)
 end
 
--- === Fungsi Cetak Log ===
-local function cetak(teks)
-	local logLine = Instance.new("TextLabel")
-	logLine.Size = UDim2.new(1, -10, 0, 14)
-	logLine.BackgroundTransparency = 1
-	logLine.Text = tostring(teks)
-	logLine.TextSize = 14
-	logLine.TextColor3 = Color3.fromRGB(0, 255, 0)
-	logLine.Font = Enum.Font.RobotoMono
-	logLine.TextXAlignment = Enum.TextXAlignment.Left
-	logLine.Parent = logFrame
-end
 
 -- === PLAYER MANAGEMENT ===
 local selectedPlayer = nil
@@ -480,6 +541,10 @@ local function trade(target, jumlah, type)
     local berhasil = 0
     local info_akhir = ""
     local current_harga = 0
+    if total_transaksi ~= 0 then
+        current_harga = total_transaksi
+        cetak("load transaksi akhir: " .. tostring(current_harga))
+    end
     local function trade_user(usr)
         print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
         if custom_list ~= nil then
@@ -504,11 +569,13 @@ local function trade(target, jumlah, type)
                     local info_ikan = i ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
                     cetak(info_ikan)
                     detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
+                    simpan_transaksi(current_harga)
                 end
                 completed = false
                 task.wait(3)
                 local mm = current_harga / 100000
                 local limit = round(mm, 2)
+
                 if jumlah > 0 and limit > jumlah then
                     cetak("jumlah tercapai ! " .. current_harga)
                     break
@@ -569,37 +636,10 @@ stopBtn.MouseButton1Click:Connect(function()
     end
 end)
 
-local auto_collect = nil
--- === SETTING AUTO TRADE ===
-local HttpService = game:GetService("HttpService")
-local settingsFile = "settings.json"
-local settings = { auto_trade = false }
-
--- Load settings dari file
-local function loadSettings()
-    if isfile and isfile(settingsFile) then
-        local data = readfile(settingsFile)
-        local decoded = HttpService:JSONDecode(data)
-        if decoded then
-            settings = decoded
-            cetak("Settings loaded: auto_trade = " .. tostring(settings.auto_trade))
-            auto_collect = settings.auto_trade
-        end
-    else
-        cetak("No settings file found, using default.")
-    end
-end
-
--- Simpan settings ke file
-local function saveSettings()
-    if writefile then
-        local data = HttpService:JSONEncode(settings)
-        writefile(settingsFile, data)
-        cetak("Settings saved.")
-    else
-        cetak("❌ writefile() not supported in this environment.")
-    end
-end
+resetBtn.MouseButton1Click:Connect(function()
+	simpan_transaksi(0)
+    detail_harga.Text = "no save"
+end)
 
 
 -- Klik toggle
@@ -627,6 +667,9 @@ loadSettings()
 updateButton()
 -- Tes awal
 cetak("Collector GUI loaded.")
+if total_transaksi ~= 0 then
+    detail_harga.Text = "Load Trade: " .. total_transaksi
+end
 local total_ikan = 1
 RF.OnClientInvoke = function(...)
     local args = {...}
@@ -683,6 +726,17 @@ end)
 if auto_collect then
     auto_collecting()
 end
+local total_trade = 0
+Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
+    function(data)
+        if data and data.Text == "Trade completed!" then
+            total_trade = total_trade + 1
+            local info = "trade : " .. tostring(total_trade)
+            --simpan_transaksi(total_trade)
+            detail_harga.Text = info
+        end
+    end
+)
 while running do
     print("running..")
     task.wait(100)
