@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.4.3" -- add benchmark speed
+versi = "KAITUN | FIGHT! | V4.4.4" -- add benchmark speed
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -53,6 +53,7 @@ local playing = true
 local event_action = false
 local enable_auto_collect = false
 local lastest_bait = "None"
+local lastest_bait_wear = nil
 
 local SERVER_URL = "https://hayfishit.dpdns.org/update"
 
@@ -767,6 +768,7 @@ local function update_inventory()
                     Tier = baits.Data.Tier
                 }
                 lastest_bait = baits.Data.Name
+                lastest_bait_wear = baits.Data.Id
             end
         end
         if category == "Items" then
@@ -1356,16 +1358,17 @@ end
 ---MULAI ALGORITMA
 ---------------------------------------------
 -- TWEAK
-Net:WaitForChild("RE/ChangeSetting"):FireServer("Server Notifications", false)
-Net:WaitForChild("RE/ChangeSetting"):FireServer("Global Notifications", false)
+--Net:WaitForChild("RE/ChangeSetting"):FireServer("Server Notifications", false)
+--Net:WaitForChild("RE/ChangeSetting"):FireServer("Global Notifications", false)
 
+send_Data("0", total_harga_secret, total_harga_mythic, "START", "0","0")
 task.wait(5)
 update_inventory()
 cek_merchant()
 hapus_gui_daily()
 SetLowGraphics()
-
 print("INISIALISASI ------COUNTDOWN")
+---countdown
 local countdown = 5
 text_progress.Text = "Auto Play in: "
 if running then
@@ -1379,7 +1382,7 @@ if running then
         end
     end
 end
-send_Data("0", total_harga_secret, total_harga_mythic, "START", "0","0")
+---jika ada countdown tunggu
 while not running do
     text_progress.Text = "Waiting Running..."
     task.wait(15)
@@ -1387,17 +1390,28 @@ while not running do
 end
 
 if running then
+    pesan("inisialisasi awal")
+    -- inisialisasi awal bait , 3d config, check player, quest, auto buy
     checkPlayers()
     toggle3DAndUI()
-
-    text_progress.Text = "Start auto run script "
+    wear_bait(lastest_bait_wear)
+    text_bait.Text = lastest_bait
+    update_quest()
+    auto_buy()
+    -- add platform
     player.CharacterAdded:Connect(attachSmartPlatform)
     if player.Character then
         attachSmartPlatform(player.Character)
     end
-    auto_buy()
-
+    -- wear rod
     current_rod = best_rod_wear() or "-"
+    text_rod.Text = current_rod
+    if current_rod_enchant then
+        text_rod_enchant.Text = "(" .. current_rod_enchant .. ")"
+    end
+    Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+
+    -- tentukan aktifitas
     if current_rod == "Ghostfinn Rod" then
         select_quest = "jungle"
     elseif current_rod == "Element Rod" then
@@ -1408,24 +1422,8 @@ if running then
         select_quest = "farming_coin"
     end
     
-    text_rod.Text = current_rod
-    if current_rod_enchant then
-        text_rod_enchant.Text = "(" .. current_rod_enchant .. ")"
-    end
-
-    print(select_quest)
-    update_quest()
-    Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
-
 end
-print("MAIN PROGRAM -------------------------------")
-
--- TEMP EVENT !!!!!
---[[
-if current_rod == "Ghostfinn Rod" or current_rod == "Element Rod" then
-    select_quest = "custom_teleport"
-end
---]]
+pesan("START ACTIVITY")
 
 if running and select_quest == "farming_coin" then
     pesan("farming koin starter")
@@ -1595,19 +1593,19 @@ if running and select_quest == "jungle" then
         end
 
         if step == 3 then
-            if running and progress_quest3 < 100 then
-                pesan(quest_jungle(3)) -- inside temple
-                teleport(math.random(1491,1516), -22, -630)
-                face(0)
-                while running and progress_quest3 < 100 do
-                    auto_fish()
-                end
-            end
             if running and progress_quest2 < 100 then
                 pesan(quest_jungle(2)) -- in the forest
                 teleport(1066, 5, 157)
                 face(0)
                 while running and progress_quest2 < 100 do
+                    auto_fish()
+                end
+            end
+            if running and progress_quest3 < 100 then
+                pesan(quest_jungle(3)) -- inside temple
+                teleport(math.random(1491,1516), -22, -630)
+                face(0)
+                while running and progress_quest3 < 100 do
                     auto_fish()
                 end
             end
@@ -1691,6 +1689,7 @@ while playing do
 end
 running = false
 event_action = false
+
 print("-----------------end-------------")
 --]]
 -----------------------------------------------------------------
