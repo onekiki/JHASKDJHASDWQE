@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.1.1"
+local versi = "NEW UI - V1.1.2"
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -829,9 +829,30 @@ Handshake.MouseButton1Click:Connect(function()
 	auto_collecting()
 end)
 
+local function attachSmartPlatform()
+    -- Buat platform sekali
+    local platform = Instance.new("Part")
+    platform.Name = "LocalPlatform"
+    platform.Size = Vector3.new(6, 0.2, 6)
+    platform.Anchored = true
+    platform.CanCollide = true
+    platform.Transparency = 0.3
+    platform.Color = Color3.new(1, 0, 0)
+    platform.Parent = workspace
+
+    -- Update posisi hanya ketika karakter bergerak
+    local function updatePlatform()
+        platform.CFrame = CFrame.new(root.Position.X, root.Position.Y - 3, root.Position.Z)
+    end
+    updatePlatform()
+    root:GetPropertyChangedSignal("Position"):Connect(updatePlatform)
+end
 if auto_collect then
     render()
-    root.Anchored = true
+    player.CharacterAdded:Connect(attachSmartPlatform)
+    if player.Character then
+        attachSmartPlatform()
+    end
     auto_collecting()
 end
 local total_trade = 0
