@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.4.4" -- add benchmark speed
+versi = "KAITUN | FIGHT! | V4.4.5" -- add benchmark speed
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -942,6 +942,7 @@ local function auto_enchant(ids)
             print("selesai enchant")
             break
         end
+        if not playing then break end
        print("next enchant >>")
     end
     pesan("selesai enchant")
@@ -975,7 +976,7 @@ local function cek_merchant()
 local scrollingFrame = gui:WaitForChild("Merchant").Main.Background.Items.ScrollingFrame
     koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
     local koins = convert(koin)
-    if list_inventory_bait[18] == nil and koins > 8000000 then
+    if list_inventory_bait[18] == nil and koins > 8300000 then
         for _, imageLabel in ipairs(scrollingFrame:GetDescendants()) do
             if imageLabel:IsA("ImageLabel") then
                 if imageLabel.Name == "Template" then
@@ -983,15 +984,23 @@ local scrollingFrame = gui:WaitForChild("Merchant").Main.Background.Items.Scroll
                     local itemPrice = imageLabel:WaitForChild("Frame"):FindFirstChild("Frame"):FindFirstChild("Price").Text
                     print(itemName .."|".. itemPrice)
                     if itemName == "Singularity Bait" then
-                        pesan("! ADA !" .. itemName .. " | " .. itemPrice)
+                        pesan("! ADA !" .. itemName .. "|" .. itemPrice)
                         teleport(-135, 3, 2767)
-                        running = false
-                        return
+                        local status, data =  Net:WaitForChild("RF/PurchaseMarketItem"):InvokeServer(3)
+                        if status then
+                            pesan("berhasill beli singularity")
+                            running  = true
+                            return true
+                        else
+                            running = false
+                            return false
+                        end
                     end
                 end
             end
         end
     end
+    return false
 end
 local numbers = {}
 local function teleport_string(data)
@@ -1364,7 +1373,9 @@ end
 send_Data("0", total_harga_secret, total_harga_mythic, "START", "0","0")
 task.wait(5)
 update_inventory()
-cek_merchant()
+if cek_merchant() == true then
+    update_inventory()
+end
 hapus_gui_daily()
 SetLowGraphics()
 print("INISIALISASI ------COUNTDOWN")
@@ -1406,9 +1417,6 @@ if running then
     -- wear rod
     current_rod = best_rod_wear() or "-"
     text_rod.Text = current_rod
-    if current_rod_enchant then
-        text_rod_enchant.Text = "(" .. current_rod_enchant .. ")"
-    end
     Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
     -- tentukan aktifitas
@@ -1421,7 +1429,21 @@ if running then
     else
         select_quest = "farming_coin"
     end
-    
+
+    --make AUTO ENCHANT if rod dont have enchant
+    if current_rod_enchant then
+        text_rod_enchant.Text = "(" .. current_rod_enchant .. ")"
+    else
+        if current_rod == "Ghostfinn Rod" or current_rod == "Element Rod" then
+            pesan("rod belum di enchant")
+            if #list_trade_batu > 0 then
+                auto_enchant(12)
+                update_inventory()
+                best_rod_wear()
+                text_rod_enchant.Text = "(" .. current_rod_enchant .. ")"
+            end
+        end
+    end
 end
 pesan("START ACTIVITY")
 
@@ -1553,7 +1575,6 @@ if running and select_quest == "jungle" then
         end
 
         if step == 2 then
-            running  = false
             local list_artifak = {265, 266, 267, 271}
             for i, k in ipairs(list_artifak) do
                 if list_inventory_fishs[k] ~= nil then
@@ -1589,7 +1610,7 @@ if running and select_quest == "jungle" then
             end
             task.wait(60)
             pesan("TUNGGU PINTU TERBUKA")
-            step = step + 1
+            step = 3
         end
 
         if step == 3 then
@@ -1612,8 +1633,6 @@ if running and select_quest == "jungle" then
             if running and progress_quest4 < 100 then
                 teleport(1487, 128, -591)
                 pesan("SELESAI MANUAL SACRIFICE")
-                playing = false
-                running = false
                 task.wait(30)
             end
         end
@@ -1625,7 +1644,7 @@ if running and select_quest == "jungle" then
     end
 end
 while playing do
-    if select_quest == "event" then
+    if running and select_quest == "event" then
         pesan("farming event")
         local function getAllMegalodonHuntPivots()
             local menuRings = workspace:FindFirstChild("!!! MENU RINGS")
@@ -1667,22 +1686,13 @@ while playing do
             end
         end
     end
-    if select_quest == "custom_teleport" then
+    if running and select_quest == "custom_teleport" then
         teleport(2144, 81, 3271) --mountain hallow
         face(0)
-        running = true
-        while playing do
-            if running then
-                pesan("fishing : " .. player:GetAttribute("LocationName"))
-                for i=0, 50 do
-                    auto_fish()
-                    if not running then break end
-                end
-            end
-            if event_action == true then
-                break
-            end
-            task.wait(15)
+        task.wait(5)
+        pesan("fishing : " .. player:GetAttribute("LocationName"))
+        while running do
+            auto_fish()
         end
     end
     task.wait(15)
