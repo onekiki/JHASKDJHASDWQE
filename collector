@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.1.3"
+local versi = "NEW UI - V1.1.4" -- trade in million
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -20,7 +20,7 @@ local TierUtility = require(ReplicatedStorage.Shared.TierUtility)
 
 local trade_stop = false
 local running = true
-
+local berat_min = 50000  -- berat trade secret minimal berapa kilo ?
 -- ScreenGui utama
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "CollectorUI"
@@ -122,20 +122,10 @@ statsLabel.Font = Enum.Font.RobotoMono
 statsLabel.TextSize = 16
 statsLabel.Parent = rightFrame
 
--- Player yang dipilih
-local selectedLabel = Instance.new("TextLabel")
-selectedLabel.Text = "Selected Player: -"
-selectedLabel.Size = UDim2.new(1, 0, 0, 20)
-selectedLabel.Position = UDim2.new(0, 0, 0, 90)
-selectedLabel.BackgroundTransparency = 1
-selectedLabel.TextColor3 = Color3.new(0,0,0)
-selectedLabel.Font = Enum.Font.RobotoMono
-selectedLabel.TextSize = 16
-selectedLabel.Parent = rightFrame
-
 -- Input jumlah
 local amountBox = Instance.new("TextBox")
-amountBox.PlaceholderText = "in K"
+amountBox.Text = "jumlah"
+amountBox.PlaceholderText = "in M..."
 amountBox.Size = UDim2.new(0, 60, 0, 25)
 amountBox.Position = UDim2.new(0, 0, 0, 120)
 amountBox.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
@@ -143,6 +133,16 @@ amountBox.TextColor3 = Color3.new(0,0,0)
 amountBox.Font = Enum.Font.RobotoMono
 amountBox.TextSize = 16
 amountBox.Parent = rightFrame
+
+local selectedLabel = Instance.new("TextLabel")
+selectedLabel.Text = "M"
+selectedLabel.Size = UDim2.new(1, 0, 0, 20)
+selectedLabel.Position = UDim2.new(0, 0, 0, 90)
+selectedLabel.BackgroundTransparency = 1
+selectedLabel.TextColor3 = Color3.new(0,0,0)
+selectedLabel.Font = Enum.Font.RobotoMono
+selectedLabel.TextSize = 16
+selectedLabel.Parent = rightFrame
 
 -- Tombol Trade
 local tradeBtn = Instance.new("TextButton")
@@ -263,7 +263,7 @@ local function cetak(teks)
 	logLine.BackgroundTransparency = 1
 	logLine.Text = tostring(teks)
 	logLine.TextSize = 14
-	logLine.TextColor3 = Color3.fromRGB(0, 255, 0)
+	logLine.TextColor3 = Color3.fromRGB(19, 19, 19)
 	logLine.Font = Enum.Font.RobotoMono
 	logLine.TextXAlignment = Enum.TextXAlignment.Left
 	logLine.Parent = logFrame
@@ -468,7 +468,7 @@ local function update_inventory()
                     total_semua = total_semua + itemData.SellPrice
                     hitung_ikan = hitung_ikan + 1
                     table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat),mutasi = variant})
-                    if tierName == "SECRET" and berat < 100000 then
+                    if tierName == "SECRET" and berat < berat_min then
                         total_secret = total_secret + itemData.SellPrice
                         table.insert(list_sekret, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
                     end
@@ -595,12 +595,6 @@ local function trade(target, jumlah, type)
     end
 
     update_inventory()
-    --[[
-    if jumlah > 0 and total_semua < round(jumlah / 100000,2) then
-        cetak("!! total ikan tidak memenuhi target !!")
-        return
-    end
-    ]]
     local custom_list = nil
     local flag_secret = false
     if type then
@@ -626,6 +620,11 @@ local function trade(target, jumlah, type)
     local berhasil = 0
     local info_akhir = ""
     local current_harga = 0
+
+    if flag_secret == false and (jumlah > 0 and total_semua < round(jumlah / 1000000,2)) then
+        cetak("!! total ikan tidak memenuhi target !!")
+        return
+    end
     if total_transaksi ~= nil and total_transaksi ~= 0 then
         current_harga = total_transaksi
         cetak("load transaksi akhir: " .. tostring(current_harga))
@@ -648,7 +647,7 @@ local function trade(target, jumlah, type)
                 end
                 if timeout < 30 then
                     berhasil = berhasil + 1
-                    info_akhir = "Total: " .. berhasil .. "/" .. #custom_list
+                    info_akhir = "Total: " .. berhasil .. "/" .. jumlah
                     current_harga = current_harga  + info.harga
                     local current_mutasi = info.mutasi or "-"
                     local info_ikan = i ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
@@ -658,7 +657,7 @@ local function trade(target, jumlah, type)
                 end
                 completed = false
                 task.wait(3)
-                local mm = current_harga / 100000
+                local mm = current_harga / 1000000
                 local limit = round(mm, 2)
                 if flag_secret == true then
                     if i >= jumlah then
