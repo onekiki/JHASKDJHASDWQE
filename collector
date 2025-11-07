@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.0.8"
+local versi = "NEW UI - V1.1.0"
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -39,11 +39,23 @@ closeBtn.TextColor3 = Color3.new(1,1,1)
 closeBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 closeBtn.Parent = mainFrame
 
+-- Tombol Close
+local reloadBtn = Instance.new("TextButton")
+reloadBtn.Size = UDim2.new(0, 25, 0, 25)
+reloadBtn.Position = UDim2.new(1, -60, 0, 5)
+reloadBtn.Text = "R"
+reloadBtn.TextColor3 = Color3.new(1,1,1)
+reloadBtn.BackgroundColor3 = Color3.fromRGB(0, 89, 255)
+reloadBtn.Parent = mainFrame
+
 closeBtn.MouseButton1Click:Connect(function()
     trade_stop = true
     running = false
 	screenGui:Destroy()
 end)
+
+
+
 
 -- === KIRI : PLAYER LIST ===
 local playerFrame = Instance.new("Frame")
@@ -120,19 +132,29 @@ amountBox.Parent = rightFrame
 
 -- Tombol Trade
 local tradeBtn = Instance.new("TextButton")
-tradeBtn.Text = "Trade"
-tradeBtn.Size = UDim2.new(0, 80, 0, 25)
+tradeBtn.Text = "Mythc"
+tradeBtn.Size = UDim2.new(0, 50, 0, 25)
 tradeBtn.Position = UDim2.new(0, 70, 0, 120)
-tradeBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+tradeBtn.BackgroundColor3 = Color3.fromRGB(241, 129, 0)
 tradeBtn.TextColor3 = Color3.new(1,1,1)
 tradeBtn.Font = Enum.Font.RobotoMono
 tradeBtn.TextSize = 16
 tradeBtn.Parent = rightFrame
 
+local tradeSecret = Instance.new("TextButton")
+tradeSecret.Text = "Scret"
+tradeSecret.Size = UDim2.new(0, 50, 0, 25)
+tradeSecret.Position = UDim2.new(0, 120, 0, 120)
+tradeSecret.BackgroundColor3 = Color3.fromRGB(24, 161, 179)
+tradeSecret.TextColor3 = Color3.new(1,1,1)
+tradeSecret.Font = Enum.Font.RobotoMono
+tradeSecret.TextSize = 16
+tradeSecret.Parent = rightFrame
+
 local allBtn = Instance.new("TextButton")
 allBtn.Text = "All"
 allBtn.Size = UDim2.new(0, 40, 0, 25)
-allBtn.Position = UDim2.new(0, 150, 0, 120)
+allBtn.Position = UDim2.new(0, 170, 0, 120)
 allBtn.BackgroundColor3 = Color3.fromRGB(243, 219, 6)
 allBtn.TextColor3 = Color3.fromRGB(34, 34, 34)
 allBtn.Font = Enum.Font.RobotoMono
@@ -266,7 +288,7 @@ local function saveSettings()
     if writefile then
         local data = HttpService:JSONEncode(settings)
         writefile(settingsFile, data)
-        cetak("Settings saved.")
+        print("Settings saved.")
     else
         cetak("❌ writefile() not supported in this environment.")
     end
@@ -282,7 +304,6 @@ local function simpan_transaksi(nilai)
     end
     settings.total_transaksi = nilai
     saveSettings()
-    cetak("💾 Transaksi tersimpan. Total sekarang: " .. settings.total_transaksi)
 end
 
 local list_ikan = {}
@@ -368,6 +389,15 @@ local total_mutasi = 0
 --// ANCHOR update_inventory
 
 local function update_inventory()
+     list_mitik = {}
+     list_sekret = {}
+     list_all = {}
+     list_master = {}
+     total_semua = 0
+     hitung_ikan = 0
+     total_secret = 0
+     total_mitik = 0
+     total_mutasi = 0
     local inventory = getInventory()
     for category, items in pairs(inventory) do
         if category == "Items" then
@@ -392,7 +422,7 @@ local function update_inventory()
                     total_semua = total_semua + itemData.SellPrice
                     hitung_ikan = hitung_ikan + 1
                     table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat),mutasi = variant})
-                    if tierName == "SECRET" then
+                    if tierName == "SECRET" and berat < 100000 then
                         total_secret = total_secret + itemData.SellPrice
                         table.insert(list_sekret, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
                     end
@@ -422,10 +452,13 @@ local function update_inventory()
             print("mitik =", total_mitik)
         end
     end
-    local cetak = "Total semua : ".. konvert_harga(total_semua) .. " | " .. konvert_harga(hitung_ikan) .. " Ikan \n"
+    local waktu = os.date("*t") -- ambil waktu lokal
+	local jam = string.format("%02d:%02d:%02d", waktu.hour, waktu.min, waktu.sec)
+    local cetak = "Total : ".. konvert_harga(total_semua) .. " | " .. konvert_harga(hitung_ikan) .. " Ikan \n"
     .. "Secret : ".. konvert_harga(total_secret) .. " | " .. #list_sekret .. " Ikan \n"
     .. "Mitik : ".. konvert_harga(total_mitik) .." | " .. #list_mitik .. " Ikan \n"
-    .. "Mutasi: " .. total_mutasi .. " Ikan"
+    .. "Mutasi: " .. total_mutasi .. " Ikan \n"
+    .. "🕒: " .. jam
     statsLabel.Text = cetak
 end
 
@@ -437,7 +470,9 @@ local function send_handshake(user)
     Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, uuid)
 end
 
-
+reloadBtn.MouseButton1Click:Connect(function()
+    update_inventory()
+end)
 -- === PLAYER MANAGEMENT ===
 local selectedPlayer = nil
 
@@ -514,11 +549,14 @@ local function trade(target, jumlah, type)
     end
 
     update_inventory()
+    --[[
     if jumlah > 0 and total_semua < round(jumlah / 100000,2) then
         cetak("!! total ikan tidak memenuhi target !!")
         return
     end
+    ]]
     local custom_list = nil
+    local flag_secret = false
     if type then
         if type == "master" then
             if target ~= "hayfish96" then
@@ -526,9 +564,10 @@ local function trade(target, jumlah, type)
                 return
             end
             custom_list = list_master
-        elseif type == "sekret" then
+        elseif type == "secret" then
             cetak("trade sekret dipilih")
             custom_list = list_sekret
+            flag_secret = true
         elseif type == "mitik" then
             cetak("trade mitik dipilih")
             custom_list = list_mitik
@@ -575,10 +614,16 @@ local function trade(target, jumlah, type)
                 task.wait(3)
                 local mm = current_harga / 100000
                 local limit = round(mm, 2)
-
-                if jumlah > 0 and limit > jumlah then
-                    cetak("jumlah tercapai ! " .. current_harga)
-                    break
+                if flag_secret == true then
+                    if i >= jumlah then
+                        cetak("total transaksi tercapai: " .. tostring(jumlah))
+                        break
+                    end
+                else
+                    if jumlah > 0 and limit > jumlah then
+                        cetak("jumlah tercapai ! " .. current_harga)
+                        break
+                    end
                 end
                 if trade_stop == true then
                     cetak("! TRADE STOPED !")
@@ -611,6 +656,20 @@ tradeBtn.MouseButton1Click:Connect(function()
 	end
 	trade(selectedPlayer, jumlah, "mitik")
 end)
+
+tradeSecret.MouseButton1Click:Connect(function()
+	if not selectedPlayer then
+		cetak("❌ Pilih player dulu!")
+		return
+	end
+	local jumlah = tonumber(amountBox.Text)
+	if not jumlah or jumlah <= 0 then
+		cetak("❌ Masukkan jumlah valid!")
+		return
+	end
+	trade(selectedPlayer, jumlah, "secret")
+end)
+
 allBtn.MouseButton1Click:Connect(function()
 	if not selectedPlayer then
 		cetak("❌ Pilih player dulu!")
@@ -738,5 +797,6 @@ Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
 )
 while running do
     print("running..")
+    update_inventory()
     task.wait(100)
 end
