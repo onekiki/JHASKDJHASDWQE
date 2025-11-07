@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.1.2"
+local versi = "NEW UI - V1.1.3"
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -31,6 +31,7 @@ local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 600, 0, 400)
 mainFrame.Position = UDim2.new(0, 10, 0, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(158, 158, 158)
+mainFrame.BackgroundTransparency = 0.5
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
@@ -232,10 +233,11 @@ local logFrame = Instance.new("ScrollingFrame")
 logFrame.Size = UDim2.new(1, -10, 0, 150)
 logFrame.Position = UDim2.new(0, 0, 0, 160)
 logFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+
 logFrame.ScrollBarThickness = 8
 logFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 logFrame.Parent = rightFrame
-
+logFrame.BackgroundTransparency = 0.8
 local logLayout = Instance.new("UIListLayout")
 logLayout.Parent = logFrame
 logLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -624,7 +626,7 @@ local function trade(target, jumlah, type)
     local berhasil = 0
     local info_akhir = ""
     local current_harga = 0
-    if total_transaksi ~= 0 then
+    if total_transaksi ~= nil and total_transaksi ~= 0 then
         current_harga = total_transaksi
         cetak("load transaksi akhir: " .. tostring(current_harga))
     end
