@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.1.4" -- trade in million
+local versi = "NEW UI - V1.1.5" -- trade in million
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -650,7 +650,7 @@ local function trade(target, jumlah, type)
                     info_akhir = "Total: " .. berhasil .. "/" .. jumlah
                     current_harga = current_harga  + info.harga
                     local current_mutasi = info.mutasi or "-"
-                    local info_ikan = i ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
+                    local info_ikan = berhasil ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
                     cetak(info_ikan)
                     detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
                     simpan_transaksi(current_harga)
@@ -660,7 +660,7 @@ local function trade(target, jumlah, type)
                 local mm = current_harga / 1000000
                 local limit = round(mm, 2)
                 if flag_secret == true then
-                    if i >= jumlah then
+                    if berhasil >= jumlah then
                         cetak("total transaksi tercapai: " .. tostring(jumlah))
                         break
                     end
