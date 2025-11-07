@@ -1,4 +1,5 @@
-local versi = "NEW UI - V1.1.0"
+local versi = "NEW UI - V1.1.1"
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
@@ -26,7 +27,7 @@ screenGui.Parent = gui
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 600, 0, 400)
 mainFrame.Position = UDim2.new(0, 10, 0, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+mainFrame.BackgroundColor3 = Color3.fromRGB(158, 158, 158)
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
@@ -35,11 +36,11 @@ local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 25, 0, 25)
 closeBtn.Position = UDim2.new(1, -30, 0, 5)
 closeBtn.Text = "X"
-closeBtn.TextColor3 = Color3.new(1,1,1)
-closeBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+closeBtn.TextColor3 = Color3.new(0, 0, 0)
+closeBtn.BackgroundColor3 = Color3.fromRGB(194, 62, 62)
 closeBtn.Parent = mainFrame
 
--- Tombol Close
+-- Tombol reload
 local reloadBtn = Instance.new("TextButton")
 reloadBtn.Size = UDim2.new(0, 25, 0, 25)
 reloadBtn.Position = UDim2.new(1, -60, 0, 5)
@@ -47,6 +48,15 @@ reloadBtn.Text = "R"
 reloadBtn.TextColor3 = Color3.new(1,1,1)
 reloadBtn.BackgroundColor3 = Color3.fromRGB(0, 89, 255)
 reloadBtn.Parent = mainFrame
+
+-- Tombol 3d
+local renderBtn = Instance.new("TextButton")
+renderBtn.Size = UDim2.new(0, 25, 0, 25)
+renderBtn.Position = UDim2.new(1, -90, 0, 5)
+renderBtn.Text = "3D"
+renderBtn.TextColor3 = Color3.new(1,1,1)
+renderBtn.BackgroundColor3 = Color3.fromRGB(202, 50, 151)
+renderBtn.Parent = mainFrame
 
 closeBtn.MouseButton1Click:Connect(function()
     trade_stop = true
@@ -257,7 +267,17 @@ end
 
 ----------------------------------------------------
 ---fungsi 
----
+local renderEnabled = false
+local function render()
+    renderEnabled = not renderEnabled
+    if renderEnabled == true then
+        setfpscap(5)
+        RunService:Set3dRenderingEnabled(false)
+    else
+        RunService:Set3dRenderingEnabled(true)
+        setfpscap(15)
+    end
+end
 local auto_collect = nil
 -- === SETTING AUTO TRADE ===
 local HttpService = game:GetService("HttpService")
@@ -369,7 +389,28 @@ local function getPositionByName(name)
 
     return hrp.Position
 end
-
+local function SetLowGraphics()
+    local Lighting = game:GetService("Lighting")
+    local Terrain = workspace:FindFirstChildOfClass("Terrain")
+    local MaterialService = game:GetService("MaterialService")
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    Lighting.GlobalShadows = false
+    Lighting.Brightness = 1
+    Lighting.EnvironmentDiffuseScale = 0
+    Lighting.EnvironmentSpecularScale = 0
+    for _, effect in ipairs(Lighting:GetChildren()) do
+        if effect:IsA("PostEffect") then
+            effect.Enabled = false
+        end
+    end
+    if Terrain then
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+        Terrain.WaterReflectance = 0
+        Terrain.WaterTransparency = 1
+    end
+    MaterialService.Use2022Materials = false
+end
 local data = Client:WaitReplion("Data")
 
 -- ambil inventory pertama kali
@@ -721,7 +762,11 @@ settingBtn.MouseButton1Click:Connect(function()
 	saveSettings()
 end)
 
--- === Jalankan load saat awal ===
+renderBtn.MouseButton1Click:Connect(function()
+    render()
+end)
+
+    -- === Jalankan load saat awal ===
 updateButton()
 -- Tes awal
 cetak("Collector GUI loaded.")
@@ -782,6 +827,7 @@ Handshake.MouseButton1Click:Connect(function()
 end)
 
 if auto_collect then
+    render()
     auto_collecting()
 end
 local total_trade = 0
@@ -795,6 +841,8 @@ Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
         end
     end
 )
+
+--SetLowGraphics()
 while running do
     print("running..")
     update_inventory()
