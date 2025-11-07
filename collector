@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.1.5" -- trade in million
+local versi = "NEW UI - V1.1.6" -- trade in million
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -79,7 +79,7 @@ playerFrame.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
 playerFrame.Parent = mainFrame
 
 local listLabel = Instance.new("TextLabel")
-listLabel.Size = UDim2.new(1, 0, 0, 20)
+listLabel.Size = UDim2.new(1, 0, 0, 60)
 listLabel.BackgroundTransparency = 1
 listLabel.Text = "Collector " .. versi
 listLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -89,11 +89,11 @@ listLabel.TextSize = 16
 listLabel.Parent = playerFrame
 
 local listScroll = Instance.new("ScrollingFrame")
-listScroll.Size = UDim2.new(1, -10, 1, -30)
-listScroll.Position = UDim2.new(0, 5, 0, 25)
+listScroll.Size = UDim2.new(1, -10, 1, 0)
+listScroll.Position = UDim2.new(0, 5, 0, 65)
 listScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 listScroll.ScrollBarThickness = 6
-listScroll.BackgroundTransparency = 1
+listScroll.BackgroundTransparency = 0.7
 listScroll.Parent = playerFrame
 
 local listLayout = Instance.new("UIListLayout")
@@ -135,7 +135,7 @@ amountBox.TextSize = 16
 amountBox.Parent = rightFrame
 
 local selectedLabel = Instance.new("TextLabel")
-selectedLabel.Text = "M"
+selectedLabel.Text = "Selected player:"
 selectedLabel.Size = UDim2.new(1, 0, 0, 20)
 selectedLabel.Position = UDim2.new(0, 0, 0, 90)
 selectedLabel.BackgroundTransparency = 1
@@ -778,15 +778,22 @@ if total_transaksi and total_transaksi ~= 0 then
     detail_harga.Text = "Load Trade: " .. total_transaksi
 end
 local total_ikan = 1
+local total_batu = 1
 RF.OnClientInvoke = function(...)
     local args = {...}
     local data = args[2]
     if type(data) == "table" then
         print("Trade offer:", data.Id, data.UUID)
     end
-    local detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
+    local detail = ""
+    if data.Id == 10 then
+        detail = total_batu .. ". BATU ENCHANT"
+        total_batu = total_batu + 1
+    elseif list_ikan[data.Id] then
+        detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
+        total_ikan = total_ikan + 1
+    end
     cetak(detail)
-    total_ikan = total_ikan + 1
     task.wait(3)
     return "OK"
 end
