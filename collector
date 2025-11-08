@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.1.6" -- trade in million
+local versi = "NEW UI - V1.2.0" -- fix price -tmp add trade map
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -16,8 +16,9 @@ local RF = Net:WaitForChild("RF/AwaitTradeResponse")
 local Client = require(ReplicatedStorage.Packages.Replion).Client
 local ItemUtility = require(ReplicatedStorage.Shared.ItemUtility)
 local TierUtility = require(ReplicatedStorage.Shared.TierUtility)
+local Variants = ReplicatedStorage:WaitForChild("Variants")
 
-
+local dump_inventory = false
 local trade_stop = false
 local running = true
 local berat_min = 50000  -- berat trade secret minimal berapa kilo ?
@@ -188,14 +189,26 @@ stopBtn.Parent = rightFrame
 
 -- === Buat tombol toggle ===
 local settingBtn = Instance.new("TextButton")
-settingBtn.Text = "Auto Collect: OFF"
-settingBtn.Size = UDim2.new(0, 150, 0, 25)
+settingBtn.Text = "Collect: OFF"
+settingBtn.Size = UDim2.new(0, 120, 0, 25)
 settingBtn.Position = UDim2.new(0, 0, 0, 320) -- di bawah tombol trade / log
 settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 settingBtn.TextColor3 = Color3.new(1,1,1)
 settingBtn.Font = Enum.Font.RobotoMono
 settingBtn.TextSize = 16
 settingBtn.Parent = rightFrame
+
+-- === Buat tombol toggle ===
+local dumpBtn = Instance.new("TextButton")
+dumpBtn.Text = "Dump Invt"
+dumpBtn.Size = UDim2.new(0, 80, 0, 25)
+dumpBtn.Position = UDim2.new(0, 130, 0, 320) -- di bawah tombol trade / log
+dumpBtn.BackgroundColor3 = Color3.fromRGB(47, 136, 106)
+dumpBtn.TextColor3 = Color3.new(1,1,1)
+dumpBtn.Font = Enum.Font.RobotoMono
+dumpBtn.TextSize = 16
+dumpBtn.Parent = rightFrame
+
 
 local SendMaster = Instance.new("TextButton")
 SendMaster.Text = "Master"
@@ -269,6 +282,23 @@ local function cetak(teks)
 	logLine.Parent = logFrame
 end
 
+local function list_variant(childName)
+    -- Cek apakah children dengan nama tersebut ada
+    print("cek variant ", childName)
+    local child = Variants:FindFirstChild(childName)
+    if not child then
+        return nil
+    end
+
+    -- Jalankan ModuleScript dan ambil datanya
+    local success, data = pcall(require, child)
+    if not success then
+        warn("Gagal memuat module untuk " .. childName .. ": " .. tostring(data))
+        return nil
+    end
+
+    return data
+end
 
 ----------------------------------------------------
 ---fungsi 
@@ -423,7 +453,17 @@ local function getInventory()
     return data:GetExpect({"Inventory"})
 end
 
+local function tentukan_berat(tabel_harga, nilai)
+    for nama, range in pairs(tabel_harga) do
+        if nilai >= range.Min and nilai <= range.Max then
+            return nama 
+        end
+    end
+    return "tidak diketahui"
+end
+
 local list_mitik = {}
+local list_mitik_map = {}
 local list_sekret = {}
 local list_all = {}
 local list_master = {}
@@ -462,25 +502,62 @@ local function update_inventory()
                 end
                 local berat = item.Metadata and item.Metadata.Weight or 0
                 local variant = item.Metadata and item.Metadata.VariantId or nil
+                local custom_harga = 0
+                local category_harga = ""
+                local shiny = ""
+                local mutasiName = ""
+                if itemData.SellPrice then
+                    custom_harga = itemData.SellPrice
+                    
+                    category_harga = tentukan_berat(itemData.Weight, berat)
+                    if category_harga == "Big" then
+                        category_harga = "*BIG*"
+                        local multiplication_big = (berat - itemData.Weight.Default.Max) / (itemData.Weight.Big.Max - itemData.Weight.Default.Max)
+                        print(multiplication_big)
+                        custom_harga =  custom_harga * ( 1 + multiplication_big)
+                    else
+                        category_harga = ""
+                    end
+                    if item.Metadata.Shiny == true then
+                        custom_harga = custom_harga + (custom_harga * 1.5)
+                        shiny = "*SHINY*"
+                    end
+                    if variant then
+                        local info_variant = list_variant(variant)
+                        if info_variant then
+                            mutasiName = "-->" .. info_variant.Data.Name .."(" .. info_variant.SellMultiplier .."x)"
+                            if item.Metadata.Shiny == true then
+                                custom_harga = custom_harga + (custom_harga * info_variant.SellMultiplier * 1.5)
+                            else
+                                custom_harga = custom_harga + (custom_harga * info_variant.SellMultiplier)
+                            end
+                        end
+                    end
+                end
                 
                 if itemData.Data.Type == "Fish" and itemData.SellPrice then
 
-                    total_semua = total_semua + itemData.SellPrice
+                    total_semua = total_semua + custom_harga
                     hitung_ikan = hitung_ikan + 1
-                    table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat),mutasi = variant})
+                    table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant})
                     if tierName == "SECRET" and berat < berat_min then
-                        total_secret = total_secret + itemData.SellPrice
-                        table.insert(list_sekret, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat)})
+                        total_secret = total_secret + custom_harga
+                        table.insert(list_sekret, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat)})
                     end
                     if tierName == "Mythic" and variant == nil then
-                        total_mitik = total_mitik + itemData.SellPrice
-                        table.insert(list_mitik, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat), mutasi = variant})
+                        total_mitik = total_mitik + custom_harga
+                        table.insert(list_mitik, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant})
+                        list_mitik_map[i] = {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
                     end
                     if variant or tierName == "SECRET" then
-                        table.insert(list_master, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = itemData.SellPrice, berat = tostring(berat),mutasi = variant})
+                        table.insert(list_master, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant})
                     end
                     if variant then
                         total_mutasi = total_mutasi + 1
+                    end
+                    if dump_inventory == true then
+                        local namas = i .. ". " ..mutasiName.. category_harga .." ".. shiny .. itemData.Data.Name .. " |$ " .. konvert_harga(custom_harga)
+                        cetak(namas)
                     end
                 end
                 --[[
@@ -631,6 +708,7 @@ local function trade(target, jumlah, type)
     end
     local function trade_user(usr)
         print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
+        local list_trade_array = {}
         if custom_list ~= nil then
             for i, info in ipairs(custom_list) do
                 Net:WaitForChild("RE/EquipItem"):FireServer(info.uuid, "Fishes")
@@ -688,6 +766,130 @@ local function trade(target, jumlah, type)
         cetak("player tidak ada")
     end
 end
+--//ANCHOR trade map
+local function trade_map(target, jumlah, type)
+	cetak("Trade ke " .. target .. " sejumlah " .. jumlah)
+    local completed = false
+    Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
+        function(data)
+            print("ADA NOTIF: ", data.Text)
+            if data and data.Text == "Trade completed!" then
+                completed = true
+            end
+        end
+    )
+    local pos, err = getPositionByName(target)
+    if pos then
+        print("Posisi sekarang:", pos)
+        local x = pos.X
+        local y = pos.Y
+        local z = pos.Z
+        teleport(x,y,z)
+        task.wait(5)
+    end
+
+    update_inventory()
+    local custom_list = nil
+    local flag_secret = false
+    if type then
+        if type == "master" then
+            if target ~= "hayfish96" then
+                cetak("master tidak sesuai")
+                return
+            end
+            custom_list = list_master
+        elseif type == "secret" then
+            cetak("trade sekret dipilih")
+            custom_list = list_sekret
+            flag_secret = true
+        elseif type == "mitik" then
+            cetak("trade mitik dipilih")
+            custom_list = list_mitik_map
+        else
+            cetak("trade all dipilih")
+            custom_list = list_all
+        end
+    end
+    
+    local berhasil = 0
+    local info_akhir = ""
+    local current_harga = 0
+
+    if flag_secret == false and (jumlah > 0 and total_semua < round(jumlah / 1000000,2)) then
+        cetak("!! total ikan tidak memenuhi target !!")
+        return
+    end
+    if total_transaksi ~= nil and total_transaksi ~= 0 then
+        current_harga = total_transaksi
+        cetak("load transaksi akhir: " .. tostring(current_harga))
+    end
+    local function trade_user(usr)
+        print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
+        if custom_list ~= nil then
+            local map_i  = 0
+            local info
+            while true do
+                info = custom_list[map_i]
+                if info == nil then
+                    cetak("ikan sudah habis")
+                    break
+                end
+                Net:WaitForChild("RE/EquipItem"):FireServer(info.uuid, "Fishes")
+                Net:WaitForChild("RF/InitiateTrade"):InvokeServer(usr.UserId, info.uuid)
+                local timeout = 0
+                while completed ~= true do
+                    print("wait")
+                    timeout = timeout + 1
+                    if timeout > 30 then
+                        print("timeout lebih dari 15 detik")
+                        break
+                    end
+                    task.wait(0.4)
+                end
+                if timeout < 30 then
+                    berhasil = berhasil + 1
+                    map_i = map_i + 1
+                    info_akhir = "Total: " .. berhasil .. "/" .. jumlah
+                    current_harga = current_harga  + info.harga
+                    local current_mutasi = info.mutasi or "-"
+                    local info_ikan = berhasil ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
+                    cetak(info_ikan)
+                    detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
+                    simpan_transaksi(current_harga)
+                end
+                completed = false
+                task.wait(5)
+                local mm = current_harga / 1000000
+                local limit = round(mm, 2)
+                if flag_secret == true then
+                    if berhasil >= jumlah then
+                        cetak("total transaksi tercapai: " .. tostring(jumlah))
+                        break
+                    end
+                else
+                    if jumlah > 0 and limit > jumlah then
+                        cetak("jumlah tercapai ! " .. current_harga)
+                        break
+                    end
+                end
+                if trade_stop == true then
+                    cetak("! TRADE STOPED !")
+                    break
+                end
+            end
+        else
+            cetak("tidak ada barang lagi")
+        end
+        cetak("SELESAI SEMUA " .. info_akhir)
+        update_inventory()
+    end
+    local existing = Players:FindFirstChild(target)
+    if existing then
+        trade_user(existing)
+    else
+        cetak("player tidak ada")
+    end
+end
 
 tradeBtn.MouseButton1Click:Connect(function()
 	if not selectedPlayer then
@@ -699,7 +901,7 @@ tradeBtn.MouseButton1Click:Connect(function()
 		cetak("❌ Masukkan jumlah valid!")
 		return
 	end
-	trade(selectedPlayer, jumlah, "mitik")
+	trade_map(selectedPlayer, jumlah, "mitik")
 end)
 
 tradeSecret.MouseButton1Click:Connect(function()
@@ -751,10 +953,10 @@ end)
 
 local function updateButton()
 	if settings.auto_trade then
-		settingBtn.Text = "Auto Collect: ON"
+		settingBtn.Text = "Collect: ON"
 		settingBtn.BackgroundColor3 = Color3.fromRGB(74, 158, 74)
 	else
-		settingBtn.Text = "Auto Collect: OFF"
+		settingBtn.Text = "Collect: OFF"
 		settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 	end
 end
@@ -769,7 +971,10 @@ end)
 renderBtn.MouseButton1Click:Connect(function()
     render()
 end)
-
+dumpBtn.MouseButton1Click:Connect(function()
+    dump_inventory = true
+    update_inventory()
+end)
     -- === Jalankan load saat awal ===
 updateButton()
 -- Tes awal
@@ -787,7 +992,7 @@ RF.OnClientInvoke = function(...)
     end
     local detail = ""
     if data.Id == 10 then
-        detail = total_batu .. ". BATU ENCHANT"
+        detail = total_batu .. ". GET ENCHANT STONE"
         total_batu = total_batu + 1
     elseif list_ikan[data.Id] then
         detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
