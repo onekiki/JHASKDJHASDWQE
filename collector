@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.2.0" -- fix price -tmp add trade map
+local versi = "NEW UI - V1.2.1" -- fix price -tmp add trade map
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -509,8 +509,8 @@ local function update_inventory()
                 if itemData.SellPrice then
                     custom_harga = itemData.SellPrice
                     
-                    category_harga = tentukan_berat(itemData.Weight, berat)
-                    if category_harga == "Big" then
+                    category_harga = ""
+                    if berat > itemData.Weight.Default.Max then
                         category_harga = "*BIG*"
                         local multiplication_big = (berat - itemData.Weight.Default.Max) / (itemData.Weight.Big.Max - itemData.Weight.Default.Max)
                         print(multiplication_big)
