@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.2.1" -- fix price -tmp add trade map
+local versi = "NEW UI - V1.3" -- change list item  to dictionary
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -21,6 +21,9 @@ local Variants = ReplicatedStorage:WaitForChild("Variants")
 local dump_inventory = false
 local trade_stop = false
 local running = true
+local start_timer = false
+local startscript = tick()
+local printer = "List Transaksi: "
 local berat_min = 50000  -- berat trade secret minimal berapa kilo ?
 -- ScreenGui utama
 local screenGui = Instance.new("ScreenGui")
@@ -31,8 +34,8 @@ screenGui.Parent = gui
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 600, 0, 400)
 mainFrame.Position = UDim2.new(0, 10, 0, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(158, 158, 158)
-mainFrame.BackgroundTransparency = 0.3
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+mainFrame.BackgroundTransparency = 0.1
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
@@ -80,7 +83,7 @@ end)
 
 
 local listLabel = Instance.new("TextLabel")
-listLabel.Size = UDim2.new(1, 0, 0, 70)
+listLabel.Size = UDim2.new(1, 0, 0, 80)
 listLabel.BackgroundTransparency = 1
 listLabel.Text = "Collector " .. versi
 listLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -90,7 +93,7 @@ listLabel.TextSize = 16
 listLabel.Parent = playerFrame
 
 local listScroll = Instance.new("ScrollingFrame")
-listScroll.Size = UDim2.new(1, -10, 1, 0)
+listScroll.Size = UDim2.new(1, -10, 0.8, 0)
 listScroll.Position = UDim2.new(0, 5, 0, 65)
 listScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
 listScroll.ScrollBarThickness = 6
@@ -116,11 +119,12 @@ rightFrame.Parent = mainFrame
 local statsLabel = Instance.new("TextLabel")
 statsLabel.Text = "Statistik Info\n\nData A: XXXX\nData B: XXXX\nData C: XXXX"
 statsLabel.Size = UDim2.new(1, 0, 0, 80)
+statsLabel.Position = UDim2.new(0, 0, 0, 20)
 statsLabel.TextXAlignment = Enum.TextXAlignment.Left
 statsLabel.BackgroundTransparency = 1
 statsLabel.TextColor3 = Color3.new(0,0,0)
-statsLabel.Font = Enum.Font.RobotoMono
-statsLabel.TextSize = 16
+statsLabel.Font = Enum.Font.Roboto
+statsLabel.TextSize = 20
 statsLabel.Parent = rightFrame
 
 -- Input jumlah
@@ -142,7 +146,7 @@ selectedLabel.Position = UDim2.new(0, 0, 0, 90)
 selectedLabel.BackgroundTransparency = 1
 selectedLabel.TextColor3 = Color3.new(0,0,0)
 selectedLabel.Font = Enum.Font.RobotoMono
-selectedLabel.TextSize = 16
+selectedLabel.TextSize = 18
 selectedLabel.Parent = rightFrame
 
 -- Tombol Trade
@@ -190,30 +194,39 @@ stopBtn.Parent = rightFrame
 -- === Buat tombol toggle ===
 local settingBtn = Instance.new("TextButton")
 settingBtn.Text = "Collect: OFF"
-settingBtn.Size = UDim2.new(0, 120, 0, 25)
-settingBtn.Position = UDim2.new(0, 0, 0, 320) -- di bawah tombol trade / log
+settingBtn.Size = UDim2.new(1, 0, 0, 25)
+settingBtn.Position = UDim2.new(0, 0, 1, 0) -- di bawah tombol trade / log
 settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 settingBtn.TextColor3 = Color3.new(1,1,1)
 settingBtn.Font = Enum.Font.RobotoMono
 settingBtn.TextSize = 16
-settingBtn.Parent = rightFrame
+settingBtn.Parent = playerFrame
 
 -- === Buat tombol toggle ===
 local dumpBtn = Instance.new("TextButton")
-dumpBtn.Text = "Dump Invt"
+dumpBtn.Text = "Dump"
 dumpBtn.Size = UDim2.new(0, 80, 0, 25)
-dumpBtn.Position = UDim2.new(0, 130, 0, 320) -- di bawah tombol trade / log
+dumpBtn.Position = UDim2.new(0, 160, 0, 360)-- di bawah tombol trade / log
 dumpBtn.BackgroundColor3 = Color3.fromRGB(47, 136, 106)
 dumpBtn.TextColor3 = Color3.new(1,1,1)
 dumpBtn.Font = Enum.Font.RobotoMono
 dumpBtn.TextSize = 16
 dumpBtn.Parent = rightFrame
 
+local printBtn = Instance.new("TextButton")
+printBtn.Text = "Print"
+printBtn.Size = UDim2.new(0, 80, 0, 25)
+printBtn.Position = UDim2.new(0, 250, 0, 360)-- di bawah tombol trade / log
+printBtn.BackgroundColor3 = Color3.fromRGB(148, 148, 148)
+printBtn.TextColor3 = Color3.new(0, 0, 0)
+printBtn.Font = Enum.Font.RobotoMono
+printBtn.TextSize = 16
+printBtn.Parent = rightFrame
 
 local SendMaster = Instance.new("TextButton")
-SendMaster.Text = "Master"
+SendMaster.Text = "Send"
 SendMaster.Size = UDim2.new(0, 80, 0, 25)
-SendMaster.Position = UDim2.new(0, 140, 0, 360) -- di bawah tombol trade / log
+SendMaster.Position = UDim2.new(0, 70, 0, 360) -- di bawah tombol trade / log
 SendMaster.BackgroundColor3 = Color3.fromRGB(167, 28, 167)
 SendMaster.TextColor3 = Color3.new(1,1,1)
 SendMaster.Font = Enum.Font.RobotoMono
@@ -221,18 +234,18 @@ SendMaster.TextSize = 16
 SendMaster.Parent = rightFrame
 
 local resetBtn = Instance.new("TextButton")
-resetBtn.Text = "reset"
-resetBtn.Size = UDim2.new(0, 80, 0, 25)
-resetBtn.Position = UDim2.new(0, 230, 0, 360) -- di bawah tombol trade / log
-resetBtn.BackgroundColor3 = Color3.fromRGB(172, 54, 54)
+resetBtn.Text = "🧹"
+resetBtn.Size = UDim2.new(0, 40, 0, 25)
+resetBtn.Position = UDim2.new(0, 290, 0, 120)
+resetBtn.BackgroundColor3 = Color3.fromRGB(172, 172, 172)
 resetBtn.TextColor3 = Color3.new(1,1,1)
 resetBtn.Font = Enum.Font.RobotoMono
 resetBtn.TextSize = 16
 resetBtn.Parent = rightFrame
 
 local Handshake = Instance.new("TextButton")
-Handshake.Text = "Handshake"
-Handshake.Size = UDim2.new(0, 130, 0, 25)
+Handshake.Text = "Sync"
+Handshake.Size = UDim2.new(0, 60, 0, 25)
 Handshake.Position = UDim2.new(0, 0, 0, 360) -- di bawah tombol trade / log
 Handshake.BackgroundColor3 = Color3.fromRGB(122, 190, 12)
 Handshake.TextColor3 = Color3.new(1,1,1)
@@ -261,7 +274,7 @@ logLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 end)
 
 local detail_harga = Instance.new("TextLabel")
-detail_harga.Text = "no load"
+detail_harga.Text = "detail"
 detail_harga.Size = UDim2.new(0, 0, 0, 0)
 detail_harga.Position = UDim2.new(0, 240, 0, 320)
 detail_harga.TextColor3 = Color3.new(0, 0, 0)
@@ -280,6 +293,12 @@ local function cetak(teks)
 	logLine.Font = Enum.Font.RobotoMono
 	logLine.TextXAlignment = Enum.TextXAlignment.Left
 	logLine.Parent = logFrame
+
+    resetBtn.MouseButton1Click:Connect(function()
+        --simpan_transaksi(0)
+        logLine:Destroy()
+        --detail_harga.Text = "rese"
+    end)
 end
 
 local function list_variant(childName)
@@ -302,6 +321,7 @@ end
 
 ----------------------------------------------------
 ---fungsi 
+local running_time = "00:00:00"
 local renderEnabled = false
 local function render()
     renderEnabled = not renderEnabled
@@ -465,6 +485,7 @@ end
 local list_mitik = {}
 local list_mitik_map = {}
 local list_sekret = {}
+local list_sekret_map = {}
 local list_all = {}
 local list_master = {}
 local total_semua = 0
@@ -477,6 +498,7 @@ local total_mutasi = 0
 local function update_inventory()
      list_mitik = {}
      list_sekret = {}
+     list_mitik_map = {}
      list_all = {}
      list_master = {}
      total_semua = 0
@@ -484,6 +506,8 @@ local function update_inventory()
      total_secret = 0
      total_mitik = 0
      total_mutasi = 0
+     local hitung_mitik_dic = 0
+     local hitung_sekret_dic = 0
     local inventory = getInventory()
     for category, items in pairs(inventory) do
         if category == "Items" then
@@ -540,11 +564,14 @@ local function update_inventory()
                     if tierName == "SECRET" and berat < berat_min then
                         total_secret = total_secret + custom_harga
                         table.insert(list_sekret, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat)})
+                        list_sekret_map[hitung_sekret_dic] =  {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat)}
+                        hitung_sekret_dic = hitung_sekret_dic + 1
                     end
                     if tierName == "Mythic" and variant == nil then
                         total_mitik = total_mitik + custom_harga
                         table.insert(list_mitik, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant})
-                        list_mitik_map[i] = {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
+                        list_mitik_map[hitung_mitik_dic] = {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
+                        hitung_mitik_dic = hitung_mitik_dic + 1
                     end
                     if variant or tierName == "SECRET" then
                         table.insert(list_master, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant})
@@ -561,12 +588,10 @@ local function update_inventory()
         end
     end
     local waktu = os.date("*t") -- ambil waktu lokal
-	local jam = string.format("%02d:%02d:%02d", waktu.hour, waktu.min, waktu.sec)
     local cetak = "Total : ".. konvert_harga(total_semua) .. " | " .. konvert_harga(hitung_ikan) .. " Ikan \n"
-    .. "Secret : ".. konvert_harga(total_secret) .. " | " .. #list_sekret .. " Ikan \n"
-    .. "Mitik : ".. konvert_harga(total_mitik) .." | " .. #list_mitik .. " Ikan \n"
+    .. "Secret : ".. konvert_harga(total_secret) .. " | " .. #list_sekret_map .. " Ikan \n"
+    .. "Mitik : ".. konvert_harga(total_mitik) .." | " .. #list_mitik_map .. " Ikan \n"
     .. "Mutasi: " .. total_mutasi .. " Ikan \n"
-    .. "🕒: " .. jam
     statsLabel.Text = cetak
 end
 
@@ -595,15 +620,6 @@ local function createPlayerButton(name)
 	btn.Parent = listScroll
 
 	btn.MouseButton1Click:Connect(function()
-        local pos, err = getPositionByName(name)
-        if pos then
-            print("Posisi sekarang:", pos)
-            local x = pos.X
-            local y = pos.Y
-            local z = pos.Z
-            teleport(x,y,z)
-            task.wait(5)
-        end
 		if selectedPlayer == name then
 			selectedPlayer = nil
 			btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
@@ -613,6 +629,15 @@ local function createPlayerButton(name)
 			selectedLabel.Text = "Selected Player: " .. name
 			btn.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
 			cetak("Selected: " .. name)
+            local pos, err = getPositionByName(name)
+            if pos then
+                print("Posisi sekarang:", pos)
+                local x = pos.X
+                local y = pos.Y
+                local z = pos.Z
+                teleport(x,y,z)
+                task.wait(5)
+            end
 		end
 	end)
 end
@@ -645,6 +670,8 @@ end)
 
 --//ANCHOR - Trade
 local function trade(target, jumlah, type)
+    startscript = tick()
+    start_timer = true
 	cetak("Trade ke " .. target .. " sejumlah " .. jumlah)
     local completed = false
     Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
@@ -738,7 +765,7 @@ local function trade(target, jumlah, type)
                     end
                 else
                     if jumlah > 0 and limit > jumlah then
-                        cetak("jumlah tercapai ! " .. current_harga)
+                        cetak("jumlah tercapai : " .. round(current_harga,2))
                         break
                     end
                 end
@@ -762,8 +789,9 @@ local function trade(target, jumlah, type)
 end
 --//ANCHOR trade map
 local function trade_map(target, jumlah, type)
-	cetak("Trade ke " .. target .. " sejumlah " .. jumlah)
     local completed = false
+    startscript = tick()
+    start_timer = true
     Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
         function(data)
             print("ADA NOTIF: ", data.Text)
@@ -793,15 +821,17 @@ local function trade_map(target, jumlah, type)
             end
             custom_list = list_master
         elseif type == "secret" then
-            cetak("trade sekret dipilih")
-            custom_list = list_sekret
+            cetak("Trade sekret  ke " .. target .. " sejumlah " .. jumlah)
+            printer = printer .. "\n Trade sekret  ke " .. target .. " sejumlah " .. jumlah
+            custom_list = list_sekret_map
             flag_secret = true
         elseif type == "mitik" then
-            cetak("trade mitik dipilih")
+            cetak("Trade mitik  ke " .. target .. " sejumlah " .. jumlah .." M")
+            printer = printer .. "\n Trade sekret  ke " .. target .. " sejumlah " .. jumlah .. " Coin"
             custom_list = list_mitik_map
         else
             cetak("trade all dipilih")
-            custom_list = list_all
+            custom_list = list_mitik_map
         end
     end
     
@@ -820,7 +850,7 @@ local function trade_map(target, jumlah, type)
     local function trade_user(usr)
         print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
         if custom_list ~= nil then
-            local map_i  = 0
+            local map_i = 0
             local info
             while true do
                 info = custom_list[map_i]
@@ -849,10 +879,10 @@ local function trade_map(target, jumlah, type)
                     local info_ikan = berhasil ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
                     cetak(info_ikan)
                     detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
+                    printer = printer .. "\n".. info_ikan
                     --simpan_transaksi(current_harga)
                 end
                 completed = false
-                task.wait(5)
                 local mm = current_harga / 1000000
                 local limit = round(mm, 2)
                 if flag_secret == true then
@@ -870,6 +900,7 @@ local function trade_map(target, jumlah, type)
                     cetak("! TRADE STOPED !")
                     break
                 end
+                task.wait(5)
             end
         else
             cetak("tidak ada barang lagi")
@@ -908,7 +939,7 @@ tradeSecret.MouseButton1Click:Connect(function()
 		cetak("❌ Masukkan jumlah valid!")
 		return
 	end
-	trade(selectedPlayer, jumlah, "secret")
+	trade_map(selectedPlayer, jumlah, "secret")
 end)
 
 allBtn.MouseButton1Click:Connect(function()
@@ -916,7 +947,7 @@ allBtn.MouseButton1Click:Connect(function()
 		cetak("❌ Pilih player dulu!")
 		return
 	end
-	trade(selectedPlayer, 0, "all")
+	trade_map(selectedPlayer, 0, "all")
 end)
 SendMaster.MouseButton1Click:Connect(function()
 	if not selectedPlayer then
@@ -934,11 +965,6 @@ stopBtn.MouseButton1Click:Connect(function()
         stopBtn.BackgroundColor3 = Color3.fromRGB(243, 6, 6)
         cetak("trade stopped OFF")
     end
-end)
-
-resetBtn.MouseButton1Click:Connect(function()
-	simpan_transaksi(0)
-    detail_harga.Text = "no save"
 end)
 
 
@@ -969,6 +995,15 @@ dumpBtn.MouseButton1Click:Connect(function()
     dump_inventory = true
     update_inventory()
 end)
+printBtn.MouseButton1Click:Connect(function()
+    if setclipboard then
+        setclipboard(printer)
+        task.wait(1.5)
+        cetak("berhasil copy to clipboard")
+    else
+        pesan("gagal copy ")
+    end
+end)
     -- === Jalankan load saat awal ===
 updateButton()
 -- Tes awal
@@ -992,6 +1027,7 @@ RF.OnClientInvoke = function(...)
         detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
         total_ikan = total_ikan + 1
     end
+    update_inventory()
     cetak(detail)
     task.wait(3)
     return "OK"
@@ -1073,10 +1109,19 @@ Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
         end
     end
 )
-
+local function formatTime(seconds)
+    local h = math.floor(seconds / 3600)
+    local m = math.floor((seconds % 3600) / 60)
+    local s = math.floor(seconds % 60)
+    return string.format("%02d:%02d:%02d", h, m, s)
+end
 --SetLowGraphics()
 while running do
-    print("running..")
-    update_inventory()
-    task.wait(100)
+    if start_timer then
+        running_time = formatTime(math.floor(tick() - startscript))
+        selectedLabel.Text = running_time
+        task.wait(1)
+    else
+        task.wait(50)
+    end
 end
