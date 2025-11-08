@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.4.5" -- add benchmark speed
+versi = "KAITUN | FIGHT! | V4.4.6" -- add benchmark speed
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1196,7 +1196,7 @@ function opsi(index)
     lastCatchTime = os.clock()
 end
 local function display_inventory()
-    local list = "**Inventory : **"
+    local list = "total stone : " .. #list_trade_batu
     if list_display then
         for i, k in ipairs(list_display) do
             list = list .. " \n " .. k
@@ -1572,6 +1572,7 @@ if running and select_quest == "jungle" then
                 pesan("selesai farming artifak")
                 step = step + 1
             end
+            Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1) -- wear rod 
         end
 
         if step == 2 then
@@ -1687,8 +1688,12 @@ while playing do
         end
     end
     if running and select_quest == "custom_teleport" then
-        teleport(2144, 81, 3271) --mountain hallow
-        face(0)
+        --list teleport
+         teleport(948, 3, 5114) -- crater island
+         face(120)
+
+        -- teleport(2144, 81, 3271) --mountain hallow
+        -- face(0)
         task.wait(5)
         pesan("fishing : " .. player:GetAttribute("LocationName"))
         while running do
