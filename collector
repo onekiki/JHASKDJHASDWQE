@@ -36,32 +36,40 @@ mainFrame.BackgroundTransparency = 0.3
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
+-- === KIRI : PLAYER LIST ===
+local playerFrame = Instance.new("Frame")
+playerFrame.Size = UDim2.new(0.35, 0, 1, -10)
+playerFrame.Position = UDim2.new(0, 5, 0, 5)
+playerFrame.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+playerFrame.Parent = mainFrame
+
+
 -- Tombol Close
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 25, 0, 25)
-closeBtn.Position = UDim2.new(1, -30, 0, 5)
+closeBtn.Position = UDim2.new(0, 10, 0, 5)
 closeBtn.Text = "X"
 closeBtn.TextColor3 = Color3.new(0, 0, 0)
 closeBtn.BackgroundColor3 = Color3.fromRGB(194, 62, 62)
-closeBtn.Parent = mainFrame
+closeBtn.Parent = playerFrame
 
 -- Tombol reload
 local reloadBtn = Instance.new("TextButton")
 reloadBtn.Size = UDim2.new(0, 25, 0, 25)
-reloadBtn.Position = UDim2.new(1, -60, 0, 5)
+reloadBtn.Position = UDim2.new(0, 60, 0, 5)
 reloadBtn.Text = "R"
 reloadBtn.TextColor3 = Color3.new(1,1,1)
 reloadBtn.BackgroundColor3 = Color3.fromRGB(0, 89, 255)
-reloadBtn.Parent = mainFrame
+reloadBtn.Parent = playerFrame
 
 -- Tombol 3d
 local renderBtn = Instance.new("TextButton")
 renderBtn.Size = UDim2.new(0, 25, 0, 25)
-renderBtn.Position = UDim2.new(1, -90, 0, 5)
+renderBtn.Position = UDim2.new(0, 90, 0, 5)
 renderBtn.Text = "3D"
 renderBtn.TextColor3 = Color3.new(1,1,1)
 renderBtn.BackgroundColor3 = Color3.fromRGB(202, 50, 151)
-renderBtn.Parent = mainFrame
+renderBtn.Parent = playerFrame
 
 closeBtn.MouseButton1Click:Connect(function()
     trade_stop = true
@@ -71,16 +79,8 @@ end)
 
 
 
-
--- === KIRI : PLAYER LIST ===
-local playerFrame = Instance.new("Frame")
-playerFrame.Size = UDim2.new(0.35, 0, 1, -10)
-playerFrame.Position = UDim2.new(0, 5, 0, 5)
-playerFrame.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-playerFrame.Parent = mainFrame
-
 local listLabel = Instance.new("TextLabel")
-listLabel.Size = UDim2.new(1, 0, 0, 60)
+listLabel.Size = UDim2.new(1, 0, 0, 70)
 listLabel.BackgroundTransparency = 1
 listLabel.Text = "Collector " .. versi
 listLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -506,7 +506,8 @@ local function update_inventory()
                 local category_harga = ""
                 local shiny = ""
                 local mutasiName = ""
-                if itemData.SellPrice then
+                
+                if itemData.Data.Type == "Fish" and itemData.SellPrice then
                     custom_harga = itemData.SellPrice
                     
                     category_harga = ""
@@ -533,10 +534,6 @@ local function update_inventory()
                             end
                         end
                     end
-                end
-                
-                if itemData.Data.Type == "Fish" and itemData.SellPrice then
-
                     total_semua = total_semua + custom_harga
                     hitung_ikan = hitung_ikan + 1
                     table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant})
@@ -560,19 +557,7 @@ local function update_inventory()
                         cetak(namas)
                     end
                 end
-                --[[
-                table.insert(results, {
-                    nama = itemData.Data.Name,
-                    id = item.Id,
-                    uuid = tostring(item.UUID),
-                    tier = tierName,
-                    berat = tostring(berat),
-                    harga = itemData.SellPrice,
-                    type = itemData.Data.Type
-                })]]
             end
-            print("sekret =", total_secret)
-            print("mitik =", total_mitik)
         end
     end
     local waktu = os.date("*t") -- ambil waktu lokal
@@ -610,6 +595,15 @@ local function createPlayerButton(name)
 	btn.Parent = listScroll
 
 	btn.MouseButton1Click:Connect(function()
+        local pos, err = getPositionByName(name)
+        if pos then
+            print("Posisi sekarang:", pos)
+            local x = pos.X
+            local y = pos.Y
+            local z = pos.Z
+            teleport(x,y,z)
+            task.wait(5)
+        end
 		if selectedPlayer == name then
 			selectedPlayer = nil
 			btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
@@ -731,7 +725,7 @@ local function trade(target, jumlah, type)
                     local info_ikan = berhasil ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
                     cetak(info_ikan)
                     detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
-                    simpan_transaksi(current_harga)
+                    --simpan_transaksi(current_harga)
                 end
                 completed = false
                 task.wait(3)
@@ -855,7 +849,7 @@ local function trade_map(target, jumlah, type)
                     local info_ikan = berhasil ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
                     cetak(info_ikan)
                     detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
-                    simpan_transaksi(current_harga)
+                    --simpan_transaksi(current_harga)
                 end
                 completed = false
                 task.wait(5)
