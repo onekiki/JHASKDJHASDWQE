@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.3.1" -- change list item  to dictionary
+local versi = "NEW UI - V1.4.0" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -50,7 +50,7 @@ playerFrame.Parent = mainFrame
 -- Tombol Close
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 25, 0, 25)
-closeBtn.Position = UDim2.new(0, 10, 0, 5)
+closeBtn.Position = UDim2.new(1, -30, 0, 5)
 closeBtn.Text = "X"
 closeBtn.TextColor3 = Color3.new(0, 0, 0)
 closeBtn.BackgroundColor3 = Color3.fromRGB(194, 62, 62)
@@ -123,7 +123,7 @@ statsLabel.Position = UDim2.new(0, 0, 0, 20)
 statsLabel.TextXAlignment = Enum.TextXAlignment.Left
 statsLabel.BackgroundTransparency = 1
 statsLabel.TextColor3 = Color3.new(0,0,0)
-statsLabel.Font = Enum.Font.Roboto
+statsLabel.Font = Enum.Font.RobotoMono
 statsLabel.TextSize = 20
 statsLabel.Parent = rightFrame
 
@@ -140,10 +140,11 @@ amountBox.TextSize = 16
 amountBox.Parent = rightFrame
 
 local selectedLabel = Instance.new("TextLabel")
-selectedLabel.Text = "Selected player:"
+selectedLabel.Text = "Player:"
 selectedLabel.Size = UDim2.new(1, 0, 0, 20)
-selectedLabel.Position = UDim2.new(0, 0, 0, 90)
+selectedLabel.Position = UDim2.new(0, 0, 0, 310)
 selectedLabel.BackgroundTransparency = 1
+selectedLabel.TextXAlignment = Enum.TextXAlignment.Left
 selectedLabel.TextColor3 = Color3.new(0,0,0)
 selectedLabel.Font = Enum.Font.RobotoMono
 selectedLabel.TextSize = 18
@@ -169,7 +170,7 @@ tradeSecret.TextColor3 = Color3.new(1,1,1)
 tradeSecret.Font = Enum.Font.RobotoMono
 tradeSecret.TextSize = 16
 tradeSecret.Parent = rightFrame
-
+--[[
 local allBtn = Instance.new("TextButton")
 allBtn.Text = "All"
 allBtn.Size = UDim2.new(0, 40, 0, 25)
@@ -179,17 +180,36 @@ allBtn.TextColor3 = Color3.fromRGB(34, 34, 34)
 allBtn.Font = Enum.Font.RobotoMono
 allBtn.TextSize = 16
 allBtn.Parent = rightFrame
+--]]
+local stoneBtn = Instance.new("TextButton")
+stoneBtn.Text = "Stone"
+stoneBtn.Size = UDim2.new(0, 40, 0, 25)
+stoneBtn.Position = UDim2.new(0, 170, 0, 120)
+stoneBtn.BackgroundColor3 = Color3.fromRGB(87, 87, 87)
+stoneBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+stoneBtn.Font = Enum.Font.RobotoMono
+stoneBtn.TextSize = 16
+stoneBtn.Parent = rightFrame
 
 local stopBtn = Instance.new("TextButton")
 stopBtn.Text = "STOP"
 stopBtn.Size = UDim2.new(0, 60, 0, 25)
-stopBtn.Position = UDim2.new(0, 220, 0, 120)
+stopBtn.Position = UDim2.new(0, 240, 0, 120)
 stopBtn.BackgroundColor3 = Color3.fromRGB(243, 6, 6)
 stopBtn.TextColor3 = Color3.fromRGB(253, 253, 253)
 stopBtn.Font = Enum.Font.RobotoMono
 stopBtn.TextSize = 16
 stopBtn.Parent = rightFrame
 
+local resetBtn = Instance.new("TextButton")
+resetBtn.Text = "🧹"
+resetBtn.Size = UDim2.new(0, 40, 0, 25)
+resetBtn.Position = UDim2.new(0, 300, 0, 120)
+resetBtn.BackgroundColor3 = Color3.fromRGB(172, 172, 172)
+resetBtn.TextColor3 = Color3.new(1,1,1)
+resetBtn.Font = Enum.Font.RobotoMono
+resetBtn.TextSize = 16
+resetBtn.Parent = rightFrame
 
 -- === Buat tombol toggle ===
 local settingBtn = Instance.new("TextButton")
@@ -233,15 +253,6 @@ SendMaster.Font = Enum.Font.RobotoMono
 SendMaster.TextSize = 16
 SendMaster.Parent = rightFrame
 
-local resetBtn = Instance.new("TextButton")
-resetBtn.Text = "🧹"
-resetBtn.Size = UDim2.new(0, 40, 0, 25)
-resetBtn.Position = UDim2.new(0, 290, 0, 120)
-resetBtn.BackgroundColor3 = Color3.fromRGB(172, 172, 172)
-resetBtn.TextColor3 = Color3.new(1,1,1)
-resetBtn.Font = Enum.Font.RobotoMono
-resetBtn.TextSize = 16
-resetBtn.Parent = rightFrame
 
 local Handshake = Instance.new("TextButton")
 Handshake.Text = "Sync"
@@ -481,10 +492,9 @@ local function tentukan_berat(tabel_harga, nilai)
     return "tidak diketahui"
 end
 
-local list_mitik = {}
 local list_mitik_map = {}
-local list_sekret = {}
 local list_sekret_map = {}
+local list_stone ={}
 local list_all = {}
 local list_master = {}
 local total_semua = 0
@@ -495,18 +505,20 @@ local total_mutasi = 0
 --// ANCHOR update_inventory
 
 local function update_inventory()
-     list_mitik = {}
-     list_sekret = {}
      list_mitik_map = {}
+     list_sekret_map = {}
      list_all = {}
+     list_stone ={}
      list_master = {}
      total_semua = 0
      hitung_ikan = 0
      total_secret = 0
      total_mitik = 0
      total_mutasi = 0
+     local hitung_stone = 0
      local hitung_mitik_dic = 0
      local hitung_sekret_dic = 0
+     local count_master = 0
     local inventory = getInventory()
     for category, items in pairs(inventory) do
         if category == "Items" then
@@ -529,7 +541,13 @@ local function update_inventory()
                 local category_harga = ""
                 local shiny = ""
                 local mutasiName = ""
-                
+                if itemData.Data.Type == "Enchant Stones" then
+                    if item.Id == 10 then
+                        print("ada batu")
+                        list_stone[hitung_stone] = {id = item.Id, uuid = tostring(item.UUID)}
+                        hitung_stone = hitung_stone + 1
+                    end
+                end
                 if itemData.Data.Type == "Fish" and itemData.SellPrice then
                     custom_harga = itemData.SellPrice
                     
@@ -559,21 +577,20 @@ local function update_inventory()
                     end
                     total_semua = total_semua + custom_harga
                     hitung_ikan = hitung_ikan + 1
-                    table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant})
+                    --table.insert(list_all, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant})
                     if tierName == "SECRET" and berat < berat_min then
                         total_secret = total_secret + custom_harga
-                        table.insert(list_sekret, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat)})
                         list_sekret_map[hitung_sekret_dic] =  {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat)}
                         hitung_sekret_dic = hitung_sekret_dic + 1
                     end
                     if tierName == "Mythic" and variant == nil then
                         total_mitik = total_mitik + custom_harga
-                        table.insert(list_mitik, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant})
                         list_mitik_map[hitung_mitik_dic] = {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
                         hitung_mitik_dic = hitung_mitik_dic + 1
                     end
                     if variant or tierName == "SECRET" then
-                        table.insert(list_master, {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant})
+                        list_master[count_master] = {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant}
+                        count_master = count_master + 1
                     end
                     if variant then
                         total_mutasi = total_mutasi + 1
@@ -586,12 +603,12 @@ local function update_inventory()
             end
         end
     end
-    local waktu = os.date("*t") -- ambil waktu lokal
-    local cetak = "Total : ".. konvert_harga(total_semua) .. " | " .. konvert_harga(hitung_ikan) .. " Ikan \n"
-    .. "Secret : ".. konvert_harga(total_secret) .. " | " .. #list_sekret_map .. " Ikan \n"
-    .. "Mitik : ".. konvert_harga(total_mitik) .." | " .. #list_mitik_map .. " Ikan \n"
+    local cetak_info = "Total : ".. konvert_harga(total_semua) .. " | " .. konvert_harga(hitung_ikan) .. " Ikan \n"
+    .. "Secret : ".. konvert_harga(total_secret) .. " | " .. hitung_sekret_dic .. " Ikan \n"
+    .. "Mitik : ".. konvert_harga(total_mitik) .." | " .. hitung_mitik_dic .. " Ikan \n"
     .. "Mutasi: " .. total_mutasi .. " Ikan \n"
-    statsLabel.Text = cetak
+    .. "Stone : " .. hitung_stone
+    statsLabel.Text = cetak_info
 end
 
 local function send_handshake(user)
@@ -622,10 +639,10 @@ local function createPlayerButton(name)
 		if selectedPlayer == name then
 			selectedPlayer = nil
 			btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
-			selectedLabel.Text = "Selected Player: -"
+			selectedLabel.Text = "Player: -"
 		else
 			selectedPlayer = name
-			selectedLabel.Text = "Selected Player: " .. name
+			selectedLabel.Text = "Player: " .. name
 			btn.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
 			cetak("Selected: " .. name)
             local pos, err = getPositionByName(name)
@@ -667,125 +684,6 @@ Players.PlayerRemoving:Connect(function(p)
 	cetak(p.Name .. " left")
 end)
 
---//ANCHOR - Trade
-local function trade(target, jumlah, type)
-    startscript = tick()
-    start_timer = true
-	cetak("Trade ke " .. target .. " sejumlah " .. jumlah)
-    local completed = false
-    Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
-        function(data)
-            print("ADA NOTIF: ", data.Text)
-            if data and data.Text == "Trade completed!" then
-                completed = true
-            end
-        end
-    )
-    local pos, err = getPositionByName(target)
-    if pos then
-        print("Posisi sekarang:", pos)
-        local x = pos.X
-        local y = pos.Y
-        local z = pos.Z
-        teleport(x,y,z)
-        task.wait(5)
-    end
-
-    update_inventory()
-    local custom_list = nil
-    local flag_secret = false
-    if type then
-        if type == "master" then
-            if target ~= "hayfish96" then
-                cetak("master tidak sesuai")
-                return
-            end
-            custom_list = list_master
-        elseif type == "secret" then
-            cetak("trade sekret dipilih")
-            custom_list = list_sekret
-            flag_secret = true
-        elseif type == "mitik" then
-            cetak("trade mitik dipilih")
-            custom_list = list_mitik
-        else
-            cetak("trade all dipilih")
-            custom_list = list_all
-        end
-    end
-    
-    local berhasil = 0
-    local info_akhir = ""
-    local current_harga = 0
-
-    if flag_secret == false and (jumlah > 0 and total_semua < round(jumlah / 1000000,2)) then
-        cetak("!! total ikan tidak memenuhi target !!")
-        return
-    end
-    if total_transaksi ~= nil and total_transaksi ~= 0 then
-        current_harga = total_transaksi
-        cetak("load transaksi akhir: " .. tostring(current_harga))
-    end
-    local function trade_user(usr)
-        print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
-        local list_trade_array = {}
-        if custom_list ~= nil then
-            for i, info in ipairs(custom_list) do
-                Net:WaitForChild("RE/EquipItem"):FireServer(info.uuid, "Fishes")
-                Net:WaitForChild("RF/InitiateTrade"):InvokeServer(usr.UserId, info.uuid)
-                local timeout = 0
-                while completed ~= true do
-                    timeout = timeout + 1
-                    if timeout > 20 then
-                        print("timeout")
-                        break
-                    end
-                    task.wait(0.4)
-                end
-                if timeout < 20 then
-                    berhasil = berhasil + 1
-                    info_akhir = "Total: " .. berhasil .. "/" .. jumlah
-                    current_harga = current_harga  + info.harga
-                    local current_mutasi = info.mutasi or "-"
-                    local info_ikan = berhasil ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
-                    cetak(info_ikan)
-                    detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
-                    --simpan_transaksi(current_harga)
-                end
-                completed = false
-                local mm = current_harga / 1000000
-                local limit = round(mm, 2)
-                if flag_secret == true then
-                    if berhasil >= jumlah then
-                        cetak("total transaksi tercapai: " .. tostring(jumlah))
-                        break
-                    end
-                else
-                    if jumlah > 0 and limit > jumlah then
-                        cetak("jumlah tercapai : " .. round(current_harga,2))
-                        break
-                    end
-                end
-                if trade_stop == true then
-                    cetak("! TRADE STOPED !")
-                    break
-                end
-            end
-            task.wait(5)
-        else
-            cetak("tidak ada barang lagi")
-        end
-        cetak("SELESAI SEMUA " .. info_akhir)
-        start_timer = false
-        update_inventory()
-    end
-    local existing = Players:FindFirstChild(target)
-    if existing then
-        trade_user(existing)
-    else
-        cetak("player tidak ada")
-    end
-end
 --//ANCHOR trade map
 local function trade_map(target, jumlah, type)
     local completed = false
@@ -814,10 +712,7 @@ local function trade_map(target, jumlah, type)
     local flag_secret = false
     if type then
         if type == "master" then
-            if target ~= "hayfish96" then
-                cetak("master tidak sesuai")
-                return
-            end
+            cetak("TRADE TO MASTER ACCOUNT")
             custom_list = list_master
         elseif type == "secret" then
             cetak("Trade sekret  ke " .. target .. " sejumlah " .. jumlah)
@@ -828,6 +723,10 @@ local function trade_map(target, jumlah, type)
             cetak("Trade mitik  ke " .. target .. " sejumlah " .. jumlah .." M")
             printer = printer .. "\n Trade sekret  ke " .. target .. " sejumlah " .. jumlah .. " Coin"
             custom_list = list_mitik_map
+        elseif type == "stone" then
+            flag_secret = true
+            cetak("Trade stone  ke " .. target .. " sejumlah " .. jumlah)
+            custom_list = list_stone
         else
             cetak("trade all dipilih")
             custom_list = list_mitik_map
@@ -865,13 +764,18 @@ local function trade_map(target, jumlah, type)
                     berhasil = berhasil + 1
                     map_i = map_i + 1
                     info_akhir = "Total: " .. berhasil .. "/" .. jumlah
-                    current_harga = current_harga  + info.harga
-                    local current_mutasi = info.mutasi or "-"
-                    local info_ikan = berhasil ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
+                    local info_ikan = "-"
+                    if info.id == 10 then
+                        info_ikan = berhasil .. ". Stone success Traded."
+                    else
+                        current_harga = current_harga  + info.harga
+                        local current_mutasi = info.mutasi or "-"
+                        info_ikan = berhasil ..". " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
+                        detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
+                        simpan_transaksi(current_harga)
+                    end
                     cetak(info_ikan)
-                    detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
                     printer = printer .. "\n".. info_ikan
-                    simpan_transaksi(current_harga)
                 end
                 completed = false
                 local mm = current_harga / 1000000
@@ -907,7 +811,7 @@ local function trade_map(target, jumlah, type)
         cetak("player tidak ada")
     end
 end
-
+--//ANCHOR Button
 tradeBtn.MouseButton1Click:Connect(function()
 	if not selectedPlayer then
 		cetak("❌ Pilih player dulu!")
@@ -933,7 +837,7 @@ tradeSecret.MouseButton1Click:Connect(function()
 	end
 	trade_map(selectedPlayer, jumlah, "secret")
 end)
-
+--[[
 allBtn.MouseButton1Click:Connect(function()
 	if not selectedPlayer then
 		cetak("❌ Pilih player dulu!")
@@ -941,12 +845,20 @@ allBtn.MouseButton1Click:Connect(function()
 	end
 	trade_map(selectedPlayer, 0, "all")
 end)
+--]]
+stoneBtn.MouseButton1Click:Connect(function()
+	if not selectedPlayer then
+		cetak("❌ Pilih player dulu!")
+		return
+	end
+	trade_map(selectedPlayer, jumlah, "stone")
+end)
 SendMaster.MouseButton1Click:Connect(function()
 	if not selectedPlayer then
 		cetak("❌ Pilih player dulu!")
 		return
 	end
-	trade(selectedPlayer, 0, "master")
+	trade_map(selectedPlayer, 0, "master")
 end)
 stopBtn.MouseButton1Click:Connect(function()
 	trade_stop = not trade_stop
