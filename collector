@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.4.0" -- Add stone trade
+local versi = "NEW UI - V1.4.1" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -543,7 +543,6 @@ local function update_inventory()
                 local mutasiName = ""
                 if itemData.Data.Type == "Enchant Stones" then
                     if item.Id == 10 then
-                        print("ada batu")
                         list_stone[hitung_stone] = {id = item.Id, uuid = tostring(item.UUID)}
                         hitung_stone = hitung_stone + 1
                     end
@@ -555,7 +554,7 @@ local function update_inventory()
                     if berat > itemData.Weight.Default.Max then
                         category_harga = "*BIG*"
                         local multiplication_big = (berat - itemData.Weight.Default.Max) / (itemData.Weight.Big.Max - itemData.Weight.Default.Max)
-                        print(multiplication_big)
+                        
                         custom_harga =  custom_harga * ( 1 + multiplication_big)
                     else
                         category_harga = ""
@@ -725,7 +724,6 @@ local function trade_map(target, jumlah, type)
             custom_list = list_mitik_map
         elseif type == "stone" then
             flag_secret = true
-            cetak("Trade stone  ke " .. target .. " sejumlah " .. jumlah)
             custom_list = list_stone
         else
             cetak("trade all dipilih")
