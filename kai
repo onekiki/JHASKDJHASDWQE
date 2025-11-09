@@ -1,4 +1,4 @@
-versi = "KAITUN | FIGHT! | V4.4.6" -- add benchmark speed
+versi = "KAITUN | FIGHT! | V4.4.7" -- add benchmark speed
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -782,7 +782,7 @@ local function update_inventory()
                     local variant = item.Metadata and item.Metadata.VariantId or " "
                     local nama = list_ikan[item.Id].nama
                     local uuid = item.UUID
-
+                    
                     if list_ikan[item.Id].tier == 7 then -- total ikan secret
                         table.insert(list_secret, uuid)
                         if list_ikan[item.Id].harga then
@@ -890,6 +890,7 @@ local function custom_trade(custom_list, limit)
         else
             pesan("tidak ada barang lagi")
         end
+        update_inventory()
         pesan("SELESAI SEMUA " .. info_akhir)
         print("clear list")
     end
@@ -1123,7 +1124,7 @@ function opsi(index)
     elseif index == 2 then
         custom_trade(list_mythic, 0)
     elseif index == 3 then
-        custom_trade(list_trade_batu, 5)
+        custom_trade(list_trade_batu, 20)
     elseif index == 4 then
     elseif index == 5 then
         -- variabel untuk menyimpan koneksi lama
