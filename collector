@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.4.1" -- Add stone trade
+local versi = "NEW UI - V1.4.2" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -723,6 +723,7 @@ local function trade_map(target, jumlah, type)
             printer = printer .. "\n Trade sekret  ke " .. target .. " sejumlah " .. jumlah .. " Coin"
             custom_list = list_mitik_map
         elseif type == "stone" then
+            cetak("Trade stone  ke " .. target .. " sejumlah " .. jumlah)
             flag_secret = true
             custom_list = list_stone
         else
@@ -849,6 +850,7 @@ stoneBtn.MouseButton1Click:Connect(function()
 		cetak("❌ Pilih player dulu!")
 		return
 	end
+    local jumlah = tonumber(amountBox.Text)
 	trade_map(selectedPlayer, jumlah, "stone")
 end)
 SendMaster.MouseButton1Click:Connect(function()
