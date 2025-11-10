@@ -1,4 +1,4 @@
-versi = "KAITUN | Experiment | V5.0.2" -- improve speed rod 
+versi = " | GLOBAL CONTROL | V5.1.0" -- add global controls  
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -50,12 +50,17 @@ local list_display = {}
 local list_trade_batu = {}
 local list_inv_item_uuid = {}
 local playing = true
-local event_action = false
+local global_event = false
 local enable_auto_collect = false
 local lastest_bait = "None"
 local lastest_bait_wear = nil
 
+local web_enable = false
+local web_location =""
+local web_old_location = ""
+
 local SERVER_URL = "https://hayfishit.dpdns.org/update"
+local CONFIG_URL = "https://hayfishit.dpdns.org/config/search"
 
 local total_harga_secret = 0
 local total_harga_mythic = 0
@@ -189,6 +194,17 @@ text_timer.TextScaled = true
 text_timer.TextXAlignment = Enum.TextXAlignment.Center
 text_timer.TextColor3 = Color3.fromRGB(230, 255, 1)
 text_timer.Parent = mainFrame
+
+local text_online = Instance.new("TextLabel")
+text_online.Size = UDim2.new(1, 0, 0.05, 0)
+text_online.Position = UDim2.new(0, 0, 0.4, 40)
+text_online.Text = ""
+text_online.BackgroundTransparency = 1
+text_online.Font = Enum.Font.RobotoMono
+text_online.TextScaled = true
+text_online.TextXAlignment = Enum.TextXAlignment.Center
+text_online.TextColor3 = Color3.fromRGB(230, 255, 1)
+text_online.Parent = mainFrame
 
 local text_nama = Instance.new("TextLabel")
 text_nama.Size = UDim2.new(0, 0, 0, 0)
@@ -602,7 +618,20 @@ local function face(yawDeg)
     end
     task.wait(2)
 end
-
+local function parseLokasi(str)
+	local hasil = {}
+	for part in string.gmatch(str, "([^|]+)") do
+		table.insert(hasil, part)
+	end
+	
+	return {
+		nama = hasil[1],
+		x = tonumber(hasil[2]),
+		y = tonumber(hasil[3]),
+		z = tonumber(hasil[4]),
+		rotasi = tonumber(hasil[5])
+	}
+end
 -----------------------------------------------------------------
 --helper graphic
 -----------------------------------------------------------------
@@ -654,7 +683,7 @@ end
 -----------------------------------------------------------------
 --              JSON ONLINE DECODER
 -----------------------------------------------------------------
---[[
+
 local function getJSON(url)
     local response =
         request(
@@ -690,7 +719,7 @@ end
 -- contoh pemakaian
 
 local last_json_data = nil
-local function ambilData()
+local function ambilData(url)
     for i = 1, 3 do
         local success, result =
             pcall(
@@ -708,18 +737,6 @@ local function ambilData()
     end
     warn("Semua percobaan gagal, pakai data lama.")
     return last_json_data
-end
-local json = ambilData()
-if json then
-    print("JSON:", json)
-else
-    warn("Tidak ada data sama sekali (belum pernah berhasil ambil).")
-end
-local config_auto_running = json.auto_running
-
-if config_auto_running == false then
-    pesan("AUTO RUN STOP")
-    running = false
 end
 --]]
 local function dump_table(t, indent)
@@ -813,7 +830,7 @@ local function update_inventory()
                         table.insert(list_display, text_sec)
                         listing = listing + 1
                     end
-                    if list_ikan[item.Id] == 283 then
+                    if item.Id == 283 then
                         count_custom_inv_id = count_custom_inv_id + 1
                     end
                 end
@@ -1187,12 +1204,12 @@ function opsi(index)
     elseif index == 11 then
         -- manual teleport
          pesan("custom teleport")
-        event_action = true
+        global_event = true
         select_quest = "custom_teleport"
 
     elseif index == 12 then
-        pesan("switch event")
-        event_action = true
+        pesan("global event trigger")
+        global_event = true
         select_quest = "event"
     elseif index == 13 then -- ROW II
         teleport(3243, -1302, 1402) -- enchant I
@@ -1298,6 +1315,7 @@ task.spawn(
         local total_benchmark = 0
         local old_catch
         local last_delta = 0
+        local old_fishing = 0
         while playing do
             local currentTime = os.clock()
             running_time = formatTime(math.floor(getOnlineTime()))
@@ -1314,10 +1332,10 @@ task.spawn(
                 old_catch = lastCatchTime
                 if delta < 30 then
                     flag_error = false
-                    text_timer.Text = "🟢 " .. delta .. " sec."
+                    text_timer.Text = delta .. " sec."
                 else
                     flag_error = true
-                    text_timer.Text = "🔴 " .. delta .. " sec."
+                    text_timer.Text =  delta .. " sec."
                 end
                 if delta > 180 then
                     pesan("! OVER !")
@@ -1360,8 +1378,29 @@ task.spawn(
                 end
             end
             if num % 100 == 0 then
+                local web_control = ambilData(CONFIG_URL)
+                if web_control then
+                    web_enable = web_control.enable_event
+                    web_location = web_control.custom_location
+                    if web_enable == 1 then
+                        text_online.Text = "🟢 global enabled"
+                        if web_location ~= web_old_location then
+                            pesan("global control enable")
+                            select_quest = "global event"
+                            global_event = true
+                            running = false
+                            web_old_location = web_location
+                        end
+                    else
+                        text_online.Text = ""
+                        global_event = false
+                    end
+                end
                 print("kirim data at: ", running_time)
-                send_Data(running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing, select_quest)
+                if old_fishing ~= count_mancing then
+                    send_Data(running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing, select_quest)
+                    old_fishing =count_mancing
+                end
             end
             num = num + 1
             task.wait(1)
@@ -1399,6 +1438,7 @@ RF.OnClientInvoke = function(...)
     end
 end
 --//ANCHOR MAIN
+
 ---------------------------------------------
 ---MULAI ALGORITMA
 ---------------------------------------------
@@ -1506,182 +1546,193 @@ if running and select_quest == "farming_coin" then
     task.wait(10)
 end
 
-if running and select_quest == "deep_sea" then
-    Net:WaitForChild("RF/UpdateAutoSellThreshold"):InvokeServer(5)  -- autosell switch to legendary
-
-    -- farming stone
-    total_stone = #list_trade_batu
-    local limit_stone = 10
-    if total_stone < limit_stone then
-        pesan("stone < " .. limit_stone)
-        teleport(3263, -1302, 1409)
-        face(0)
-        local z = 0
-        while running and total_stone < limit_stone do
-            auto_fish(2)
-            z = z + 1
-            if z % 50 == 0 then
-                total_stone = #list_trade_batu
-                pesan("farm stone: " .. total_stone)
-            end
-        end
+if running then
+    local web_control = ambilData(CONFIG_URL)
+    if web_control then
+        web_enable = web_control.enable_event
+        web_location = web_control.custom_location
     end
-
-    while playing do
-        if running and progress_quest1 < 100 then
-            pesan(quest_deep_sea(1))
-            teleport(-3602, -283, -1612)
-            face(120)
-            local z = 1
-            while running and progress_quest1 < 100 do
-                auto_fish(2)
-            end
-        end
-        if running and ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 then
-            pesan(quest_deep_sea(3))
-            teleport(-3734, -135, -1013)
-            face(0)
-            while running and ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 do
-                auto_fish(2)
-            end
-        end
-        if running and ((progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4) >= 100 then
-            pesan("selesai deep sea quest")
-            select_quest = "jungle"
-            break
-        end
-        if event_action == true then
-            break
-        end
-        task.wait(15)
-        text_timer.Text = "waiting running deep sea quest"
-    end
-end
-if running and select_quest == "jungle" then
-    local exists = workspace["JUNGLE INTERACTIONS"].Doors.TempleDoor:FindFirstChild("DELETE_ME_AFTER_UNLOCK")
-
-    if exists then
-        print("Model ditemukan!")
-        step = 1
-    else
-        step = 3
-    end
-
-    while playing do
-        if step == 0 then
-            break
-        end
-        if step == 1 then
-            if running and list_inventory_fishs[265] == nil then
-                pesan("farming artifak > 1. Arrow")
-                teleport(884, 7, -370)
-                face(270)
-                while running and list_inventory_fishs[265] == nil do
-                    auto_fish()
-                end
-            end
-            if running and list_inventory_fishs[266] == nil then
-                pesan("farming artifak > 2. cressent")
-                teleport(1404, 4, 122)
-                face(0)
-                while running and list_inventory_fishs[266] == nil do
-                    auto_fish()
-                end
-            end
-            if running and list_inventory_fishs[267] == nil then
-                pesan("farming artifak > 3. diamond")
-                teleport(1840, 4, -296)
-                face(90)
-                while running and  list_inventory_fishs[267] == nil do
-                    auto_fish()
-                end
-            end
-            if running and list_inventory_fishs[271] == nil then
-                pesan("farming artifak > 4. Hourglass")
-                teleport(1490, 6, -848)
-                face(0)
-                while running and list_inventory_fishs[271] == nil do
-                    auto_fish()
-                end
-            end
-            if running and list_inventory_fishs[265] ~= nil and list_inventory_fishs[266] ~= nil and list_inventory_fishs[267] ~= nil and list_inventory_fishs[271] ~= nil then
-                pesan("selesai farming artifak")
-                step = step + 1
-            end
-        end
-
-        if step == 2 then
-            local list_artifak = {265, 266, 267, 271}
-            for i, k in ipairs(list_artifak) do
-                if list_inventory_fishs[k] ~= nil then
-                    if i == 1 then
-                        teleport(897, 8, -361)
-                        Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
-                        task.wait(1)
-                        Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Arrow Artifact")
-                        task.wait(1)
-                    end
-                    if i == 2 then
-                        teleport(1420, 31, 79)
-                        Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
-                        task.wait(1)
-                        Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Crescent Artifact")
-                        task.wait(1)
-                    end
-                    if i == 3 then
-                        teleport(1819, 8, -284)
-                        Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
-                        task.wait(1)
-                        Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Diamond Artifact")
-                        task.wait(1)
-                    end
-                    if i == 4 then
-                        teleport(1485, 8, -861)
-                        Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
-                        task.wait(1)
-                        Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Hourglass Diamond Artifact")
-                        task.wait(1)
-                    end
-                end
-            end
-            task.wait(60)
-            pesan("TUNGGU PINTU TERBUKA")
-            step = 3
-            Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1) -- wear rod 
-            task.wait(30)
-        end
-
-        if step == 3 then
-            if running and progress_quest3 < 100 then
-                pesan(quest_jungle(3)) -- inside temple
-                teleport(math.random(1491,1516), -22, -630)
-                face(0)
-                while running and progress_quest3 < 100 do
-                    auto_fish()
-                end
-            end
-            if running and progress_quest2 < 100 then
-                pesan(quest_jungle(2)) -- in the forest
-                teleport(1066, 5, 157)
-                face(0)
-                while running and progress_quest2 < 100 do
-                    auto_fish()
-                end
-            end
-            if running and progress_quest4 < 100 then
-                teleport(1487, 128, -591)
-                pesan("SELESAI MANUAL SACRIFICE")
-                task.wait(30)
-            end
-        end
-        if event_action == true then
-            break
-        end
-        text_timer.Text = "waiting running jungle quest"
-        task.wait(15)
+    if web_enable == 1 then
+        select_quest = "global event"
+        global_event = true
     end
 end
 while playing do
+    if running and select_quest == "deep_sea" then
+        Net:WaitForChild("RF/UpdateAutoSellThreshold"):InvokeServer(5)  -- autosell switch to legendary
+
+        -- farming stone
+        total_stone = #list_trade_batu
+        local limit_stone = 10
+        if total_stone < limit_stone then
+            pesan("stone < " .. limit_stone)
+            teleport(3263, -1302, 1409)
+            face(0)
+            local z = 0
+            while running and total_stone < limit_stone do
+                auto_fish(2)
+                z = z + 1
+                if z % 50 == 0 then
+                    total_stone = #list_trade_batu
+                    pesan("farm stone: " .. total_stone)
+                end
+            end
+        end
+
+        while playing do
+            if running and progress_quest1 < 100 then
+                pesan(quest_deep_sea(1))
+                teleport(-3602, -283, -1612)
+                face(120)
+                local z = 1
+                while running and progress_quest1 < 100 do
+                    auto_fish(2)
+                end
+            end
+            if running and ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 then
+                pesan(quest_deep_sea(3))
+                teleport(-3734, -135, -1013)
+                face(0)
+                while running and ((progress_quest2 + progress_quest3 + progress_quest4) / 3) < 100 do
+                    auto_fish(2)
+                end
+            end
+            if running and ((progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4) >= 100 then
+                pesan("selesai deep sea quest")
+                select_quest = "jungle"
+                break
+            end
+            if global_event == true then
+                break
+            end
+            task.wait(15)
+            text_timer.Text = "waiting running deep sea quest"
+        end
+    end
+    if running and select_quest == "jungle" then
+        local exists = workspace["JUNGLE INTERACTIONS"].Doors.TempleDoor:FindFirstChild("DELETE_ME_AFTER_UNLOCK")
+
+        if exists then
+            print("Model ditemukan!")
+            step = 1
+        else
+            step = 3
+        end
+
+        while playing do
+            if step == 0 then
+                break
+            end
+            if step == 1 then
+                if running and list_inventory_fishs[265] == nil then
+                    pesan("farming artifak > 1. Arrow")
+                    teleport(884, 7, -370)
+                    face(270)
+                    while running and list_inventory_fishs[265] == nil do
+                        auto_fish()
+                    end
+                end
+                if running and list_inventory_fishs[266] == nil then
+                    pesan("farming artifak > 2. cressent")
+                    teleport(1404, 4, 122)
+                    face(0)
+                    while running and list_inventory_fishs[266] == nil do
+                        auto_fish()
+                    end
+                end
+                if running and list_inventory_fishs[267] == nil then
+                    pesan("farming artifak > 3. diamond")
+                    teleport(1840, 4, -296)
+                    face(90)
+                    while running and  list_inventory_fishs[267] == nil do
+                        auto_fish()
+                    end
+                end
+                if running and list_inventory_fishs[271] == nil then
+                    pesan("farming artifak > 4. Hourglass")
+                    teleport(1490, 6, -848)
+                    face(0)
+                    while running and list_inventory_fishs[271] == nil do
+                        auto_fish()
+                    end
+                end
+                if running and list_inventory_fishs[265] ~= nil and list_inventory_fishs[266] ~= nil and list_inventory_fishs[267] ~= nil and list_inventory_fishs[271] ~= nil then
+                    pesan("selesai farming artifak")
+                    step = step + 1
+                end
+            end
+
+            if step == 2 then
+                local list_artifak = {265, 266, 267, 271}
+                for i, k in ipairs(list_artifak) do
+                    if list_inventory_fishs[k] ~= nil then
+                        if i == 1 then
+                            teleport(897, 8, -361)
+                            Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
+                            task.wait(1)
+                            Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Arrow Artifact")
+                            task.wait(1)
+                        end
+                        if i == 2 then
+                            teleport(1420, 31, 79)
+                            Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
+                            task.wait(1)
+                            Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Crescent Artifact")
+                            task.wait(1)
+                        end
+                        if i == 3 then
+                            teleport(1819, 8, -284)
+                            Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
+                            task.wait(1)
+                            Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Diamond Artifact")
+                            task.wait(1)
+                        end
+                        if i == 4 then
+                            teleport(1485, 8, -861)
+                            Net:WaitForChild("RE/EquipItem"):FireServer(list_inventory_fishs[k].UUID, "Fishes")
+                            task.wait(1)
+                            Net:WaitForChild("RE/PlaceLeverItem"):FireServer("Hourglass Diamond Artifact")
+                            task.wait(1)
+                        end
+                    end
+                end
+                task.wait(60)
+                pesan("TUNGGU PINTU TERBUKA")
+                step = 3
+                Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1) -- wear rod 
+                task.wait(30)
+            end
+
+            if step == 3 then
+                if running and progress_quest3 < 100 then
+                    pesan(quest_jungle(3)) -- inside temple
+                    teleport(math.random(1491,1516), -22, -630)
+                    face(0)
+                    while running and progress_quest3 < 100 do
+                        auto_fish()
+                    end
+                end
+                if running and progress_quest2 < 100 then
+                    pesan(quest_jungle(2)) -- in the forest
+                    teleport(1066, 5, 157)
+                    face(0)
+                    while running and progress_quest2 < 100 do
+                        auto_fish()
+                    end
+                end
+                if running and progress_quest4 < 100 then
+                    teleport(1487, 128, -591)
+                    pesan("SELESAI MANUAL SACRIFICE")
+                    task.wait(30)
+                end
+            end
+            if global_event == true then
+                break
+            end
+            text_timer.Text = "waiting running jungle quest"
+            task.wait(15)
+        end
+    end
     if running and select_quest == "event" then
         pesan("farming event")
         local function getAllMegalodonHuntPivots()
@@ -1726,9 +1777,9 @@ while playing do
     end
     if running and select_quest == "custom_teleport" then
         --list teleport
-         teleport(948, 3, 5114) -- crater island
-         face(120)
-         --teleport(6098, -586, 4677) --group fishing
+            teleport(948, 3, 5114) -- crater island
+            face(120)
+            --teleport(6098, -586, 4677) --group fishing
 
         --teleport(2144, 81, 3271) --mountain hallow
         --face(0)
@@ -1738,10 +1789,33 @@ while playing do
             auto_fish()
         end
     end
+    if select_quest == "global event" or global_event == true then
+        local web_parse = parseLokasi(web_location)
+        pesan("EVENT:" .. web_parse.nama)
+        teleport(web_parse.x, web_parse.y, web_parse.z)
+        face(web_parse.rotasi)
+        task.wait(5)
+        running = true
+        while running and global_event == true do
+            auto_fish()
+        end
+    end
+    -- reset ke quest
+    if running and global_event == false then
+        if current_rod == "Ghostfinn Rod" then
+            select_quest = "jungle"
+        elseif current_rod == "Element Rod" then
+            select_quest = "custom_teleport"
+        elseif current_rod == "Astral Rod" then
+            select_quest = "deep_sea"
+        else
+            select_quest = "farming_coin"
+        end
+    end
     task.wait(15)
 end
 running = false
-event_action = false
+global_event = false
 
 print("-----------------end-------------")
 --]]
