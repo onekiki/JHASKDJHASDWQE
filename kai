@@ -1,4 +1,4 @@
-versi = " | GLOBAL CONTROL | V5.1.1" -- testing  item id 183 auto fav
+versi = " | GLOBAL CONTROL | V5.1.2" -- fix auto fav selected item
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -543,10 +543,8 @@ if getconnections then
 end
 
 Event.OnClientEvent:Connect(function(itemId, stats, data, flag)
-    if itemId == 283 then
-        running = false
-        pesan("KETEMU IKAN")
-        dump_table(data)
+    if data.InventoryItem.Id == 283 then
+        fav(data.InventoryItem.UUID)
     end
 end)
 
