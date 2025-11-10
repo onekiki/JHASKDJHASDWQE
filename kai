@@ -1,4 +1,4 @@
-versi = " | GLOBAL CONTROL | V5.1.3" -- fix auto fav selected item
+versi = " | GLOBAL CONTROL | V5.1.4" -- fix auto fav selected item
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1570,8 +1570,10 @@ if running then
         web_location = web_control.custom_location
     end
     if web_enable == 1 then
-        select_quest = "global event"
-        global_event = true
+        if current_rod == "Ghostfinn Rod" or current_rod == "Element Rod" then
+            select_quest = "global event"
+            global_event = true
+        end
     end
 end
 while playing do
