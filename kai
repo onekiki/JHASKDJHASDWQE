@@ -1,4 +1,4 @@
-versi = "KAITUN | Experiment | V5.0.0" -- improve speed rod 
+versi = "KAITUN | Experiment | V5.0.1" -- improve speed rod 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1722,12 +1722,12 @@ while playing do
     end
     if running and select_quest == "custom_teleport" then
         --list teleport
-         --teleport(948, 3, 5114) -- crater island
-         --face(120)
+         teleport(948, 3, 5114) -- crater island
+         face(120)
          --teleport(6098, -586, 4677) --group fishing
 
-        teleport(2144, 81, 3271) --mountain hallow
-        face(0)
+        --teleport(2144, 81, 3271) --mountain hallow
+        --face(0)
         task.wait(5)
         pesan("fishing : " .. player:GetAttribute("LocationName"))
         while running do
