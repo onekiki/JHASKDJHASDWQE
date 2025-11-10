@@ -1,4 +1,4 @@
-versi = " | GLOBAL CONTROL | V5.1.2" -- fix auto fav selected item
+versi = " | GLOBAL CONTROL | V5.1.3" -- fix auto fav selected item
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -49,9 +49,10 @@ local list_mythic = {}
 local list_display = {}
 local list_trade_batu = {}
 local list_inv_item_uuid = {}
+local list_fav = {}
 local playing = true
 local global_event = false
-local enable_auto_collect = false
+local stop_global_control = false
 local lastest_bait = "None"
 local lastest_bait_wear = nil
 
@@ -289,7 +290,7 @@ end
 --// ANCHOR OPTION MENU
 local options = {
                 "Trade Secret","Trade Mythic", "Trade Stone", "-", "TEST", "Listen Trade",
-                "Auto Buy", "Merchant", "Jobs ID", "Fishing", "teleport custom", "Farm Event",
+                "Auto Buy", "Merchant", "Jobs ID", "STOP CONTROL", "teleport custom", "Farm Event",
                 "Enhant I", "E (empowered 10%)", "E (mutation +30%)", "E (cursed 75%)", "E (prismatic -8)", "Enchant II"
             }
 
@@ -772,6 +773,7 @@ local function update_inventory()
     count_custom_inv_id = 0
     local listing = 1
     list_secret = {}
+    list_fav = {}
     list_display = {}
     list_mythic = {}
     list_trade_batu = {}
@@ -833,6 +835,7 @@ local function update_inventory()
                         listing = listing + 1
                     end
                     if item.Id == 283 then
+                        table.insert(list_fav, uuid)
                         count_custom_inv_id = count_custom_inv_id + 1
                     end
                 end
@@ -1200,9 +1203,8 @@ function opsi(index)
             pesan("gagal copy job id")
         end
     elseif index == 10 then
-        while playing do
-            auto_fish()
-        end
+       stop_global_control = not stop_global_control
+       pesan("global control set: " .. tostring(stop_global_control))
     elseif index == 11 then
         -- manual teleport
          pesan("custom teleport")
@@ -1229,7 +1231,7 @@ function opsi(index)
     lastCatchTime = os.clock()
 end
 local function display_inventory()
-    local list = "custom id: (283)" .. count_custom_inv_id .. " \n total stone : " .. #list_trade_batu
+    local list = "FAV: " .. count_custom_inv_id .. " \n total stone : " .. #list_trade_batu
     if list_display then
         for i, k in ipairs(list_display) do
             list = list .. " \n " .. k
@@ -1372,6 +1374,31 @@ task.spawn(
                 text_bait.Text = lastest_bait
                 print("total mythic : ", #list_mythic)
                 print("total uang:", koin)
+
+                local web_control = ambilData(CONFIG_URL)
+                if stop_global_control == false then
+                    if web_control then
+                        web_enable = web_control.enable_event
+                        web_location = web_control.custom_location
+                        if web_enable == 1 then
+                            if current_rod == "Ghostfinn Rod" or current_rod == "Element Rod" then
+                                text_online.Text = "🟢 global enabled"
+                                if web_location ~= web_old_location then
+                                    pesan("global control enable")
+                                    select_quest = "global event"
+                                    global_event = true
+                                    running = false
+                                    web_old_location = web_location
+                                end
+                            end
+                        else
+                            text_online.Text = ""
+                            global_event = false
+                        end
+                    end
+                else
+                    text_online.Text = "🔴 global Disabled"
+                end
             end
             if running and num % 5 == 0 then
                 if #Players:GetPlayers() > 1 then
@@ -1380,26 +1407,6 @@ task.spawn(
                 end
             end
             if num % 100 == 0 then
-                local web_control = ambilData(CONFIG_URL)
-                if web_control then
-                    web_enable = web_control.enable_event
-                    web_location = web_control.custom_location
-                    if web_enable == 1 then
-                        if current_rod == "Ghostfinn Rod" or current_rod == "Element Rod" then
-                            text_online.Text = "🟢 global enabled"
-                            if web_location ~= web_old_location then
-                                pesan("global control enable")
-                                select_quest = "global event"
-                                global_event = true
-                                running = false
-                                web_old_location = web_location
-                            end
-                        end
-                    else
-                        text_online.Text = ""
-                        global_event = false
-                    end
-                end
                 print("kirim data at: ", running_time)
                 if old_fishing ~= count_mancing then
                     send_Data(running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing, select_quest)
@@ -1424,9 +1431,15 @@ RF.OnClientInvoke = function(...)
         print("start kirim ikan")
         running = false
         task.wait(10)
-        custom_trade(list_mythic, 0)
-        task.wait(10)
+        if total_harga_mythic > 500000 then -- minimal 500k
+            custom_trade(list_mythic, 0)
+            task.wait(10)
+        end
         custom_trade(list_secret, 0)
+        task.wait(10)
+        if #list_fav > 0 then
+            custom_trade(list_fav, 0)
+        end
         running = true
         lastCatchTime = os.clock()
         Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
