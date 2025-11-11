@@ -1,4 +1,4 @@
-versi = " | GLOBAL CONTROL | V5.1.4" -- fix auto fav selected item
+versi = " | MULTIUSER | V5.1.4" -- fix auto fav selected item
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -53,8 +53,7 @@ local list_fav = {}
 local playing = true
 local global_event = false
 local stop_global_control = false
-local lastest_bait = "None"
-local lastest_bait_wear = nil
+local current_bait = "None"
 
 local web_enable = false
 local web_location =""
@@ -62,6 +61,7 @@ local web_old_location = ""
 
 local SERVER_URL = "https://hayfishit.dpdns.org/update"
 local CONFIG_URL = "https://hayfishit.dpdns.org/config/search"
+local USER_LIST = "https://hayfishit.dpdns.org/user?nama="
 
 local total_harga_secret = 0
 local total_harga_mythic = 0
@@ -75,6 +75,7 @@ local master_user2 = "haycollector"
 local current_rod = ""
 local current_rod_enchant = nil
 local lastCatchTime = nil
+local list_sibling = {}
 
 --khusus event unlocker
 local flag_item_unlocker = true
@@ -506,20 +507,94 @@ local function info_enchant(id)
 	end
 	return nil -- kalau tidak ditemukan
 end
+-----------------------------------------------------------------
+--              JSON ONLINE DECODER
+-----------------------------------------------------------------
+
+local function getJSON(url)
+    local response =
+        request(
+        {
+            Url = url,
+            Method = "GET",
+            Headers = {
+                ["Accept"] = "application/json"
+            }
+        }
+    )
+
+    if not response.Success then
+        warn("Request gagal:", response.StatusCode)
+        return nil
+    end
+
+    local ok, data =
+        pcall(
+        function()
+            return HttpService:JSONDecode(response.Body)
+        end
+    )
+
+    if ok then
+        return data
+    else
+        warn("Gagal decode JSON:", data)
+        return nil
+    end
+end
+
+--//ANCHOR HTTP GET 
+local last_json_data = nil
+local function ambilData(url)
+    print(url)
+    for i = 1, 3 do
+        local success, result =
+            pcall(
+            function()
+                return getJSON(url)
+            end
+        )
+        if success and result then
+            last_json_data = result
+            return result
+        else
+            warn(("Percobaan %d gagal"):format(i))
+            task.wait(1)
+        end
+    end
+    warn("Semua percobaan gagal, pakai data lama.")
+    return last_json_data
+end
+local url_listuser = USER_LIST .. player.Name
+local get_user = ambilData(url_listuser)
+
+if get_user then
+    print("info")
+    for _, user in ipairs(get_user.users) do
+        list_sibling[user.nama] = "sibling"
+        print("sibling:", user.nama)
+    end
+end
+list_sibling[master_user] = "master"
+list_sibling[master_user2] = "master"
 
 --//ANCHOR connection
+task.wait(10)
 
 local function checkPlayers()
     local LocalPlayer = Players.LocalPlayer
-	for _, X in pairs(Players:GetPlayers()) do
-        if X.name ~= player.Name then 
-            if X.Name == master_user2 or X.Name == master_user then
-                print("MASTER TELAH GABUNG")
-                return
+	for _, list_players in pairs(Players:GetPlayers()) do
+        if list_players.name ~= player.Name then 
+            if list_sibling[list_players.name] == "sibling" then
+                print("sibling entered")
+            elseif list_sibling[list_players.name] == "master" then
+                print("master entered")
+                running = false
             else
-                LocalPlayer:Kick("ADA PLAYER LAIN!! ", X.Name)
+                LocalPlayer:Kick("ADA PLAYER LAIN!! ", list_players.Name)
                 running = false
                 playing = false
+                return false
             end
         end
 	end
@@ -529,16 +604,12 @@ Players.PlayerAdded:Connect(function()
 	checkPlayers()
 end)
 Players.PlayerRemoving:Connect(function()
-    if #Players:GetPlayers() == 1 then
-        print("player sudah keluar, lanjut running")
-        running = true
-    end
+    checkPlayers()
 end)
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
 if getconnections then
     for _, conn in ipairs(getconnections(Event.OnClientEvent)) do
-
         conn:Disable()
     end
 end
@@ -701,66 +772,6 @@ local function toggle3DAndUI()
     --]]
 end
 
------------------------------------------------------------------
---              JSON ONLINE DECODER
------------------------------------------------------------------
-
-local function getJSON(url)
-    local response =
-        request(
-        {
-            Url = url,
-            Method = "GET",
-            Headers = {
-                ["Accept"] = "application/json"
-            }
-        }
-    )
-
-    if not response.Success then
-        warn("Request gagal:", response.StatusCode)
-        return nil
-    end
-
-    local ok, data =
-        pcall(
-        function()
-            return HttpService:JSONDecode(response.Body)
-        end
-    )
-
-    if ok then
-        return data
-    else
-        warn("Gagal decode JSON:", data)
-        return nil
-    end
-end
-
--- contoh pemakaian
-
-local last_json_data = nil
-local function ambilData(url)
-    for i = 1, 3 do
-        local success, result =
-            pcall(
-            function()
-                return getJSON(url)
-            end
-        )
-        if success and result then
-            last_json_data = result
-            return result
-        else
-            warn(("Percobaan %d gagal"):format(i))
-            task.wait(1)
-        end
-    end
-    warn("Semua percobaan gagal, pakai data lama.")
-    return last_json_data
-end
---]]
-
 --//ANCHOR INVENTORY
 
 local function update_inventory()
@@ -801,8 +812,6 @@ local function update_inventory()
                     Name = baits.Data.Name,
                     Tier = baits.Data.Tier
                 }
-                lastest_bait = baits.Data.Name
-                lastest_bait_wear = baits.Data.Id
             end
         end
         if category == "Items" then
@@ -986,6 +995,8 @@ local function auto_enchant(ids)
     end
     pesan("selesai enchant")
 end
+
+--//ANCHOR best rod and bait wear
 local function best_rod_wear()
     local old_tier = 0
     local current_uuid = ""
@@ -1009,6 +1020,16 @@ local function best_rod_wear()
         return best
     else
         print("⚠️ Tidak ada rod ditemukan.")
+    end
+end
+local function best_bait_wear()
+    local order_bait = {18,20,15,3,1}
+    for _,ids in ipairs(order_bait) do
+        if list_inventory_bait[ids] ~= nil then
+            print("best bait: ")
+            wear_bait(ids)
+            return list_inventory_bait[ids].Name
+        end
     end
 end
 local function cek_merchant()
@@ -1245,7 +1266,7 @@ end
 local function send_Data(running_time, koin_secret, koin_myth, activity, total_fishing,quest)
     local progress = (progress_quest1 + progress_quest2 + progress_quest3 + progress_quest4) / 4
     local nama = player.Name
-    local job_id = lastest_bait
+    local job_id = current_bait
     local rod = current_rod
     local list_inv = display_inventory()
     koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
@@ -1371,7 +1392,7 @@ task.spawn(
                 task.wait(2)
                 hapus_gui_daily()
                 text_rod.Text = current_rod
-                text_bait.Text = lastest_bait
+                text_bait.Text = current_bait
                 print("total mythic : ", #list_mythic)
                 print("total uang:", koin)
 
@@ -1398,12 +1419,6 @@ task.spawn(
                     end
                 else
                     text_online.Text = "🔴 global Disabled"
-                end
-            end
-            if running and num % 5 == 0 then
-                if #Players:GetPlayers() > 1 then
-                    pesan("PLAYER LEBIH DARI 1")
-                    running = false
                 end
             end
             if num % 100 == 0 then
@@ -1498,8 +1513,6 @@ if running then
     -- inisialisasi awal bait , 3d config, check player, quest, auto buy
     checkPlayers()
     toggle3DAndUI()
-    wear_bait(lastest_bait_wear)
-    text_bait.Text = lastest_bait
     update_quest()
     auto_buy()
     -- add platform
@@ -1507,9 +1520,12 @@ if running then
     if player.Character then
         attachSmartPlatform(player.Character)
     end
-    -- wear rod
+    -- wear best rod and bait
+
     current_rod = best_rod_wear() or "-"
     text_rod.Text = current_rod
+    current_bait = best_bait_wear() or "-"
+    text_bait.Text = current_bait
     Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
     -- tentukan aktifitas
@@ -1809,15 +1825,17 @@ while playing do
         end
     end
     if select_quest == "global event" or global_event == true then
-        local web_parse = parseLokasi(web_location)
-        pesan("EVENT:" .. web_parse.nama)
-        teleport(web_parse.x, web_parse.y, web_parse.z)
-        face(web_parse.rotasi)
-        task.wait(5)
         running = true
-        while running and global_event == true do
-            auto_fish()
-        end
+        --if running then
+            local web_parse = parseLokasi(web_location)
+            pesan("EVENT:" .. web_parse.nama)
+            teleport(web_parse.x, web_parse.y, web_parse.z)
+            face(web_parse.rotasi)
+            task.wait(5)
+            while running and global_event == true do
+                auto_fish()
+            end
+        --end
     end
     -- reset ke quest
     if running and global_event == false then
