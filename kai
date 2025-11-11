@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.1.4" -- fix auto fav selected item
+versi = " | MULTIUSER | V5.1.5" -- update trade for multi user 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1444,22 +1444,25 @@ RF.OnClientInvoke = function(...)
     end
     if maybeData.Id == 163 then -- vyper fish
         print("start kirim ikan")
-        running = false
-        task.wait(10)
-        if total_harga_mythic > 500000 then -- minimal 500k
-            custom_trade(list_mythic, 0)
+        task.spawn(
+            function()
+            running = false
             task.wait(10)
-        end
-        custom_trade(list_secret, 0)
-        task.wait(10)
-        if #list_fav > 0 then
-            custom_trade(list_fav, 0)
-        end
-        running = true
-        lastCatchTime = os.clock()
-        Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
-        pesan("SELESAI TRADE")
-        send_Data("", 0, 0, last_msg, count_mancing, select_quest)
+            if total_harga_mythic > 500000 then -- minimal 500k
+                custom_trade(list_mythic, 0)
+                task.wait(10)
+            end
+            custom_trade(list_secret, 0)
+            task.wait(10)
+            if #list_fav > 0 then
+                custom_trade(list_fav, 0)
+            end
+            running = true
+            lastCatchTime = os.clock()
+            Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
+            pesan("SELESAI TRADE")
+            send_Data("", 0, 0, last_msg, count_mancing, select_quest)
+        end)
         return "CANCEL"
     else
         if list_ikan[maybeData.Id] then
