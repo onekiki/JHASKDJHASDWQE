@@ -1,4 +1,4 @@
-local versi = "MULTI USR - V1.5" -- Add stone trade
+local versi = "MULTI USR - V1.5.1" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -29,7 +29,7 @@ local berat_min = 50000  -- berat trade secret minimal berapa kilo ?
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "CollectorUI"
 screenGui.Parent = gui
-
+local selectedPlayer = nil
 -- Frame utama (putih)
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 600, 0, 400)
@@ -524,6 +524,8 @@ local hitung_ikan = 0
 local total_secret = 0
 local total_mitik = 0
 local total_mutasi = 0
+local trade_uuid = nil
+local trade_id = 163
 --// ANCHOR update_inventory
 
 local function update_inventory()
@@ -570,6 +572,9 @@ local function update_inventory()
                     end
                 end
                 if itemData.Data.Type == "Fish" and itemData.SellPrice then
+                    if item.Id == trade_id then
+                        trade_uuid = tostring(item.UUID)
+                    end
                     custom_harga = itemData.SellPrice
                     
                     category_harga = ""
@@ -635,6 +640,9 @@ end
 local function send_handshake(user)
     print(user)
     local uuid = "0c0130a7-4a59-4747-972a-d7b7bd63bfa2"
+    if trade_uuid then
+        uuid = trade_uuid
+    end
     Net:WaitForChild("RE/EquipItem"):FireServer(uuid, "Fishes")
     task.wait(1)
     Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, uuid)
@@ -934,7 +942,7 @@ local function auto_collecting(nama)
 end
 
 
-local selectedPlayer = nil
+
 
 local function createPlayerButton(name)
 	local btn = Instance.new("TextButton")
