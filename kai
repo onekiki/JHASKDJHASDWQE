@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.1.5.1" -- update trade for multi user 
+versi = " | MULTIUSER | V5.1.6" -- update trade for multi user 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
