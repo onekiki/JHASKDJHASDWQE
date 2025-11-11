@@ -1,4 +1,4 @@
-local versi = "NEW UI - V1.4.2" -- Add stone trade
+local versi = "MULTI USR - V1.5" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -454,6 +454,28 @@ local function getPositionByName(name)
 
     return hrp.Position
 end
+local function attachSmartPlatform()
+    -- Buat platform sekali
+    local platform = Instance.new("Part")
+    platform.Name = "LocalPlatform"
+    platform.Size = Vector3.new(6, 0.2, 6)
+    platform.Anchored = true
+    platform.CanCollide = true
+    platform.Transparency = 0.3
+    platform.Color = Color3.new(1, 0, 0)
+    platform.Parent = workspace
+
+    -- Update posisi hanya ketika karakter bergerak
+    local function updatePlatform()
+        platform.CFrame = CFrame.new(root.Position.X, root.Position.Y - 3, root.Position.Z)
+    end
+    updatePlatform()
+    root:GetPropertyChangedSignal("Position"):Connect(updatePlatform)
+end
+player.CharacterAdded:Connect(attachSmartPlatform)
+if player.Character then
+    attachSmartPlatform()
+end
 local function SetLowGraphics()
     local Lighting = game:GetService("Lighting")
     local Terrain = workspace:FindFirstChildOfClass("Terrain")
@@ -622,66 +644,6 @@ reloadBtn.MouseButton1Click:Connect(function()
     update_inventory()
 end)
 -- === PLAYER MANAGEMENT ===
-local selectedPlayer = nil
-
-local function createPlayerButton(name)
-	local btn = Instance.new("TextButton")
-	btn.Size = UDim2.new(1, -10, 0, 30)
-	btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
-	btn.Text = name
-	btn.TextColor3 = Color3.new(1,1,1)
-	btn.Font = Enum.Font.RobotoMono
-	btn.TextSize = 16
-	btn.Parent = listScroll
-
-	btn.MouseButton1Click:Connect(function()
-		if selectedPlayer == name then
-			selectedPlayer = nil
-			btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
-			selectedLabel.Text = "Player: -"
-		else
-			selectedPlayer = name
-			selectedLabel.Text = "Player: " .. name
-			btn.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
-			cetak("Selected: " .. name)
-            local pos, err = getPositionByName(name)
-            if pos then
-                print("Posisi sekarang:", pos)
-                local x = pos.X
-                local y = pos.Y
-                local z = pos.Z
-                teleport(x,y,z)
-                task.wait(5)
-            end
-		end
-	end)
-end
-
-for _, p in ipairs(Players:GetPlayers()) do
-	if p ~= player then
-		createPlayerButton(p.Name)
-	end
-end
-
-Players.PlayerAdded:Connect(function(p)
-	if p ~= player then
-		createPlayerButton(p.Name)
-		cetak(p.Name .. " joined")
-	end
-end)
-
-Players.PlayerRemoving:Connect(function(p)
-	for _, btn in ipairs(listScroll:GetChildren()) do
-		if btn:IsA("TextButton") and btn.Text == p.Name then
-			btn:Destroy()
-		end
-	end
-	if selectedPlayer == p.Name then
-		selectedPlayer = nil
-		selectedLabel.Text = "Selected Player: -"
-	end
-	cetak(p.Name .. " left")
-end)
 
 --//ANCHOR trade map
 local function trade_map(target, jumlah, type)
@@ -928,7 +890,9 @@ RF.OnClientInvoke = function(...)
         detail = total_batu .. ". GET ENCHANT STONE"
         total_batu = total_batu + 1
     elseif list_ikan[data.Id] then
-        detail = total_ikan .. ". [ ".. get_tier(list_ikan[data.Id].tier) .." ] " .. list_ikan[data.Id].nama
+        local nama = list_ikan[data.Id].nama or "no name"
+        local tier = get_tier(list_ikan[data.Id].tier) or "[-]"
+        detail = total_ikan .. tier .. nama
         total_ikan = total_ikan + 1
     end
     update_inventory()
@@ -936,21 +900,18 @@ RF.OnClientInvoke = function(...)
     task.wait(3)
     return "OK"
 end
+
 update_inventory()
-local function auto_collecting()
+
+--//ANCHOR Auto collecting
+local function auto_collecting(nama)
         cetak("start auto collect")
         local ready = true
-        if #Players:GetPlayers() > 2 then
-            cetak("PLAYER LEBIH DARI 1")
+        if #Players:GetPlayers() > 4 then
+            cetak("PLAYER LEBIH DARI 4")
             ready = false
         end
         if ready then
-            local nama = nil
-            for i, user in ipairs(Players:GetPlayers()) do
-                if user ~= player then
-                    nama = user.Name
-                end
-            end
             if nama then
                 local pos, err = getPositionByName(nama)
                 if pos then
@@ -972,36 +933,87 @@ local function auto_collecting()
         end
 end
 
-Handshake.MouseButton1Click:Connect(function()
-	auto_collecting()
+
+local selectedPlayer = nil
+
+local function createPlayerButton(name)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, -10, 0, 30)
+	btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
+	btn.Text = name
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Font = Enum.Font.RobotoMono
+	btn.TextSize = 16
+	btn.Parent = listScroll
+
+	btn.MouseButton1Click:Connect(function()
+		if selectedPlayer == name then
+			selectedPlayer = nil
+			btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
+			selectedLabel.Text = "Player: -"
+		else
+			selectedPlayer = name
+			selectedLabel.Text = "Player: " .. name
+			btn.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
+			cetak("Selected: " .. name)
+            local pos, err = getPositionByName(name)
+            if pos then
+                print("Posisi sekarang:", pos)
+                local x = pos.X
+                local y = pos.Y
+                local z = pos.Z
+                teleport(x,y,z)
+                task.wait(5)
+            end
+            if auto_collect then
+                auto_collecting(name)
+            end
+		end
+	end)
+end
+
+for _, p in ipairs(Players:GetPlayers()) do
+	if p ~= player then
+		createPlayerButton(p.Name)
+	end
+end
+
+Players.PlayerAdded:Connect(function(p)
+	if p ~= player then
+		createPlayerButton(p.Name)
+		cetak(p.Name .. " joined")
+	end
 end)
 
-local function attachSmartPlatform()
-    -- Buat platform sekali
-    local platform = Instance.new("Part")
-    platform.Name = "LocalPlatform"
-    platform.Size = Vector3.new(6, 0.2, 6)
-    platform.Anchored = true
-    platform.CanCollide = true
-    platform.Transparency = 0.3
-    platform.Color = Color3.new(1, 0, 0)
-    platform.Parent = workspace
+Players.PlayerRemoving:Connect(function(p)
+	for _, btn in ipairs(listScroll:GetChildren()) do
+		if btn:IsA("TextButton") and btn.Text == p.Name then
+			btn:Destroy()
+		end
+	end
+	if selectedPlayer == p.Name then
+		selectedPlayer = nil
+		selectedLabel.Text = "Selected Player: -"
+	end
+	cetak(p.Name .. " left")
+end)
 
-    -- Update posisi hanya ketika karakter bergerak
-    local function updatePlatform()
-        platform.CFrame = CFrame.new(root.Position.X, root.Position.Y - 3, root.Position.Z)
+Handshake.MouseButton1Click:Connect(function()
+    cetak("select handshake to " .. selectedPlayer)
+    local existing = Players:FindFirstChild(selectedPlayer)
+    if existing then
+        cetak("kirim handshake")
+        send_handshake(existing.UserId)
+    else
+        print("player tidak ada")
     end
-    updatePlatform()
-    root:GetPropertyChangedSignal("Position"):Connect(updatePlatform)
-end
+end)
+--[[
 if auto_collect then
     render()
-    player.CharacterAdded:Connect(attachSmartPlatform)
-    if player.Character then
-        attachSmartPlatform()
-    end
     auto_collecting()
 end
+--]]
 local total_trade = 0
 Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
     function(data)
