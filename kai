@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.1.5" -- update trade for multi user 
+versi = " | MULTIUSER | V5.1.5.1" -- update trade for multi user 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -589,7 +589,6 @@ local function checkPlayers()
                 print("sibling entered")
             elseif list_sibling[list_players.name] == "master" then
                 print("master entered")
-                running = false
             else
                 LocalPlayer:Kick("ADA PLAYER LAIN!! ", list_players.Name)
                 running = false
@@ -1760,8 +1759,12 @@ while playing do
                 end
                 if running and progress_quest4 < 100 then
                     teleport(1487, 128, -591)
-                    pesan("SELESAI MANUAL SACRIFICE")
                     task.wait(30)
+                    while running do
+                        pesan("SELESAI MANUAL SACRIFICE")
+                        send_Data("", 0, 0, last_msg, count_mancing, select_quest)
+                        task.wait(300)
+                    end
                 end
             end
             if global_event == true then
