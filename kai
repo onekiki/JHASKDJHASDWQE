@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.1.8" -- fix ada orang 
+versi = " | MULTIUSER | V5.1.9" -- disabled global control first
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -52,7 +52,7 @@ local list_inv_item_uuid = {}
 local list_fav = {}
 local playing = true
 local global_event = false
-local stop_global_control = false
+local stop_global_control = true
 local current_bait = "None"
 
 local web_enable = false
@@ -1402,9 +1402,8 @@ task.spawn(
                 text_bait.Text = current_bait
                 print("total mythic : ", #list_mythic)
                 print("total uang:", koin)
-
-                local web_control = ambilData(CONFIG_URL)
                 if stop_global_control == false then
+                    local web_control = ambilData(CONFIG_URL)
                     if web_control then
                         web_enable = web_control.enable_event
                         web_location = web_control.custom_location
@@ -1427,6 +1426,7 @@ task.spawn(
                 else
                     text_online.Text = "🔴 global Disabled"
                 end
+                --]]
             end
             if num % 100 == 0 then
                 print("kirim data at: ", running_time)
@@ -1570,11 +1570,11 @@ if running and select_quest == "farming_coin" then
     teleport(-650, 46, 169)
     face(0)
     local c = 0
-    while running do
-        auto_fish(3.5)
+    while playing do
+        auto_fish(4)
         if c % 200 == 0 then
             auto_buy()
-            current_rod = best_rod_wear()
+            current_rod = best_rod_wear() or "-"
             if current_rod == "Astral Rod" then
                 break
             end
