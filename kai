@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.1.7" -- fix ada orang 
+versi = " | MULTIUSER | V5.1.8" -- fix ada orang 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
