@@ -565,6 +565,7 @@ local function ambilData(url)
     warn("Semua percobaan gagal, pakai data lama.")
     return last_json_data
 end
+--[[
 local url_listuser = USER_LIST .. player.Name
 local get_user = ambilData(url_listuser)
 
@@ -605,6 +606,7 @@ if get_user then
         checkPlayers()
     end)
 end
+--]]
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
 if getconnections then
@@ -1516,8 +1518,7 @@ end
 
 if running then
     pesan("inisialisasi awal")
-    -- inisialisasi awal bait , 3d config, check player, quest, auto buy
-    checkPlayers()
+    -- inisialisasi awal bait , 3d config, check player, quest, auto bu
     toggle3DAndUI()
     update_quest()
     auto_buy()
