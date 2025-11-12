@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.1.6" -- update trade for multi user 
+versi = " | MULTIUSER | V5.1.7" -- fix ada orang 
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -574,37 +574,37 @@ if get_user then
         list_sibling[user.nama] = "sibling"
         print("sibling:", user.nama)
     end
-end
-list_sibling[master_user] = "master"
-list_sibling[master_user2] = "master"
+    list_sibling[master_user] = "master"
+    list_sibling[master_user2] = "master"
 
---//ANCHOR connection
-task.wait(10)
+    --//ANCHOR connection
+    task.wait(10)
 
-local function checkPlayers()
-    local LocalPlayer = Players.LocalPlayer
-	for _, list_players in pairs(Players:GetPlayers()) do
-        if list_players.name ~= player.Name then 
-            if list_sibling[list_players.name] == "sibling" then
-                print("sibling entered")
-            elseif list_sibling[list_players.name] == "master" then
-                print("master entered")
-            else
-                LocalPlayer:Kick("ADA PLAYER LAIN!! ", list_players.Name)
-                running = false
-                playing = false
-                return false
+    local function checkPlayers()
+        local LocalPlayer = Players.LocalPlayer
+        for _, list_players in pairs(Players:GetPlayers()) do
+            if list_players.name ~= player.Name then 
+                if list_sibling[list_players.name] == "sibling" then
+                    print("sibling entered")
+                elseif list_sibling[list_players.name] == "master" then
+                    print("master entered")
+                else
+                    --LocalPlayer:Kick("ADA PLAYER LAIN!! ", list_players.Name)
+                    pesan("ADA PLAYER LAIN")
+                    running = false
+                    return false
+                end
             end
         end
-	end
-end
+    end
 
-Players.PlayerAdded:Connect(function()
-	checkPlayers()
-end)
-Players.PlayerRemoving:Connect(function()
-    checkPlayers()
-end)
+    Players.PlayerAdded:Connect(function()
+        checkPlayers()
+    end)
+    Players.PlayerRemoving:Connect(function()
+        checkPlayers()
+    end)
+end
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
 if getconnections then
@@ -1382,6 +1382,10 @@ task.spawn(
                 task.wait(0.5)
             end
             if running and num % 300 == 0 then
+                if #Players:GetPlayers() > 4 then
+                    pesan("PLAYER LEBIH DARI 4")
+                    running = false
+                end
                 update_inventory()
                 update_quest()
                 --check_unlocker()
