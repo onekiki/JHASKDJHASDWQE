@@ -1,4 +1,4 @@
-local versi = "MULTI USR - V2.0.0" -- Add stone trade
+local versi = "MULTI USR - V2.1.0" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -1035,6 +1035,15 @@ local function waiting(user)
 end
 --//ANCHOR auto collect user
 if auto_collect then
+    local countdown = 5
+    cetak("Auto Play in: ")
+    if running then
+        for i = 1, countdown do
+            local elapsed = countdown - i
+            cetak(elapsed)
+            task.wait(1)
+        end
+    end
     if #Players:GetPlayers() > 6 then
         cetak("PLAYER LEBIH DARI 6")
     else
