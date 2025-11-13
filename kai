@@ -464,6 +464,10 @@ local function auto_buy_rod(id)
 end
 local function wear_bait(id)
     Net:WaitForChild("RE/EquipBait"):FireServer(id)
+    if list_inventory_bait[id] then
+        text_bait.Text = list_inventory_bait[id].Name
+        current_bait = list_inventory_bait[id].Name
+    end
 end
 local function auto_buy_bait(id)
     print("beli bait id:", id)
@@ -1428,7 +1432,6 @@ task.spawn(
                 task.wait(2)
                 hapus_gui_daily()
                 text_rod.Text = current_rod
-                text_bait.Text = current_bait
                 print("total mythic : ", #list_mythic)
                 print("total uang:", koin)
                 if stop_global_control == false then
@@ -1561,7 +1564,7 @@ if running then
     current_rod = best_rod_wear() or "-"
     text_rod.Text = current_rod
     current_bait = best_bait_wear() or "-"
-    text_bait.Text = current_bait
+
     Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
 
     -- tentukan aktifitas
