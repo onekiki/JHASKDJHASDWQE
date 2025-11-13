@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.2.0" -- add local config
+versi = " | MULTIUSER | V5.2.1" -- fix multitrade
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -990,7 +990,11 @@ local function custom_trade(custom_list, limit)
         end
         update_inventory()
         pesan("SELESAI SEMUA " .. info_akhir)
+        local langkah = 0.5
+        local forward = root.CFrame.LookVector * langkah
+        root.CFrame = root.CFrame + forward
         print("clear list")
+        return
     end
     local existing = Players:FindFirstChild(master_user)
     local existing2 = Players:FindFirstChild(master_user2)
@@ -1462,6 +1466,7 @@ task.spawn(
     end
 )
 
+--//ANCHOR wait trade response
 local RF = Net:WaitForChild("RF/AwaitTradeResponse")
 RF.OnClientInvoke = function(...)
     local args = {...}
