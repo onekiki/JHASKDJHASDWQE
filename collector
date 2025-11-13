@@ -1,4 +1,4 @@
-local versi = "MULTI USR - V1.5.1" -- Add stone trade
+local versi = "MULTI USR - V2.0.0" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -637,15 +637,14 @@ local function update_inventory()
     statsLabel.Text = cetak_info
 end
 
+--//ANCHOR shandshake
 local function send_handshake(user)
     print(user)
-    local uuid = "0c0130a7-4a59-4747-972a-d7b7bd63bfa2"
     if trade_uuid then
-        uuid = trade_uuid
+        Net:WaitForChild("RE/EquipItem"):FireServer(trade_uuid, "Fishes")
+        task.wait(1)
+        Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, trade_uuid)
     end
-    Net:WaitForChild("RE/EquipItem"):FireServer(uuid, "Fishes")
-    task.wait(1)
-    Net:WaitForChild("RF/InitiateTrade"):InvokeServer(user, uuid)
 end
 
 reloadBtn.MouseButton1Click:Connect(function()
@@ -913,32 +912,25 @@ update_inventory()
 
 --//ANCHOR Auto collecting
 local function auto_collecting(nama)
-        cetak("start auto collect")
-        local ready = true
-        if #Players:GetPlayers() > 4 then
-            cetak("PLAYER LEBIH DARI 4")
-            ready = false
-        end
-        if ready then
-            if nama then
-                local pos, err = getPositionByName(nama)
-                if pos then
-                    print("Posisi sekarang:", pos)
-                    local x = pos.X
-                    local y = pos.Y
-                    local z = pos.Z
-                    teleport(x,y,z)
-                    task.wait(5)
-                    local existing = Players:FindFirstChild(nama)
-                    if existing then
-                        cetak("kirim handshake")
-                        send_handshake(existing.UserId)
-                    else
-                        print("player tidak ada")
-                    end
-                end
+    cetak("start auto collect")
+    if nama then
+        local pos, err = getPositionByName(nama)
+        if pos then
+            print("Posisi sekarang:", pos)
+            local x = pos.X
+            local y = pos.Y
+            local z = pos.Z
+            teleport(x,y,z)
+            task.wait(5)
+            local existing = Players:FindFirstChild(nama)
+            if existing then
+                cetak("kirim handshake")
+                send_handshake(existing.UserId)
+            else
+                print("player tidak ada")
             end
         end
+    end
 end
 
 
@@ -1016,12 +1008,55 @@ Handshake.MouseButton1Click:Connect(function()
         print("player tidak ada")
     end
 end)
---[[
-if auto_collect then
-    render()
-    auto_collecting()
+
+local function waiting(user)
+    local posisi_awal, error1 = getPositionByName(user)
+    if not posisi_awal then
+        warn(error1)
+        return
+    end
+    local count = 1
+    while true do
+        local pos, error2 = getPositionByName(user)
+        if not pos then
+            warn(error2)
+            return
+        end
+
+        -- hitung perbedaan posisi
+        local distance = (pos - posisi_awal).Magnitude
+
+        if distance < 0.5 then
+            cetak("menunggu...")
+        else
+            print("posisi sudah berubah, selisih:", distance)
+            cetak("Selesai")
+            return
+        end
+        if count > 30 then
+            return
+        end
+        count = count + 1
+        task.wait(15)
+    end
 end
---]]
+--//ANCHOR auto collect user
+if auto_collect then
+    if #Players:GetPlayers() > 6 then
+        cetak("PLAYER LEBIH DARI 6")
+    else
+        if trade_uuid then
+            cetak("trade sudah siap")
+            --render()
+            for _, user in ipairs(Players:GetPlayers()) do
+                if user ~= player then
+                    auto_collecting(user.Name)
+                    waiting(user)
+                end
+            end
+        end
+    end
+end
 local total_trade = 0
 Net:WaitForChild("RE/TextNotification").OnClientEvent:Connect(
     function(data)
