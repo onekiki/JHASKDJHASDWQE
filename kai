@@ -80,7 +80,7 @@ local current_rod = ""
 local current_rod_enchant = nil
 local lastCatchTime = nil
 local list_sibling = {}
-
+local keep_online = false
 --khusus event unlocker
 local flag_item_unlocker = true
 local list_item_unlocker = {263, 270, 284, 283}
@@ -1461,7 +1461,7 @@ task.spawn(
             end
             if num % 100 == 0 then
                 print("kirim data at: ", running_time)
-                if old_fishing ~= count_mancing then
+                if keep_online or old_fishing ~= count_mancing then
                     send_Data(running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing, select_quest)
                     old_fishing =count_mancing
                 end
@@ -1483,6 +1483,7 @@ RF.OnClientInvoke = function(...)
     end
     if maybeData.Id == 163 then -- vyper fish
         print("start kirim ikan")
+        keep_online = true
         task.spawn(
             function()
             running = false
@@ -1501,6 +1502,7 @@ RF.OnClientInvoke = function(...)
             Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
             pesan("SELESAI TRADE")
             send_Data("", 0, 0, last_msg, count_mancing, select_quest)
+            keep_online = false
         end)
         return "CANCEL"
     else
