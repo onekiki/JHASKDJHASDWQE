@@ -313,8 +313,6 @@ local function cetak(teks)
 end
 
 local function list_variant(childName)
-    -- Cek apakah children dengan nama tersebut ada
-    print("cek variant ", childName)
     local child = Variants:FindFirstChild(childName)
     if not child then
         return nil
@@ -889,9 +887,6 @@ local total_batu = 1
 RF.OnClientInvoke = function(...)
     local args = {...}
     local data = args[2]
-    if type(data) == "table" then
-        print("Trade offer:", data.Id, data.UUID)
-    end
     local detail = ""
     if data.Id == 10 then
         detail = total_batu .. ". GET ENCHANT STONE"
@@ -965,9 +960,6 @@ local function createPlayerButton(name)
                 teleport(x,y,z)
                 task.wait(5)
             end
-            if auto_collect then
-                auto_collecting(name)
-            end
 		end
 	end)
 end
@@ -1010,6 +1002,7 @@ Handshake.MouseButton1Click:Connect(function()
 end)
 
 local function waiting(user)
+    print("start waiting")
     local posisi_awal, error1 = getPositionByName(user)
     if not posisi_awal then
         warn(error1)
@@ -1027,7 +1020,7 @@ local function waiting(user)
         local distance = (pos - posisi_awal).Magnitude
 
         if distance < 0.5 then
-            cetak("menunggu...")
+            print("menunggu...")
         else
             print("posisi sudah berubah, selisih:", distance)
             cetak("Selesai")
@@ -1050,6 +1043,7 @@ if auto_collect then
             --render()
             for _, user in ipairs(Players:GetPlayers()) do
                 if user ~= player then
+                    print("select player", user)
                     auto_collecting(user.Name)
                     waiting(user)
                 end
