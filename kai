@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.1.9" -- disabled global control first
+versi = " | MULTIUSER | V5.2.0" -- add local config
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -280,6 +280,15 @@ dropdownFrame.BorderSizePixel = 1
 dropdownFrame.Visible = false
 dropdownFrame.ClipsDescendants = true
 dropdownFrame.Parent = mainFrame
+
+--//ANCHOR BTN
+closeBtn.MouseButton1Click:Connect(
+    function()
+        running = false
+        playing = false
+        screenGui:Destroy()
+    end
+)
 
 local last_msg = "-"
 local function pesan(msg)
@@ -565,48 +574,108 @@ local function ambilData(url)
     warn("Semua percobaan gagal, pakai data lama.")
     return last_json_data
 end
---[[
-local url_listuser = USER_LIST .. player.Name
-local get_user = ambilData(url_listuser)
 
-if get_user then
-    print("info")
-    for _, user in ipairs(get_user.users) do
-        list_sibling[user.nama] = "sibling"
-        print("sibling:", user.nama)
+local function ambil_data_server(url, data)
+    local load_server = ambilData(url)
+    local data_list = {}
+    if load_server then
+        if data == "player_list" then
+            for _, user in ipairs(load_server.users) do
+                data_list[user.nama] = "sibling"
+                print("sibling:", user.nama)
+            end
+            data_list[master_user] = "master"
+            data_list[master_user2] = "master"
+        end
     end
-    list_sibling[master_user] = "master"
-    list_sibling[master_user2] = "master"
+    return data_list
+end
 
-    --//ANCHOR connection
-    task.wait(10)
+local settingsFile = "haybot.json"
 
-    local function checkPlayers()
-        local LocalPlayer = Players.LocalPlayer
-        for _, list_players in pairs(Players:GetPlayers()) do
-            if list_players.name ~= player.Name then 
-                if list_sibling[list_players.name] == "sibling" then
-                    print("sibling entered")
-                elseif list_sibling[list_players.name] == "master" then
-                    print("master entered")
-                else
-                    --LocalPlayer:Kick("ADA PLAYER LAIN!! ", list_players.Name)
-                    pesan("ADA PLAYER LAIN")
-                    running = false
-                    return false
+-- Simpan settings ke file
+local function saveSettings(data_setting, category)
+    if writefile then
+        if category == "player_list" then
+            local data = HttpService:JSONEncode({ sibling = data_setting })
+            writefile(settingsFile, data)
+        end
+    else
+        pesan("❌ writefile() not supported in this environment.")
+    end
+end
+
+local function load_server()
+    pesan("config belum tersedia, ambil dari server")
+    local url = USER_LIST .. player.Name
+    list_sibling = ambil_data_server(url, "player_list")
+    if list_sibling ~= nil then
+        pesan("berhasil ambil data server")
+        saveSettings(list_sibling, "player_list")
+        return true
+    else
+        pesan("gagal ambil data server")
+        return false
+    end
+end
+-- Load settings dari file
+local function loadSettings()
+    local hasil = false
+    if isfile and isfile(settingsFile) then
+        local data = readfile(settingsFile)
+        local decoded = HttpService:JSONDecode(data)
+        if decoded then
+            if next(decoded.sibling) == nil then
+                pesan("config ada tapi kosong")
+                hasil = load_server()
+                return hasil
+            else
+                pesan("load local config")
+                list_sibling = decoded.sibling
+                if list_sibling then
+                    for user, val in pairs(list_sibling) do
+                        print("user:", user)
+                    end
                 end
             end
         end
+    else
+        hasil = load_server()
+        return hasil
     end
-
-    Players.PlayerAdded:Connect(function()
-        checkPlayers()
-    end)
-    Players.PlayerRemoving:Connect(function()
-        checkPlayers()
-    end)
 end
---]]
+
+local load_setting_flag = loadSettings()
+
+local function checkPlayers()
+    if load_setting_flag == false then
+        print("check player gagal, setting return false")
+        return
+    end
+    local LocalPlayer = Players.LocalPlayer
+    for _, list_players in pairs(Players:GetPlayers()) do
+        if list_players.name ~= player.Name then 
+            if list_sibling[list_players.name] == "sibling" then
+                print("sibling entered")
+            elseif list_sibling[list_players.name] == "master" then
+                print("master entered")
+            else
+                LocalPlayer:Kick("ADA PLAYER LAIN!! ", list_players.Name)
+                pesan("ADA PLAYER LAIN")
+                running = false
+                return false
+            end
+        end
+    end
+end
+
+Players.PlayerAdded:Connect(function()
+    checkPlayers()
+end)
+Players.PlayerRemoving:Connect(function()
+    checkPlayers()
+end)
+
 local Event = Net:WaitForChild("RE/ObtainedNewFishNotification")
 -- putuskan koneksi lama (opsional)
 if getconnections then
@@ -764,13 +833,6 @@ local function toggle3DAndUI()
         mainFrame.BackgroundTransparency = 0
     end
     RunService:Set3dRenderingEnabled(renderEnabled)
-    --[[
-    for _, gui in ipairs(gui:GetChildren()) do
-        if gui:IsA("ScreenGui") and gui ~= screenGui then
-            gui.Enabled = false -- kalau render off, UI juga ikut mati
-        end
-    end
-    --]]
 end
 
 --//ANCHOR INVENTORY
@@ -858,14 +920,7 @@ local function update_inventory()
     end
 end
 
---//ANCHOR BTN
-closeBtn.MouseButton1Click:Connect(
-    function()
-        running = false
-        playing = false
-        screenGui:Destroy()
-    end
-)
+
 
 btn_stop.MouseButton1Click:Connect(
     function()
@@ -886,11 +941,6 @@ render_btn.MouseButton1Click:Connect(
     end
 )
 
-btn_reload.MouseButton1Click:Connect(
-    function()
-        rejoinSameServer()
-    end
-)
 --//ANCHOR TRADE 
 local function custom_trade(custom_list, limit)
     local completed = false
@@ -1303,31 +1353,6 @@ local function send_Data(running_time, koin_secret, koin_myth, activity, total_f
     end)
 end
 
---//ANCHOR Unlocker
-local flag_unlocker = {0, 0, 0, 0}
-local all_unlocked = false
-local function check_unlocker()
-    for i,v in ipairs(list_item_unlocker) do
-        if flag_unlocker[i] == 0 then
-            if(list_inventory_fishs[v] ~= nil) then
-                flag_unlocker[i] = 1
-                print("unlocker ada item: ", list_inventory_fishs[v].Id)
-                fav(list_inventory_fishs[v].UUID)
-            end
-        end
-    end
-    for _, val in ipairs(flag_unlocker) do
-        if val == 1 then
-            all_unlocked = true
-            break
-        end
-    end
-    if all_unlocked then
-        print("semua item telah unlock")
-        running = false
-    end
-end
---]]
 -- //ANCHOR SPAWN
 --------------------------------------------------------------------
 --- SPAWN
@@ -1365,11 +1390,6 @@ task.spawn(
                     flag_error = true
                     text_timer.Text =  delta .. " sec."
                 end
-                if delta > 180 then
-                    pesan("! OVER !")
-                    --rejoinSameServer()
-                    task.wait(60)
-                end
             end
             if count_benchmark >= 10 then
                 benchmark_speed = round(total_benchmark / (count_benchmark),2)
@@ -1378,6 +1398,7 @@ task.spawn(
                 print("rod speed : ", benchmark_speed)
                 text_rod_speed.Text = "⚡ : " .. tostring(benchmark_speed)
             end
+            --[[
             if flag_error == true and num % 15 == 0 then
                 task.wait(0.5)
                 Net:WaitForChild("RF/CancelFishingInputs"):InvokeServer(tick())
@@ -1385,14 +1406,14 @@ task.spawn(
                 Net:WaitForChild("RE/FishingCompleted"):FireServer()
                 task.wait(0.5)
             end
+            --]]
             if running and num % 300 == 0 then
                 if #Players:GetPlayers() > 6 then
-                    pesan("PLAYER LEBIH DARI 4")
+                    pesan("PLAYER LEBIH DARI 5")
                     running = false
                 end
                 update_inventory()
                 update_quest()
-                --check_unlocker()
                 Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(1)
                 task.wait(2)
                 Net:WaitForChild("RF/SellAllItems"):InvokeServer(now)
@@ -1426,7 +1447,6 @@ task.spawn(
                 else
                     text_online.Text = "🔴 global Disabled"
                 end
-                --]]
             end
             if num % 100 == 0 then
                 print("kirim data at: ", running_time)
@@ -1485,8 +1505,6 @@ end
 ---MULAI ALGORITMA
 ---------------------------------------------
 -- TWEAK
---Net:WaitForChild("RE/ChangeSetting"):FireServer("Server Notifications", false)
---Net:WaitForChild("RE/ChangeSetting"):FireServer("Global Notifications", false)
 
 send_Data("0", total_harga_secret, total_harga_mythic, "START", "0","0")
 task.wait(5)
@@ -1566,6 +1584,8 @@ end
 pesan("START ACTIVITY")
 
 if running and select_quest == "farming_coin" then
+    Net:WaitForChild("RE/ChangeSetting"):FireServer("Server Notifications", false)
+    Net:WaitForChild("RE/ChangeSetting"):FireServer("Global Notifications", false)
     pesan("farming koin starter")
     teleport(-650, 46, 169)
     face(0)
@@ -1601,6 +1621,7 @@ if running then
         end
     end
 end
+
 while playing do
     if running and select_quest == "deep_sea" then
         Net:WaitForChild("RF/UpdateAutoSellThreshold"):InvokeServer(5)  -- autosell switch to legendary
@@ -1866,9 +1887,9 @@ while playing do
 end
 running = false
 global_event = false
-
-print("-----------------end-------------")
 --]]
+print("-----------------end-------------")
+
 -----------------------------------------------------------------
 --               E N D     M A I N
 -----------------------------------------------------------------
