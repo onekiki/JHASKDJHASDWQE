@@ -878,6 +878,8 @@ end)
     -- === Jalankan load saat awal ===
 updateButton()
 -- Tes awal
+
+--//ANCHOR client invoke
 cetak("Collector GUI loaded.")
 if total_transaksi and total_transaksi ~= 0 then
     detail_harga.Text = "Load Trade: " .. konvert_harga(total_transaksi)
@@ -894,7 +896,7 @@ RF.OnClientInvoke = function(...)
     elseif list_ikan[data.Id] then
         local nama = list_ikan[data.Id].nama or "no name"
         local tier = get_tier(list_ikan[data.Id].tier) or "[-]"
-        detail = total_ikan .. tier .. nama
+        detail = total_ikan ..". ".. tier .." | ".. nama
         total_ikan = total_ikan + 1
     end
     update_inventory()
@@ -1054,7 +1056,7 @@ if auto_collect then
                 if user ~= player then
                     print("select player", user)
                     auto_collecting(user.Name)
-                    waiting(user)
+                    waiting(user.Name)
                 end
             end
         end
