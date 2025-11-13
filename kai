@@ -1,4 +1,8 @@
-versi = " | MULTIUSER | V5.2.1" -- fix multitrade
+versi = " | MULTIUSER | V5.2.2" -- fix multitrade 
+
+--[[
+//NOTE Support purple bait
+--]]
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
 local player = Players.LocalPlayer
@@ -1078,7 +1082,7 @@ local function best_rod_wear()
     end
 end
 local function best_bait_wear()
-    local order_bait = {18,20,15,3,1}
+    local order_bait = {18,20,15,25,3,1}
     for _,ids in ipairs(order_bait) do
         if list_inventory_bait[ids] ~= nil then
             print("best bait: ")
@@ -1857,6 +1861,7 @@ while playing do
 
         --teleport(2144, 81, 3271) --mountain hallow
         --face(0)
+        wear_bait(25) -- purple moon bait +30% size
         task.wait(5)
         pesan("fishing : " .. player:GetAttribute("LocationName"))
         while running do
