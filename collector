@@ -612,7 +612,7 @@ local function update_inventory()
                         list_mitik_map[hitung_mitik_dic] = {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
                         hitung_mitik_dic = hitung_mitik_dic + 1
                     end
-                    if variant or tierName == "SECRET" then
+                    if variant or tierName == "SECRET" or item.Id == 283 then
                         list_master[count_master] = {nama = itemData.Data.Name, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant}
                         count_master = count_master + 1
                     end
