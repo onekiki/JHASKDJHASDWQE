@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.2.4"
+versi = " | MULTIUSER | V5.2.5"
 
 --[[
 //NOTE 
@@ -320,7 +320,7 @@ end
 local options = {
                 "Trade Secret","Trade Mythic", "Trade Stone", "auto sacrifice", "UPD inventory", "Listen Trade",
                 "Auto Buy", "Merchant", "Jobs ID", "STOP CONTROL", "REEDEM CODE", "Farm Event",
-                "Enhant I", "E (empowered 10%)", "E (mutation +30%)", "E (cursed 75%)", "E (prismatic -8)", "Enchant II"
+                "Enhant I", "E (empowered 10%)", "E (mutation +30%)", "E (cursed 75%)", "E (big hunter 10%)", "Enchant II"
             }
 
 local function opsia(x)
@@ -1344,7 +1344,7 @@ function opsi(index)
     elseif index == 16 then
         auto_enchant(12) --cursed
     elseif index == 17 then
-        auto_enchant(13) -- prismatic
+        auto_enchant(3) -- big hunt
     elseif index == 18 then
         teleport(1486, 128, -592) -- enchant II 
     end
