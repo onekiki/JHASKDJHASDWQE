@@ -1,7 +1,10 @@
-versi = " | MULTIUSER | V5.2.2" -- fix multitrade 
+versi = " | MULTIUSER | V5.2.3"
 
 --[[
-//NOTE Support purple bait
+//NOTE 
++ Support purple bait
++ add auto sacrifice
+- remove global main event
 --]]
 local Players = game:GetService("Players")
 local TeleportService = game:GetService("TeleportService")
@@ -49,6 +52,7 @@ local progress_quest2 = 0
 local progress_quest3 = 0
 local progress_quest4 = 0
 local list_secret = {}
+local list_secret_tumbal = {}
 local list_mythic = {}
 local list_display = {}
 local list_trade_batu = {}
@@ -222,16 +226,16 @@ text_nama.TextXAlignment = Enum.TextXAlignment.Center
 text_nama.TextColor3 = Color3.fromRGB(255, 255, 255)
 text_nama.Parent = mainFrame
 
-local btn_reload = Instance.new("TextButton")
-btn_reload.Size = UDim2.new(0, 40, 0, 40)
-btn_reload.Position = UDim2.new(0, 180, 0, 130)
-btn_reload.Text = "🔄"
-btn_reload.TextScaled = true
-btn_reload.Visible = true
-btn_reload.TextXAlignment = Enum.TextXAlignment.Center
-btn_reload.TextColor3 = Color3.fromRGB(255, 255, 255)
-btn_reload.Parent = mainFrame
-btn_reload.BackgroundColor3 = Color3.fromRGB(77, 77, 77)
+local btn_link = Instance.new("TextButton")
+btn_link.Size = UDim2.new(0, 40, 0, 40)
+btn_link.Position = UDim2.new(0, 180, 0, 130)
+btn_link.Text = "🔗‍️"
+btn_link.TextScaled = true
+btn_link.Visible = true
+btn_link.TextXAlignment = Enum.TextXAlignment.Center
+btn_link.TextColor3 = Color3.fromRGB(255, 255, 255)
+btn_link.Parent = mainFrame
+btn_link.BackgroundColor3 = Color3.fromRGB(0, 195, 255)
 
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 40, 0, 40)
@@ -294,6 +298,17 @@ closeBtn.MouseButton1Click:Connect(
     end
 )
 
+btn_link.MouseButton1Click:Connect(
+    function()
+        stop_global_control = not stop_global_control
+        if stop_global_control == false then
+            btn_link.Text = "✔️"
+        else
+            btn_link.Text = "🔗‍️"
+        end
+    end
+)
+
 local last_msg = "-"
 local function pesan(msg)
     last_msg = msg
@@ -303,7 +318,7 @@ end
 
 --// ANCHOR OPTION MENU
 local options = {
-                "Trade Secret","Trade Mythic", "Trade Stone", "-", "TEST", "Listen Trade",
+                "Trade Secret","Trade Mythic", "Trade Stone", "auto sacrifice", "UPD inventory", "Listen Trade",
                 "Auto Buy", "Merchant", "Jobs ID", "STOP CONTROL", "REEDEM CODE", "Farm Event",
                 "Enhant I", "E (empowered 10%)", "E (mutation +30%)", "E (cursed 75%)", "E (prismatic -8)", "Enchant II"
             }
@@ -668,7 +683,8 @@ local function checkPlayers()
             elseif list_sibling[list_players.name] == "master" then
                 print("master entered")
             else
-                LocalPlayer:Kick("ADA PLAYER LAIN!! ", list_players.Name)
+                local namas = list_players.name
+                LocalPlayer:Kick("ADA PLAYER LAIN!! " .. namas)
                 pesan("ADA PLAYER LAIN")
                 running = false
                 return false
@@ -860,6 +876,7 @@ local function update_inventory()
     list_mythic = {}
     list_trade_batu = {}
     list_inv_item_uuid = {}
+    list_secret_tumbal = {}
     for category, items in pairs(inventory) do
         if category == "Fishing Rods" then
             for _, item in ipairs(items) do
@@ -899,6 +916,9 @@ local function update_inventory()
                     
                     if list_ikan[item.Id].tier == 7 then -- total ikan secret
                         table.insert(list_secret, uuid)
+                        if berat < 20000 then
+                            table.insert(list_secret_tumbal, uuid)
+                        end
                         if list_ikan[item.Id].harga then
                             total_harga_secret = total_harga_secret + list_ikan[item.Id].harga
                         end
@@ -990,6 +1010,10 @@ local function custom_trade(custom_list, limit)
                 task.wait(3)
                 if limit > 0 and i > limit then
                     print("limit trade telah tercapai")
+                    break
+                end
+                if not playing then
+                    print("force break")
                     break
                 end
             end
@@ -1245,21 +1269,31 @@ function opsi(index)
     elseif index == 3 then
         custom_trade(list_trade_batu, 20)
     elseif index == 4 then
-    elseif index == 5 then
-        -- variabel untuk menyimpan koneksi lama
-        if _G.FishCaughtConnection then
-            _G.FishCaughtConnection:Disconnect()
-            _G.FishCaughtConnection = nil
-            print("🔌 Koneksi lama diputus.")
+        pesan("auto sacrifice")
+        if #list_secret_tumbal < 1 then
+            pesan("tumbal < 1")
+            return
         end
-
-        -- buat koneksi baru
-        _G.FishCaughtConnection = remote.OnClientEvent:Connect(function(name, data)
-            if running then
-                lastCatchTime = os.clock()
-                text_progress.Text = name .. " (" .. round(data.Weight, 2) .. " Kg)"
-            end
-        end)
+        teleport(1486, 128, -592)
+        task.wait(2)
+        pesan("total sacrifice: " .. tostring(#list_secret_tumbal))
+        for i, k in ipairs(list_inv_item_uuid) do
+            Net:WaitForChild("RE/UnequipItem"):FireServer(k)
+            task.wait(0.1)
+        end
+        for i, k in ipairs(list_secret_tumbal) do
+            if not playing then break end
+            print("total sacrifice : ", #list_secret_tumbal)
+            Net:WaitForChild("RE/EquipItem"):FireServer(k, "Fishes")
+            task.wait(1)
+            Net:WaitForChild("RE/EquipToolFromHotbar"):FireServer(2)
+            task.wait(1)
+            Net:WaitForChild("RE/CreateTranscendedStone"):FireServer()
+            task.wait(10)
+        end
+        pesan("selesai sacrifice")
+    elseif index == 5 then
+        update_inventory()
     elseif index == 6 then
         pesan("Waiting to trade....")
         local RF = Net:WaitForChild("RF/AwaitTradeResponse")
@@ -1871,31 +1905,6 @@ while playing do
         pesan("fishing : " .. player:GetAttribute("LocationName"))
         while running do
             auto_fish()
-        end
-    end
-    if select_quest == "global event" or global_event == true then
-        running = true
-        --if running then
-            local web_parse = parseLokasi(web_location)
-            pesan("EVENT:" .. web_parse.nama)
-            teleport(web_parse.x, web_parse.y, web_parse.z)
-            face(web_parse.rotasi)
-            task.wait(5)
-            while running and global_event == true do
-                auto_fish()
-            end
-        --end
-    end
-    -- reset ke quest
-    if running and global_event == false then
-        if current_rod == "Ghostfinn Rod" then
-            select_quest = "jungle"
-        elseif current_rod == "Element Rod" then
-            select_quest = "custom_teleport"
-        elseif current_rod == "Astral Rod" then
-            select_quest = "deep_sea"
-        else
-            select_quest = "farming_coin"
         end
     end
     task.wait(15)
