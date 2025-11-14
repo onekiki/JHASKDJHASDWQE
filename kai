@@ -1,4 +1,4 @@
-versi = " | MULTIUSER | V5.2.3"
+versi = " | MULTIUSER | V5.2.4"
 
 --[[
 //NOTE 
@@ -916,9 +916,8 @@ local function update_inventory()
                     
                     if list_ikan[item.Id].tier == 7 then -- total ikan secret
                         table.insert(list_secret, uuid)
-                        if berat < 20000 then
-                            table.insert(list_secret_tumbal, uuid)
-                        end
+                        print(berat)
+                        table.insert(list_secret_tumbal, uuid)
                         if list_ikan[item.Id].harga then
                             total_harga_secret = total_harga_secret + list_ikan[item.Id].harga
                         end
@@ -1192,6 +1191,7 @@ local function update_quest()
     local x = select_quest .. " > " .. progress_quest1 .. " - " .. progress_quest2 .. " - " .. progress_quest3 .. " - " .. progress_quest4
     text_progress.Text = x
 end
+
 --//ANCHOR auto buy
 local function auto_buy()
     print("start auto buy")
@@ -1909,6 +1909,7 @@ while playing do
     end
     task.wait(15)
 end
+
 running = false
 global_event = false
 --]]
