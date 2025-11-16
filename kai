@@ -1869,8 +1869,14 @@ while playing do
             teleport(web_parse.x, web_parse.y, web_parse.z)
             face(web_parse.rotasi)
             task.wait(5)
-            while running and global_event == true do
-                auto_fish()
+            if current_rod == "Astral Rod" then
+                while running and global_event == true do
+                    auto_fish(2)
+                end
+            else
+                 while running and global_event == true do
+                    auto_fish()
+                end
             end
     end
     -- reset ke quest
