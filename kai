@@ -1452,7 +1452,7 @@ task.spawn(
                             web_enable = web_control.enable_event
                             web_location = web_control.custom_location
                             if web_enable == 1 then
-                                if current_rod == "Ghostfinn Rod" or current_rod == "Element Rod" or current_rod == "Astral Rod" then
+                                if current_rod == "Ghostfinn Rod" or current_rod == "Element Rod" then
                                     text_online.Text = "🟢 global enabled"
                                     if web_location ~= web_old_location then
                                         pesan("global control enable")
