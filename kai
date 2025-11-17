@@ -1,4 +1,4 @@
-versi = " | GLOBAL | V5.2.7"
+versi = " | GLOBAL | V5.2.8"
 
 --[[
 //NOTE 
@@ -1433,11 +1433,17 @@ task.spawn(
                 print("total mythic : ", #list_mythic)
                 print("total uang:", koin)
             end
-            if num % 100 == 0 then
-                print("kirim data at: ", running_time)
-                if keep_online or old_fishing ~= count_mancing then
-                    send_Data(running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing, select_quest)
-                    old_fishing =count_mancing
+            -- evenry 10 minutes
+            if running and num % 600 == 0 then
+                koin = gui:WaitForChild("Events").Frame.CurrencyCounter.Counter.Text
+                local koins = convert(koin)
+                if koins > 4000000 then
+                    Net:WaitForChild("RF/PurchaseWeatherEvent"):InvokeServer("Wind")
+                    task.wait(2)
+                    Net:WaitForChild("RF/PurchaseWeatherEvent"):InvokeServer("Cloudy")
+                    task.wait(2)
+                    Net:WaitForChild("RF/PurchaseWeatherEvent"):InvokeServer("Storm")
+                    task.wait(2)
                 end
                 if stop_global_control == false then
                     task.spawn(function()
@@ -1464,6 +1470,13 @@ task.spawn(
                     end)
                 else
                     text_online.Text = "🔴 global Disabled"
+                end
+            end
+            if num % 100 == 0 then
+                print("kirim data at: ", running_time)
+                if keep_online or old_fishing ~= count_mancing then
+                    send_Data(running_time, total_harga_secret, total_harga_mythic, last_msg, count_mancing, select_quest)
+                    old_fishing =count_mancing
                 end
             end
             num = num + 1
