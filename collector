@@ -1,4 +1,4 @@
-local versi = "MULTI USR - V2.1.7" -- Add stone trade
+local versi = "MULTI USR - V2.1.8" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -744,6 +744,7 @@ local function update_inventory()
                     --]]
                     if item.Id == fav_item then
                         list_fav[hitung_fav] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
+                        hitung_fav = hitung_fav + 1
                     end
                     if variant then
                         total_mutasi = total_mutasi + 1
