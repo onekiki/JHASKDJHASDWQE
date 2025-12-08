@@ -1,0 +1,116 @@
+-- REQUIRE FILE WORDLIST (prefix A-Z)
+local HttpService = game:GetService("HttpService")
+
+local raw = readfile("words.json")
+local dict = HttpService:JSONDecode(raw)
+
+--======================================================
+-- GUI MINI — POSISI KIRI LAYAR
+--======================================================
+
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.ResetOnSpawn = false
+
+local container = Instance.new("Frame", gui)
+container.Size = UDim2.new(0, 250, 0, 600)
+container.Position = UDim2.new(0, 20, 0, 0)   -- kiri layar
+container.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+container.BorderSizePixel = 0
+
+-- CLOSE BUTTON
+local closeButton = Instance.new("TextButton", container)
+closeButton.Size = UDim2.new(0, 24, 0, 24)
+closeButton.Position = UDim2.new(1, -28, 0, 4)
+closeButton.BackgroundColor3 = Color3.fromRGB(180, 70, 70)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 14
+closeButton.BorderSizePixel = 0
+closeButton.AutoButtonColor = true
+
+closeButton.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
+
+-- HEADER (for input)
+local header = Instance.new("Frame", container)
+header.Size = UDim2.new(1, 0, 0, 40)
+header.BackgroundColor3 = Color3.fromRGB(120,120,120)
+
+local input = Instance.new("TextBox", header)
+input.Size = UDim2.new(1, -20, 1, 0)
+input.Position = UDim2.new(0, 10, 0, 0)
+input.BackgroundTransparency = 1
+input.Text = ""
+input.TextColor3 = Color3.fromRGB(30,30,30)
+input.Font = Enum.Font.GothamBold
+input.TextScaled = true
+input.ClearTextOnFocus = false
+
+-- LIST TITLE
+local label = Instance.new("TextLabel", container)
+label.Position = UDim2.new(0, 10, 0, 50)
+label.Size = UDim2.new(1, -20, 0, 25)
+label.BackgroundTransparency = 1
+label.Text = "LIST:"
+label.TextColor3 = Color3.fromRGB(50,50,50)
+label.Font = Enum.Font.GothamBold
+label.TextXAlignment = Enum.TextXAlignment.Left
+label.TextSize = 16
+
+-- RESULTS
+local resultsFrame = Instance.new("Frame", container)
+resultsFrame.Position = UDim2.new(0, 10, 0, 75)
+resultsFrame.Size = UDim2.new(1, -20, 1, -85)
+resultsFrame.BackgroundTransparency = 1
+
+local layout = Instance.new("UIListLayout", resultsFrame)
+layout.Padding = UDim.new(0, 3)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+
+--======================================================
+-- AUTOCOMPLETE
+--======================================================
+
+local function clear()
+    for _, v in ipairs(resultsFrame:GetChildren()) do
+        if v:IsA("TextLabel") then v:Destroy() end
+    end
+end
+
+local function autocomplete(prefix)
+    prefix = prefix:lower()
+    if prefix == "" then return {} end
+
+    local first = prefix:sub(1,1)
+    local list = dict[first]
+    if not list then return {} end
+
+    local results = {}
+
+    for _, w in ipairs(list) do
+        if w:sub(1, #prefix) == prefix then
+            table.insert(results, w)
+            if #results >= 15 then break end
+        end
+    end
+    return results
+end
+
+input:GetPropertyChangedSignal("Text"):Connect(function()
+    clear()
+
+    local items = autocomplete(input.Text)
+    for _, w in ipairs(items) do
+        local t = Instance.new("TextLabel", resultsFrame)
+        t.Size = UDim2.new(1, 0, 0, 18)
+        t.BackgroundTransparency = 1
+        t.TextColor3 = Color3.fromRGB(50,50,50)
+        t.Font = Enum.Font.Gotham
+        t.TextSize = 14
+        t.TextXAlignment = Enum.TextXAlignment.Left
+        t.Text = w
+    end
+end)
