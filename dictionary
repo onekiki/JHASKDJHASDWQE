@@ -33,9 +33,10 @@ closeButton.MouseButton1Click:Connect(function()
     gui:Destroy()
 end)
 
--- HEADER (for input)
+-- HEADER INPUT ----------------------------------------
 local header = Instance.new("Frame", container)
 header.Size = UDim2.new(1, 0, 0, 40)
+header.Position = UDim2.new(0, 0, 0, 30)
 header.BackgroundColor3 = Color3.fromRGB(120,120,120)
 
 local input = Instance.new("TextBox", header)
@@ -45,13 +46,25 @@ input.BackgroundTransparency = 1
 input.Text = ""
 input.TextColor3 = Color3.fromRGB(30,30,30)
 input.Font = Enum.Font.GothamBold
-input.TextScaled = false
-input.TextSize = 28
+input.TextScaled = true
 input.ClearTextOnFocus = false
 
--- LIST TITLE
+-- CLOSE BUTTON
+local clr_btn = Instance.new("TextButton", container)
+clr_btn.Size = UDim2.new(0, 80, 0, 50)
+clr_btn.Position = UDim2.new(1, -80, 0, -4)
+clr_btn.BackgroundColor3 = Color3.fromRGB(180, 70, 70)
+clr_btn.Text = "CLEAR"
+clr_btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+clr_btn.Font = Enum.Font.GothamBold
+clr_btn.TextSize = 24
+clr_btn.BorderSizePixel = 0
+clr_btn.AutoButtonColor = true
+
+
+-- LIST LABEL -------------------------------------------
 local label = Instance.new("TextLabel", container)
-label.Position = UDim2.new(0, 10, 0, 50)
+label.Position = UDim2.new(0, 10, 0, 80)
 label.Size = UDim2.new(1, -20, 0, 25)
 label.BackgroundTransparency = 1
 label.Text = "LIST:"
@@ -60,15 +73,51 @@ label.Font = Enum.Font.GothamBold
 label.TextXAlignment = Enum.TextXAlignment.Left
 label.TextSize = 16
 
--- RESULTS
+
+-- RESULTS FRAME ----------------------------------------
 local resultsFrame = Instance.new("Frame", container)
-resultsFrame.Position = UDim2.new(0, 10, 0, 75)
-resultsFrame.Size = UDim2.new(1, -20, 1, -85)
+resultsFrame.Position = UDim2.new(0, 10, 0, 105)
+resultsFrame.Size = UDim2.new(1, -20, 0, 160)
 resultsFrame.BackgroundTransparency = 1
 
 local layout = Instance.new("UIListLayout", resultsFrame)
 layout.Padding = UDim.new(0, 3)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+
+--======================================================
+--         QWERTY KEYBOARD (3 ROWS)
+--======================================================
+
+local keyboard = Instance.new("Frame", container)
+keyboard.Position = UDim2.new(0, 10, 0, 275)
+keyboard.Size = UDim2.new(1, -20, 0, 120)
+keyboard.BackgroundTransparency = 1
+
+local function createRow(yPos, letters)
+    for i = 1, #letters do
+        local c = letters:sub(i,i)
+
+        local btn = Instance.new("TextButton", keyboard)
+        btn.Size = UDim2.new(0, 22, 0, 22)
+        btn.Position = UDim2.new(0, (i-1)*24 + (yPos==1 and 0 or (yPos==2 and 10 or 20)), 0, (yPos-1)*26)
+        btn.BackgroundColor3 = Color3.fromRGB(200,200,200)
+        btn.Text = c
+        btn.Font = Enum.Font.GothamBold
+        btn.TextSize = 14
+        btn.TextColor3 = Color3.fromRGB(40,40,40)
+        btn.BorderSizePixel = 0
+
+        btn.MouseButton1Click:Connect(function()
+            input.Text = input.Text .. c
+        end)
+    end
+end
+
+-- QWERTY rows
+createRow(1, "qwertyuiop")
+createRow(2, "asdfghjkl")
+createRow(3, "zxcvbnm")
 
 
 --======================================================
@@ -99,6 +148,10 @@ local function autocomplete(prefix)
     end
     return results
 end
+
+clr_btn.MouseButton1Click:Connect(function()
+    input.Text = ""
+end)
 
 input:GetPropertyChangedSignal("Text"):Connect(function()
     clear()
