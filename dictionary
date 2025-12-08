@@ -12,7 +12,7 @@ local gui = Instance.new("ScreenGui", game.CoreGui)
 gui.ResetOnSpawn = false
 
 local container = Instance.new("Frame", gui)
-container.Size = UDim2.new(0, 250, 0, 600)
+container.Size = UDim2.new(0, 250, 0, 400)
 container.Position = UDim2.new(0, 20, 0, 0)   -- kiri layar
 container.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
 container.BorderSizePixel = 0
@@ -20,12 +20,12 @@ container.BorderSizePixel = 0
 -- CLOSE BUTTON
 local closeButton = Instance.new("TextButton", container)
 closeButton.Size = UDim2.new(0, 24, 0, 24)
-closeButton.Position = UDim2.new(1, -28, 0, 4)
+closeButton.Position = UDim2.new(1, 0, 0, -4)
 closeButton.BackgroundColor3 = Color3.fromRGB(180, 70, 70)
 closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.Font = Enum.Font.GothamBold
-closeButton.TextSize = 14
+closeButton.TextSize = 30
 closeButton.BorderSizePixel = 0
 closeButton.AutoButtonColor = true
 
@@ -45,7 +45,8 @@ input.BackgroundTransparency = 1
 input.Text = ""
 input.TextColor3 = Color3.fromRGB(30,30,30)
 input.Font = Enum.Font.GothamBold
-input.TextScaled = true
+input.TextScaled = false
+input.TextSize = 28
 input.ClearTextOnFocus = false
 
 -- LIST TITLE
