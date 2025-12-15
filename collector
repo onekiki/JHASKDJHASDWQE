@@ -1,4 +1,4 @@
-local versi = "NEW - V3.2.2" -- Add stone trade
+local versi = "NEW - V3.2.3" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -336,6 +336,7 @@ dropdownFrame.Parent = rightFrame
 local options = {
                 "Mitik All","Mitik BIG","Mitik Small", "Stone", "Laba2", "ALL SECRET",
                 "Thin","Frostborn", "Glider", "Scare", "Blob Shark", "CUSTOM ID",
+                "DUMP FISHES"
             }
 
 local function opsia(x)
@@ -1288,6 +1289,19 @@ function opsi(index)
         pesan("set fav: " .. list_ikan[fav_item].nama)
         pesan("Total fav: " .. #list_fav)
         trade("fav")
+    elseif index == 13 then
+        local dump_ikan = "DUMP IKAN"
+        for id, ikan in pairs(list_ikan) do
+            print(ikan.nama, ikan.harga, ikan.tier, ikan.id)
+            dump_ikan = ikan.nama .. "|" .. tostring(ikan.id) .."|" .. tostring(konvert_harga(ikan.harga))
+        end
+        if setclipboard then
+            setclipboard(dump_ikan)
+            task.wait(1.5)
+            pesan("berhasil dump ke clipboard")
+        else
+            pesan("gagal copy ")
+        end
     end
 end
 --//ANCHOR auto collect user
