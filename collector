@@ -1,4 +1,4 @@
-local versi = "NEW - V3.2.4" -- Add stone trade
+local versi = "NEW - V3.2.5" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -29,7 +29,7 @@ local start_timer = false
 local startscript = tick()
 local printer = "List Transaksi: "
 local berat_min = 50000  -- berat trade secret minimal berapa kilo ?
-
+local set_harga = "50000"
 local fav_item = 283
 
 -- ScreenGui utama
@@ -272,6 +272,16 @@ printBtn.Font = Enum.Font.RobotoMono
 printBtn.TextSize = 16
 printBtn.Parent = rightFrame
 
+local setharga = Instance.new("TextBox")
+setharga.Text = set_harga
+setharga.PlaceholderText = ""
+setharga.Size = UDim2.new(0, 60, 0, 25)
+setharga.Position = UDim2.new(0, 0, 0, 340)
+setharga.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+setharga.TextColor3 = Color3.new(0,0,0)
+setharga.Font = Enum.Font.RobotoMono
+setharga.TextSize = 16
+setharga.Parent = rightFrame
 
 local Handshake = Instance.new("TextButton")
 Handshake.Text = "Sync"
@@ -791,11 +801,11 @@ local function update_inventory()
                             total_mitik_all = total_mitik_all + custom_harga
                             list_mitik_all[index_mitik_all] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
                             index_mitik_all = index_mitik_all + 1
-
-                            if variant ~= nil or category_harga == "*BIG*" or shiny == "*SHINY*" then
-                                total_mitik_big = total_mitik_big + custom_harga
-                                list_mitik_big[index_mitik_big] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
-                                index_mitik_big = index_mitik_big + 1
+                            set_harga = setharga.Text
+                            if custom_harga > tonumber(set_harga) then
+                                    total_mitik_big = total_mitik_big + custom_harga
+                                    list_mitik_big[index_mitik_big] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
+                                    index_mitik_big = index_mitik_big + 1
                             else
                                 total_mitik_small = total_mitik_small + custom_harga
                                 list_mitik_small[index_mitik_small] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
@@ -1293,7 +1303,7 @@ function opsi(index)
         local dump_ikan = "DUMP IKAN \n"
         for id, ikan in pairs(list_ikan) do
             print(ikan.nama, ikan.harga, ikan.tier, ikan.id)
-            dump_ikan = dump_ikan .. ikan.nama .. "|" .. tostring(ikan.id) .."|" .. tostring(konvert_harga(ikan.harga)) .."\n"
+            dump_ikan = dump_ikan .. ikan.tier .. "|" .. ikan.nama .."|" .. tostring(ikan.id) .."|".. tostring(konvert_harga(ikan.harga)) .."\n"
         end
         if setclipboard then
             setclipboard(dump_ikan)
