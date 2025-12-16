@@ -1,4 +1,4 @@
-local versi = "NEW - V3.2.5" -- Add stone trade
+local versi = "NEW - V3.2.6" -- Add stone trade
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -28,7 +28,6 @@ local running = true
 local start_timer = false
 local startscript = tick()
 local printer = "List Transaksi: "
-local berat_min = 50000  -- berat trade secret minimal berapa kilo ?
 local set_harga = "50000"
 local fav_item = 283
 
@@ -70,15 +69,6 @@ showBtn.Text = "SHOW"
 showBtn.TextColor3 = Color3.new(0, 0, 0)
 showBtn.BackgroundColor3 = Color3.fromRGB(214, 188, 72)
 showBtn.Parent = playerFrame
-
--- Tombol reload
-local reloadBtn = Instance.new("TextButton")
-reloadBtn.Size = UDim2.new(0, 25, 0, 25)
-reloadBtn.Position = UDim2.new(0, 60, 0, 5)
-reloadBtn.Text = "R"
-reloadBtn.TextColor3 = Color3.new(1,1,1)
-reloadBtn.BackgroundColor3 = Color3.fromRGB(0, 89, 255)
-reloadBtn.Parent = playerFrame
 
 -- Tombol 3d
 local renderBtn = Instance.new("TextButton")
@@ -210,26 +200,6 @@ stoneBtn.Parent = rightFrame
 
 --]]
 
-local stopBtn = Instance.new("TextButton")
-stopBtn.Text = "STOP"
-stopBtn.Size = UDim2.new(0, 60, 0, 25)
-stopBtn.Position = UDim2.new(0, 240, 0, 120)
-stopBtn.BackgroundColor3 = Color3.fromRGB(243, 6, 6)
-stopBtn.TextColor3 = Color3.fromRGB(253, 253, 253)
-stopBtn.Font = Enum.Font.RobotoMono
-stopBtn.TextSize = 16
-stopBtn.Parent = rightFrame
-
-local resetBtn = Instance.new("TextButton")
-resetBtn.Text = "🧹"
-resetBtn.Size = UDim2.new(0, 40, 0, 25)
-resetBtn.Position = UDim2.new(0, 300, 0, 120)
-resetBtn.BackgroundColor3 = Color3.fromRGB(172, 172, 172)
-resetBtn.TextColor3 = Color3.new(1,1,1)
-resetBtn.Font = Enum.Font.RobotoMono
-resetBtn.TextSize = 16
-resetBtn.Parent = rightFrame
-
 -- === Buat tombol toggle ===
 local settingBtn = Instance.new("TextButton")
 settingBtn.Text = "Collect: OFF"
@@ -251,38 +221,6 @@ shopBtn.Font = Enum.Font.RobotoMono
 shopBtn.TextSize = 16
 shopBtn.Parent = playerFrame
 
--- === Buat tombol toggle ===
-local dumpBtn = Instance.new("TextButton")
-dumpBtn.Text = "Listing"
-dumpBtn.Size = UDim2.new(0, 80, 0, 25)
-dumpBtn.Position = UDim2.new(0, 160, 0, 360)-- di bawah tombol trade / log
-dumpBtn.BackgroundColor3 = Color3.fromRGB(47, 136, 106)
-dumpBtn.TextColor3 = Color3.new(1,1,1)
-dumpBtn.Font = Enum.Font.RobotoMono
-dumpBtn.TextSize = 16
-dumpBtn.Parent = rightFrame
-
-local printBtn = Instance.new("TextButton")
-printBtn.Text = "Print"
-printBtn.Size = UDim2.new(0, 80, 0, 25)
-printBtn.Position = UDim2.new(0, 250, 0, 360)-- di bawah tombol trade / log
-printBtn.BackgroundColor3 = Color3.fromRGB(148, 148, 148)
-printBtn.TextColor3 = Color3.new(0, 0, 0)
-printBtn.Font = Enum.Font.RobotoMono
-printBtn.TextSize = 16
-printBtn.Parent = rightFrame
-
-local setharga = Instance.new("TextBox")
-setharga.Text = set_harga
-setharga.PlaceholderText = ""
-setharga.Size = UDim2.new(0, 60, 0, 25)
-setharga.Position = UDim2.new(0, 0, 0, 340)
-setharga.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
-setharga.TextColor3 = Color3.new(0,0,0)
-setharga.Font = Enum.Font.RobotoMono
-setharga.TextSize = 16
-setharga.Parent = rightFrame
-
 local Handshake = Instance.new("TextButton")
 Handshake.Text = "Sync"
 Handshake.Size = UDim2.new(0, 60, 0, 25)
@@ -292,6 +230,67 @@ Handshake.TextColor3 = Color3.new(1,1,1)
 Handshake.Font = Enum.Font.RobotoMono
 Handshake.TextSize = 16
 Handshake.Parent = rightFrame
+
+-- Tombol reload
+local reloadBtn = Instance.new("TextButton")
+reloadBtn.Size = UDim2.new(0, 60, 0, 25)
+reloadBtn.Position = UDim2.new(0, 65, 0, 360)
+reloadBtn.Text = "SCAN"
+reloadBtn.TextColor3 = Color3.new(1,1,1)
+reloadBtn.Font = Enum.Font.RobotoMono
+reloadBtn.BackgroundColor3 = Color3.fromRGB(0, 89, 255)
+reloadBtn.Parent = rightFrame
+
+local dumpBtn = Instance.new("TextButton")
+dumpBtn.Text = "List"
+dumpBtn.Size = UDim2.new(0, 60, 0, 25)
+dumpBtn.Position = UDim2.new(0, 125, 0, 360)-- di bawah tombol trade / log
+dumpBtn.BackgroundColor3 = Color3.fromRGB(47, 136, 106)
+dumpBtn.TextColor3 = Color3.new(1,1,1)
+dumpBtn.Font = Enum.Font.RobotoMono
+dumpBtn.TextSize = 16
+dumpBtn.Parent = rightFrame
+
+local printBtn = Instance.new("TextButton")
+printBtn.Text = "Print"
+printBtn.Size = UDim2.new(0, 60, 0, 25)
+printBtn.Position = UDim2.new(0, 185, 0, 360)-- di bawah tombol trade / log
+printBtn.BackgroundColor3 = Color3.fromRGB(148, 148, 148)
+printBtn.TextColor3 = Color3.new(0, 0, 0)
+printBtn.Font = Enum.Font.RobotoMono
+printBtn.TextSize = 16
+printBtn.Parent = rightFrame
+
+local stopBtn = Instance.new("TextButton")
+stopBtn.Text = "STOP"
+stopBtn.Size = UDim2.new(0, 60, 0, 25)
+stopBtn.Position = UDim2.new(0, 245, 0, 360)
+stopBtn.BackgroundColor3 = Color3.fromRGB(243, 6, 6)
+stopBtn.TextColor3 = Color3.fromRGB(253, 253, 253)
+stopBtn.Font = Enum.Font.RobotoMono
+stopBtn.TextSize = 16
+stopBtn.Parent = rightFrame
+
+local resetBtn = Instance.new("TextButton")
+resetBtn.Text = "🧹"
+resetBtn.Size = UDim2.new(0, 40, 0, 25)
+resetBtn.Position = UDim2.new(0, 300, 0, 120)
+resetBtn.BackgroundColor3 = Color3.fromRGB(172, 172, 172)
+resetBtn.TextColor3 = Color3.new(1,1,1)
+resetBtn.Font = Enum.Font.RobotoMono
+resetBtn.TextSize = 16
+resetBtn.Parent = rightFrame
+
+local setharga = Instance.new("TextBox")
+setharga.Text = set_harga
+setharga.PlaceholderText = ""
+setharga.Size = UDim2.new(0, 60, 0, 25)
+setharga.Position = UDim2.new(0, 235, 0, 340)
+setharga.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+setharga.TextColor3 = Color3.new(0,0,0)
+setharga.Font = Enum.Font.RobotoMono
+setharga.TextSize = 16
+setharga.Parent = rightFrame
 
 -- === LOG FRAME ===
 local logFrame = Instance.new("ScrollingFrame")
