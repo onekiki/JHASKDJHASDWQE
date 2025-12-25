@@ -1,4 +1,4 @@
-local versi = "NEW - V3.2.8" -- Add stone trade
+local versi = "NEW - V3.2.9" -- REMOVE GRAPHIC TWEAK
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -618,6 +618,7 @@ local function SetLowGraphics()
     end
     MaterialService.Use2022Materials = false
 end
+--[[
 ---------------------------------------------------------------------
 -- 1. Daftar efek yang akan dihapus
 ---------------------------------------------------------------------
@@ -681,6 +682,7 @@ workspace.DescendantAdded:Connect(function(obj)
         cleanObject(obj)
     end)
 end)
+--]]
 local data = Client:WaitReplion("Data")
 
 -- ambil inventory pertama kali
