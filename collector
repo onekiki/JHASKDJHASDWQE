@@ -1,4 +1,4 @@
-local versi = "NEW - V3.2.9" -- REMOVE GRAPHIC TWEAK
+local versi = "NEW - V3.3.0" -- REMOVE GRAPHIC TWEAK
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -344,9 +344,9 @@ dropdownFrame.Parent = rightFrame
 
 --// ANCHOR OPTION MENU
 local options = {
-                "Mitik All","Mitik BIG","Mitik Small", "Stone", "Laba2", "MASTER",
+                "Mitik All","Mitik BIG","Mitik Small", "Stone", "EVOLVED", "Laba2",
                 "Thin","Frostborn", "Glider", "Scare", "Blob Shark", "CUSTOM ID",
-                "INDEX SECRET"
+                "INDEX SECRET","MASTER"
             }
 
 local function opsia(x)
@@ -695,6 +695,7 @@ local list_mitik_small = {}
 local list_mitik_all = {}
 local list_sekret_all = {}
 local list_stone ={}
+local list_stone_envolved = {}
 local list_all = {}
 local list_master = {}
 local list_fav = {}
@@ -709,7 +710,8 @@ local function update_inventory()
 
      list_sekret_all = {}
      list_all = {}
-     list_stone ={}
+     list_stone = {}
+     list_stone_envolved = {}
      list_fav = {}
      list_master = {}
      local total_secret = 0
@@ -725,7 +727,7 @@ local function update_inventory()
      local total_mutasi = 0
      local hitung_stone = 0
      local hitung_fav = 0
-
+     local hitung_envolved = 0
     local inventory = getInventory()
     for category, items in pairs(inventory) do
         if category == "Items" then
@@ -753,6 +755,9 @@ local function update_inventory()
                     if item.Id == 10 then
                         list_stone[hitung_stone] = {id = item.Id, uuid = tostring(item.UUID)}
                         hitung_stone = hitung_stone + 1
+                    elseif item.Id == 558 then
+                        list_stone_envolved[hitung_envolved] = {id = item.Id, uuid = tostring(item.UUID)}
+                        hitung_envolved = hitung_envolved + 1
                     end
                 end
                 if itemData.Data.Type == "Fish" and itemData.SellPrice then
@@ -912,6 +917,10 @@ local function trade_map(target, jumlah, type)
             printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
             flag_secret = true
             custom_list = list_stone
+        elseif type == "evolved" then
+            printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
+            flag_secret = true
+            custom_list = list_stone_envolved
         elseif type == "fav" then
             printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
             flag_secret = true
@@ -1271,11 +1280,11 @@ function opsi(index)
     elseif index == 4 then
         trade("stone")
     elseif index == 5 then
-        fav_item = 283
+        trade("evolved")
+    elseif index == 6 then
+         fav_item = 283
         pesan("set fav: " .. list_ikan[fav_item].nama)
         trade("fav")
-    elseif index == 6 then
-         trade("master")
     elseif index == 7 then
         fav_item = 218 -- thin
         pesan("set fav: " .. list_ikan[fav_item].nama)
@@ -1308,6 +1317,9 @@ function opsi(index)
                 pesan(ikan.nama .." > " .. tostring(ikan.id))
             end
         end
+    elseif index == 14 then
+        
+        trade("master")
     end
 end
 local countdown = 5
