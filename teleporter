@@ -1,0 +1,162 @@
+-- LocalScript (taruh di StarterGui)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+--=== GUI utama ===--
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "PlayerListGui"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+-- Frame container
+local Frame = Instance.new("Frame")
+Frame.Name = "PlayerListFrame"
+Frame.Size = UDim2.new(0, 250, 0.7, 0)
+Frame.Position = UDim2.new(0, 20, 0, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Frame.BorderSizePixel = 0
+Frame.Visible = true
+Frame.Parent = ScreenGui
+
+-- Judul frame
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -40, 0, 30)
+Title.Position = UDim2.new(0, 10, 0, 5)
+Title.BackgroundTransparency = 1
+Title.Text = "Daftar Pemain"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 20
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = Frame
+
+local text_info = Instance.new("TextLabel")
+text_info.Size = UDim2.new(1, -40, 0, 30)
+text_info.Position = UDim2.new(0, 10, 1, -30)
+text_info.BackgroundTransparency = 1
+text_info.Text = "status"
+text_info.TextColor3 = Color3.fromRGB(255, 255, 255)
+text_info.Font = Enum.Font.SourceSansBold
+text_info.TextSize = 16
+text_info.TextXAlignment = Enum.TextXAlignment.Left
+text_info.Parent = Frame
+
+-- Tombol Close
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.TextSize = 18
+CloseButton.Parent = Frame
+
+CloseButton.MouseEnter:Connect(function()
+        CloseButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+end)
+CloseButton.MouseLeave:Connect(function()
+        CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+end)
+
+-- Tombol close action
+CloseButton.MouseButton1Click:Connect(function()
+        Frame.Visible = false
+end)
+
+-- ScrollFrame untuk daftar player
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Name = "PlayerScroll"
+Scroll.Size = UDim2.new(1, -20, 1, -50)
+Scroll.Position = UDim2.new(0, 10, 0, 40)
+Scroll.BackgroundTransparency = 1
+Scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+Scroll.ScrollBarThickness = 6
+Scroll.Parent = Frame
+
+-- Layout agar tombol rapi
+local Layout = Instance.new("UIListLayout")
+Layout.Padding = UDim.new(0, 5)
+Layout.FillDirection = Enum.FillDirection.Vertical
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+Layout.VerticalAlignment = Enum.VerticalAlignment.Top
+Layout.Parent = Scroll
+
+local function teleport(x, y, z)
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.CFrame = CFrame.new(Vector3.new(x, y, z))
+        print("✅ Teleported to", x, y, z)
+    end
+end
+local function getPositionByName(name)
+    local plr = Players:FindFirstChild(name)
+    if not plr then return nil, "player not found" end
+
+    local char = plr.Character or plr.CharacterAdded:Wait()
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil, "HumanoidRootPart not found" end
+
+    return hrp.Position
+end
+--=== Fungsi pembuat tombol player ===--
+local function createPlayerButton(player)
+        local button = Instance.new("TextButton")
+        button.Name = player.Name .. "_Button"
+        button.Size = UDim2.new(1, -10, 0, 30)
+        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.Text = player.Name
+        button.Font = Enum.Font.SourceSansBold
+        button.TextSize = 18
+        button.Parent = Scroll
+
+        button.MouseEnter:Connect(function()
+                button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+        end)
+        button.MouseLeave:Connect(function()
+                button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        end)
+
+        button.MouseButton1Click:Connect(function()
+                print("Kamu menekan:", player.Name)
+        local pos, err = getPositionByName(player.Name)
+        if pos then
+            print("Posisi sekarang:", pos)
+            local x = pos.X
+            local y = pos.Y
+            local z = pos.Z
+
+            teleport(x,y,z)
+        else
+            warn("tidak ada username itu")
+        end
+
+        end)
+end
+
+--=== Fungsi update daftar player ===--
+local function refreshPlayerList()
+        for _, child in ipairs(Scroll:GetChildren()) do
+                if child:IsA("TextButton") then
+                        child:Destroy()
+                end
+        end
+        for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+                    createPlayerButton(player)
+        end
+        end
+        -- Update ukuran scroll otomatis
+        task.wait()
+        Scroll.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y)
+end
+
+--=== Event player join/leave ===--
+Players.PlayerAdded:Connect(refreshPlayerList)
+Players.PlayerRemoving:Connect(refreshPlayerList)
+
+-- Pertama kali dijalankan
+refreshPlayerList()
