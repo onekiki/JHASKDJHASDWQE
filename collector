@@ -209,7 +209,7 @@ stoneBtn.Parent = rightFrame
 local settingBtn = Instance.new("TextButton")
 settingBtn.Text = "Collect: OFF"
 settingBtn.Size = UDim2.new(1, 0, 0, 25)
-settingBtn.Position = UDim2.new(0, 0, 1, -20) -- di bawah tombol trade / log
+settingBtn.Position = UDim2.new(0, 0, 1, 20) -- di bawah tombol trade / log
 settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 settingBtn.TextColor3 = Color3.new(1,1,1)
 settingBtn.Font = Enum.Font.RobotoMono
@@ -219,7 +219,7 @@ settingBtn.Parent = playerFrame
 local shopBtn = Instance.new("TextButton")
 shopBtn.Text = "goto Sell"
 shopBtn.Size = UDim2.new(1, 0, 0, 25)
-shopBtn.Position = UDim2.new(0, 0, 1, -50) -- di bawah tombol trade / log
+shopBtn.Position = UDim2.new(0, 0, 1, 50) -- di bawah tombol trade / log
 shopBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
 shopBtn.TextColor3 = Color3.new(1,1,1)
 shopBtn.Font = Enum.Font.RobotoMono
@@ -1468,7 +1468,7 @@ end
 
 if auto_collect then
     if running then
-        if #Players:GetPlayers() > 6 then
+        if #Players:GetPlayers() > 20 then
             pesan("PLAYER LEBIH DARI 6")
         else
             if trade_uuid then
