@@ -1,0 +1,192 @@
+-- Decompiled with Konstant V2.1, a fast Luau decompiler made in Luau by plusgiant5 (https://discord.gg/brNTY8nX8t)
+-- Decompiled on 2026-01-23 08:04:29
+-- Luau version 6, Types version 3
+-- Time taken: 0.007861 seconds
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local tbl_upvr_3 = {}
+local tbl_upvr = {}
+local var4_upvw
+local PlayerStatsUtility_upvr = require(ReplicatedStorage.Shared.PlayerStatsUtility)
+local function isPickaxeEquipped_upvr() -- Line 22, Named "isPickaxeEquipped"
+	--[[ Upvalues[2]:
+		[1]: var4_upvw (read and write)
+		[2]: PlayerStatsUtility_upvr (readonly)
+	]]
+	if not var4_upvw then
+		return false
+	end
+	local any_Get_result1_upvr = var4_upvw:Get("EquippedId")
+	if not any_Get_result1_upvr or any_Get_result1_upvr == "" then
+		return false
+	end
+	local any_GetItemFromInventory_result1 = PlayerStatsUtility_upvr:GetItemFromInventory(var4_upvw, function(arg1) -- Line 32
+		--[[ Upvalues[1]:
+			[1]: any_Get_result1_upvr (readonly)
+		]]
+		local var8
+		if arg1.UUID ~= any_Get_result1_upvr then
+			var8 = false
+		else
+			var8 = true
+		end
+		return var8
+	end, "Items")
+	if any_GetItemFromInventory_result1 and any_GetItemFromInventory_result1.Id == 20220 then
+		return true
+	end
+	return false
+end
+local Trove_upvr = require(ReplicatedStorage.Packages.Trove)
+local Color3_fromRGB_result1_upvr = Color3.fromRGB(120, 200, 255)
+local TweenService_upvr = game:GetService("TweenService")
+local TweenInfo_new_result1_upvr = TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true)
+local tbl_upvr_2 = {}
+local function addCrystalEffects_upvr(arg1) -- Line 43, Named "addCrystalEffects"
+	--[[ Upvalues[6]:
+		[1]: tbl_upvr_3 (readonly)
+		[2]: Trove_upvr (readonly)
+		[3]: Color3_fromRGB_result1_upvr (readonly)
+		[4]: TweenService_upvr (readonly)
+		[5]: TweenInfo_new_result1_upvr (readonly)
+		[6]: tbl_upvr_2 (readonly)
+	]]
+	if tbl_upvr_3[arg1] then
+	else
+		local any_new_result1 = Trove_upvr.new()
+		tbl_upvr_3[arg1] = any_new_result1
+		if not arg1 then
+			any_new_result1:Destroy()
+			tbl_upvr_3[arg1] = nil
+			return
+		end
+		local Highlight = Instance.new("Highlight")
+		Highlight.FillColor = Color3_fromRGB_result1_upvr
+		Highlight.OutlineColor = Color3.fromRGB(180, 140, 255)
+		Highlight.FillTransparency = 0.5
+		Highlight.OutlineTransparency = 0
+		Highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+		Highlight.Parent = arg1
+		any_new_result1:Add(Highlight)
+		local any_Create_result1_upvr_2 = TweenService_upvr:Create(Highlight, TweenInfo_new_result1_upvr, {
+			FillTransparency = 0.8;
+		})
+		any_Create_result1_upvr_2:Play()
+		any_new_result1:Add(function() -- Line 72
+			--[[ Upvalues[1]:
+				[1]: any_Create_result1_upvr_2 (readonly)
+			]]
+			any_Create_result1_upvr_2:Cancel()
+		end)
+		local PointLight = Instance.new("PointLight")
+		PointLight.Color = Color3_fromRGB_result1_upvr
+		PointLight.Brightness = 2
+		PointLight.Range = 12
+		PointLight.Parent = arg1
+		any_new_result1:Add(PointLight)
+		local any_Create_result1_upvr = TweenService_upvr:Create(PointLight, TweenInfo_new_result1_upvr, {
+			Brightness = 0.8;
+		})
+		any_Create_result1_upvr:Play()
+		any_new_result1:Add(function() -- Line 88
+			--[[ Upvalues[1]:
+				[1]: any_Create_result1_upvr (readonly)
+			]]
+			any_Create_result1_upvr:Cancel()
+		end)
+		local class_ProximityPrompt_upvr = arg1:FindFirstChildWhichIsA("ProximityPrompt")
+		if class_ProximityPrompt_upvr then
+			table.insert(tbl_upvr_2, class_ProximityPrompt_upvr)
+			class_ProximityPrompt_upvr.Enabled = true
+			any_new_result1:Add(function() -- Line 97
+				--[[ Upvalues[2]:
+					[1]: tbl_upvr_2 (copied, readonly)
+					[2]: class_ProximityPrompt_upvr (readonly)
+				]]
+				local table_find_result1 = table.find(tbl_upvr_2, class_ProximityPrompt_upvr)
+				if table_find_result1 then
+					table.remove(tbl_upvr_2, table_find_result1)
+				end
+			end)
+		end
+	end
+end
+local function _(arg1) -- Line 106, Named "removeCrystalEffects"
+	--[[ Upvalues[1]:
+		[1]: tbl_upvr_3 (readonly)
+	]]
+	local var27 = tbl_upvr_3[arg1]
+	if var27 then
+		var27:Destroy()
+		tbl_upvr_3[arg1] = nil
+	end
+end
+local function updateAllCrystalEffects_upvr() -- Line 114, Named "updateAllCrystalEffects"
+	--[[ Upvalues[4]:
+		[1]: isPickaxeEquipped_upvr (readonly)
+		[2]: tbl_upvr (readonly)
+		[3]: addCrystalEffects_upvr (readonly)
+		[4]: tbl_upvr_3 (readonly)
+	]]
+	if isPickaxeEquipped_upvr() then
+		for i, _ in tbl_upvr do
+			addCrystalEffects_upvr(i)
+		end
+	else
+		for var30, _ in tbl_upvr_3 do
+			local var32 = tbl_upvr_3[var30]
+			if var32 then
+				var32:Destroy()
+				tbl_upvr_3[var30] = nil
+			end
+		end
+	end
+end
+require(ReplicatedStorage.Packages.Observers).observeTag("GlowingCrystal", function(arg1) -- Line 128
+	--[[ Upvalues[4]:
+		[1]: tbl_upvr (readonly)
+		[2]: isPickaxeEquipped_upvr (readonly)
+		[3]: addCrystalEffects_upvr (readonly)
+		[4]: tbl_upvr_3 (readonly)
+	]]
+	tbl_upvr[arg1] = function() -- Line 129
+	end
+	if isPickaxeEquipped_upvr() then
+		addCrystalEffects_upvr(arg1)
+	end
+	return function() -- Line 135
+		--[[ Upvalues[3]:
+			[1]: tbl_upvr (copied, readonly)
+			[2]: arg1 (readonly)
+			[3]: tbl_upvr_3 (copied, readonly)
+		]]
+		tbl_upvr[arg1] = nil
+		local var36 = arg1
+		local var37 = tbl_upvr_3[var36]
+		if var37 then
+			var37:Destroy()
+			tbl_upvr_3[var36] = nil
+		end
+	end
+end, {workspace})
+require(ReplicatedStorage.Packages.Replion).Client:AwaitReplion("Data", function(arg1) -- Line 141
+	--[[ Upvalues[2]:
+		[1]: var4_upvw (read and write)
+		[2]: updateAllCrystalEffects_upvr (readonly)
+	]]
+	var4_upvw = arg1
+	arg1:OnChange("EquippedId", function() -- Line 144
+		--[[ Upvalues[1]:
+			[1]: updateAllCrystalEffects_upvr (copied, readonly)
+		]]
+		updateAllCrystalEffects_upvr()
+	end)
+	arg1:OnChange("Inventory", function() -- Line 148
+		--[[ Upvalues[1]:
+			[1]: updateAllCrystalEffects_upvr (copied, readonly)
+		]]
+		updateAllCrystalEffects_upvr()
+	end)
+	updateAllCrystalEffects_upvr()
+end)
+return {}
