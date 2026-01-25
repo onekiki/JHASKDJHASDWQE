@@ -1,0 +1,85 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+
+
+local function setNoclip(char, state)
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = not state
+        end
+    end
+end
+
+local function teleport(x, y, z)
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.CFrame = CFrame.new(Vector3.new(x, y, z))
+        print("✅ Teleported to", x, y, z)
+    end
+end
+local flag_unequipt = false
+--//ANCHOR auto FARM CRYSTAL
+local function mining(crystal)
+    local prompt =
+        crystal:FindFirstChildOfClass("ProximityPrompt")
+        or crystal:FindFirstChildWhichIsA("ProximityPrompt", true)
+
+    if prompt and prompt.Enabled then
+        print("Triggered:", prompt.ActionText, prompt.ObjectText)
+        pesan("ada crystal")
+        fireproximityprompt(prompt)
+        task.wait(2)
+    end
+end
+
+local function cek_proximity(crystal)
+    local prompt =
+        crystal:FindFirstChildOfClass("ProximityPrompt")
+        or crystal:FindFirstChildWhichIsA("ProximityPrompt", true)
+
+    if prompt and prompt.Enabled then
+        return true
+    else
+        return false
+    end
+end
+
+local function auto_crystal()
+    pesan("AUTO FARM CRYSTAL")
+
+        flag_unequipt = false
+        task.wait(5)
+        local islands = workspace:FindFirstChild("Islands")
+        if not islands then return {} end
+
+        local island = islands:FindFirstChild("Crystal Depths")
+        if not island then return {} end
+
+        local crystals = island:FindFirstChild("Crystals")
+        if not crystals then return {} end
+        setNoclip(root, true)
+        root.Anchored = true
+        for i, v in ipairs(crystals:GetChildren()) do
+            if v:IsA("MeshPart") then
+                pesan("crystal ke " .. tostring(i))
+                if cek_proximity(v) == true then
+                    task.wait(1)
+                    local cf = v:GetPivot()
+                    root.CFrame = cf + Vector3.new(0, 5, 0)
+                    mining(v)
+                end
+                task.wait(0.05)
+            end
+        end
+        --running = true
+        --on_trading = false
+        root.Anchored = false
+        setNoclip(root, false)
+end
+
+teleport(5749,-905,15392)
+task.wait(5)
+auto_crystal()
