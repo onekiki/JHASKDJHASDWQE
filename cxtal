@@ -1,16 +1,10 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local root = character:WaitForChild("HumanoidRootPart")
-
-
-local function setNoclip(char, state)
-    for _, part in ipairs(char:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.CanCollide = not state
-        end
-    end
-end
+-- ====== PLAYER ======
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+local hum = char:WaitForChild("Humanoid")
 
 local function teleport(x, y, z)
     local char = player.Character or player.CharacterAdded:Wait()
@@ -20,66 +14,132 @@ local function teleport(x, y, z)
         print("✅ Teleported to", x, y, z)
     end
 end
-local flag_unequipt = false
---//ANCHOR auto FARM CRYSTAL
-local function mining(crystal)
-    local prompt =
-        crystal:FindFirstChildOfClass("ProximityPrompt")
-        or crystal:FindFirstChildWhichIsA("ProximityPrompt", true)
-
-    if prompt and prompt.Enabled then
-        print("Triggered:", prompt.ActionText, prompt.ObjectText)
-        pesan("ada crystal")
-        fireproximityprompt(prompt)
-        task.wait(2)
-    end
-end
-
-local function cek_proximity(crystal)
-    local prompt =
-        crystal:FindFirstChildOfClass("ProximityPrompt")
-        or crystal:FindFirstChildWhichIsA("ProximityPrompt", true)
-
-    if prompt and prompt.Enabled then
-        return true
-    else
-        return false
-    end
-end
-
-local function auto_crystal()
-    pesan("AUTO FARM CRYSTAL")
-
-        flag_unequipt = false
-        task.wait(5)
-        local islands = workspace:FindFirstChild("Islands")
-        if not islands then return {} end
-
-        local island = islands:FindFirstChild("Crystal Depths")
-        if not island then return {} end
-
-        local crystals = island:FindFirstChild("Crystals")
-        if not crystals then return {} end
-        setNoclip(root, true)
-        root.Anchored = true
-        for i, v in ipairs(crystals:GetChildren()) do
-            if v:IsA("MeshPart") then
-                pesan("crystal ke " .. tostring(i))
-                if cek_proximity(v) == true then
-                    task.wait(1)
-                    local cf = v:GetPivot()
-                    root.CFrame = cf + Vector3.new(0, 5, 0)
-                    mining(v)
-                end
-                task.wait(0.05)
-            end
-        end
-        --running = true
-        --on_trading = false
-        root.Anchored = false
-        setNoclip(root, false)
-end
-
 teleport(5749,-905,15392)
 task.wait(5)
-auto_crystal()
+
+local function printProximityInfo(crystal)
+    local prompt =
+        crystal:FindFirstChildOfClass("ProximityPrompt")
+        or crystal:FindFirstChildWhichIsA("ProximityPrompt", true)
+
+    if not prompt then
+        print("[PROMPT] Tidak ada ProximityPrompt di", crystal.Name)
+        return false
+    else
+        ProximityPromptService = game:GetService("ProximityPromptService")
+        --fireproximityprompt(prompt)
+        PromptButtonHoldBegan = ProximityPromptService.PromptButtonHoldBegan:Connect(function(prompt)
+			fireproximityprompt(prompt)
+		end)
+        task.wait(2)
+        PromptButtonHoldBegan:Disconnect()
+        print("========== PROXIMITY PROMPT ==========")
+        print("Crystal Name :", crystal.Name)
+        print("ActionText   :", prompt.ActionText)
+        print("ObjectText   :", prompt.ObjectText)
+        print("HoldDuration :", prompt.HoldDuration)
+        print("KeyboardKey  :", prompt.KeyboardKeyCode)
+        print("Enabled      :", prompt.Enabled)
+        print("MaxDistance  :", prompt.MaxActivationDistance)
+        print("=====================================")
+        return true
+    end
+end
+
+-- ====== GET CRYSTALS ======
+local function getCrystalChildren()
+    local islands = workspace:FindFirstChild("Islands")
+    if not islands then return {} end
+
+    local island = islands:FindFirstChild("Crystal Depths")
+    if not island then return {} end
+
+    local crystals = island:FindFirstChild("Crystals")
+    if not crystals then return {} end
+
+    local result = {}
+    for _, v in ipairs(crystals:GetChildren()) do
+        if v:IsA("MeshPart") then
+            if printProximityInfo(v) then
+                hum:ChangeState(Enum.HumanoidStateType.Physics)
+                hrp.CFrame = v.CFrame + Vector3.new(0, 6, 0)
+                break
+            end
+        end
+    end
+    return result
+end
+
+local crystals = getCrystalChildren()
+if #crystals == 0 then return end
+
+
+local currentIndex = 1
+
+local function teleportTo(index)
+    local v = crystals[index]
+    if not v then return end
+
+    hum:ChangeState(Enum.HumanoidStateType.Physics)
+    hrp.CFrame = v.CFrame + Vector3.new(0, 6, 0)
+    task.wait(0.1)
+    hum:ChangeState(Enum.HumanoidStateType.Running)
+
+    print("Teleport ke:", v.Name, "Index:", index)
+end
+
+teleportTo(currentIndex)
+
+-- ====== GUI ======
+local gui = Instance.new("ScreenGui")
+gui.Name = "CrystalNavigator"
+gui.ResetOnSpawn = false
+gui.Parent = player.PlayerGui
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromScale(0.25, 0.15)
+frame.Position = UDim2.fromScale(0.5, 0.8)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true
+
+local function makeButton(text, pos)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.fromScale(0.28, 0.5)
+    btn.Position = pos
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.TextScaled = true
+    btn.Parent = frame
+    return btn
+end
+
+local backBtn = makeButton("◀ BACK", UDim2.fromScale(0.03, 0.25))
+local nextBtn = makeButton("NEXT ▶", UDim2.fromScale(0.36, 0.25))
+local closeBtn = makeButton("X", UDim2.fromScale(0.7, 0.25))
+closeBtn.Size = UDim2.fromScale(0.25, 0.5)
+closeBtn.BackgroundColor3 = Color3.fromRGB(120, 30, 30)
+
+-- ====== BUTTON LOGIC ======
+nextBtn.MouseButton1Click:Connect(function()
+    currentIndex += 1
+    if currentIndex > #crystals then
+        currentIndex = 1
+    end
+    teleportTo(currentIndex)
+end)
+
+backBtn.MouseButton1Click:Connect(function()
+    currentIndex -= 1
+    if currentIndex < 1 then
+        currentIndex = #crystals
+    end
+    teleportTo(currentIndex)
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
