@@ -1,0 +1,205 @@
+-- Decompiled with Konstant V2.1, a fast Luau decompiler made in Luau by plusgiant5 (https://discord.gg/brNTY8nX8t)
+-- Decompiled on 2026-02-01 10:50:21
+-- Luau version 6, Types version 3
+-- Time taken: 0.030772 seconds
+
+local TableUtil = require(game:GetService("ReplicatedStorage").Modules.Util.TableUtil)
+local module = {
+	["Fisherman Island"] = {
+		DefaultLocation = true;
+		SpawnLocation = true;
+		Order = -10;
+		Cover = "rbxassetid://91009938122602";
+		Items = {"Old Boot", "Conch Shell", "Sea Shell", "Azure Damsel", "Flame Angelfish", "Korean Angelfish", "Ballina Angelfish", "Yello Damselfish", "Strawberry Dotty", "Yellowfin Tuna", "Copperband Butterfly", "Darwin Clownfish", "Clownfish", "Dorhey Tang", "Unicorn Tang", "Dotted Stingray", "Enchant Stone", "Dogfish", "Glacierfin Snapper", "Bandit Angelfish", "Lined Cardinal Fish", "Pygmy Goby", "Watanabei Angelfish", "White Tang", "Herring Fish", "Barracuda Fish", "Gar Fish", "Frog", "King Frog", "Lake Sturgeon", "Crystal Crab", "Orca", "Old Boot"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 1;
+	};
+	Ocean = {
+		Order = -5;
+		Cover = "rbxassetid://86832426448448";
+		Items = {"Conch Shell", "Sea Shell", "Block Fish", "Cypress Ratua", "Curious Garfish", "Purp Blisfish", "Traffic Cone Fish", "Candy Butterfly", "Jewel Tang", "Skunk Tilefish", "Vintage Damsel", "Yellowstate Angelfish", "Vintage Blue Tang", "Cow Clownfish", "Moorish Idol", "Tricolore Butterfly", "Slurpfish Chromis", "Manta Ray", "Chrome Tuna", "Hammerhead Shark", "Enchant Stone", "Blob Shark", "Ghost Shark", "Masked Angelfish", "Blue-Banded Goby", "Conspi Angelfish", "Fade Tang", "Ruby", "Cute Octopus", "Worm Fish", "Narwhal", "Sharp One", "Diamond Ring", "Expensive Chain", "Skeleton Narwhal"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 1;
+	};
+	["Kohana Lab"] = {
+		NoDisplay = true;
+		Order = 9999;
+		Cover = "";
+		Items = {"Conch Shell", "Sea Shell", "Boltback Fish", "Fire Goby", "Reef Chromis", "Shrimp Goby", "Banded Butterfly", "Queen Angelfish", "Jennifer Dottyback", "Longnose Butterfly", "Sushi Cardinal", "Kau Cardinal", "Lobster", "Loggerhead Turtle", "Bumblebee Grouper", "Boa Angelfish", "Prismy Seahorse", "Enchant Stone", "Zoster Butterfly", "Blumato Clownfish", "Lochness Monster", "Starlight Manta Ray"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 1;
+	};
+	Kohana = {
+		SpawnLocation = true;
+		Order = 2;
+		Cover = "rbxassetid://136679349504933";
+		Items = {"Conch Shell", "Sea Shell", "Boltback Fish", "Fire Goby", "Reef Chromis", "Shrimp Goby", "Banded Butterfly", "Queen Angelfish", "Jennifer Dottyback", "Longnose Butterfly", "Sushi Cardinal", "Kau Cardinal", "Lobster", "Loggerhead Turtle", "Bumblebee Grouper", "Boa Angelfish", "Prismy Seahorse", "Enchant Stone", "Zoster Butterfly", "Blumato Clownfish", "Lochness Monster", "Starlight Manta Ray"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 1;
+	};
+	["Kohana Volcano"] = {
+		SpawnLocation = true;
+		Order = 3;
+		Cover = "rbxassetid://81420844408191";
+		Items = {"Magma Goby", "Firecoal Damsel", "Volcanic Basslet", "Lavafin Tuna", "Blueflame Ray", "Lava Butterfly", "Rockform Cardianl", "Volsail Tang", "Arowana", "Magma Shark", "Ancient Magma Whale", "Lava Sharpshead", "Lava Salmon", "Lava Sharptooth", "Magma Smeltfish", "Lava Tailfish", "Lava Tuna", "Magma Crab", "Magma Piranha", "Magma Pufferfish", "Magmajaw"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.8;
+	};
+	["Volcanic Cavern"] = {
+		NoDisplay = true;
+		Hidden = true;
+		SpawnLocation = true;
+		Order = 4;
+		Cover = "";
+		Items = {"Magma Ptychodus", "Magma Eel", "Magma Tail Fish", "Magma Goby", "Firecoal Damsel", "Volcanic Basslet", "Lavafin Tuna", "Blueflame Ray", "Lava Butterfly", "Rockform Cardianl", "Volsail Tang", "Arowana", "Magma Shark", "Ancient Magma Whale", "Lava Sharpshead", "Lava Salmon", "Lava Sharptooth", "Magma Smeltfish", "Lava Tailfish", "Lava Tuna", "Magma Crab", "Magma Piranha", "Magma Swordfish", "Magma Pufferfish", "Magmajaw", "Nine Tailed Fish"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.3;
+	};
+	["Coral Reefs"] = {
+		SpawnLocation = true;
+		Order = 5;
+		Cover = "rbxassetid://71296896753311";
+		Items = {"Conch Shell", "Sea Shell", "Salmon", "Coral", "Corazon Damsel", "Orangy Goby", "Specked Butterfly", "Tricolore Butterfly", "White Clownfish", "Panther Grouper", "Scissortail Dartfish", "Domino Damsel", "Maze Angelfish", "Blue Lobster", "Hawks Turtle", "Starjam Tang", "Greenbee Grouper", "Enchant Stone", "Sail Tang", "Flat Fish", "Flying Fish", "Lion Fish", "Luminous Fish", "Pink Dolphin", "Saw Fish", "Starfish", "Wahoo", "Eerie Shark", "Monster Shark", "Antique Cup"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.8;
+	};
+	["Esoteric Depths"] = {
+		SpawnLocation = true;
+		Order = 6;
+		Cover = "rbxassetid://70827963357705";
+		Items = {"Rockfish", "Void Eel", "Coal Tang", "Ash Basslet", "Charmed Tang", "Dark Tentacle", "Astra Damsel", "Enchanted Angelfish", "Magic Tang", "Abyss Seahorse", "Enchant Stone", "Fish Fossil", "Iron Domefin", "Blockmine Fish", "Turqoi Backfin", "Starlight Crab", "Hybodus Shark", "Thin Armor Shark", "Scare"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.55;
+	};
+	["Tropical Grove"] = {
+		SpawnLocation = true;
+		Order = 7;
+		Cover = "rbxassetid://77908303381120";
+		Items = {"Strippled Seahorse", "Orange Basslet", "Pufferfish", "Racoon Butterfly Fish", "Scissortail Dartfish", "Thresher Shark", "Great Whale", "Enchant Stone", "Smarty Mcfish", "Ruby", "King Mackerel", "Fossilized Shark"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.45;
+	};
+	["Crater Island"] = {
+		SpawnLocation = true;
+		Order = 8;
+		Cover = "rbxassetid://91202432476960";
+		Items = {"Frostborn Shark", "Plasma Shark", "Axolotl", "Silver Tuna", "Pilot Fish", "Patriot Tang", "Red Snapper", "Parrot Fish", "Hermit Crab", "Catfish", "Sheepshead Fish", "Coney Fish", "Blackcap Basslet", "Plasma Serpent"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.35;
+	};
+	["Lost Isle"] = {
+		Hidden = true;
+		Order = 10;
+		Cover = "rbxassetid://134411025211886";
+		Items = {"Dead Fish", "Skeleton Fish", "Swordfish"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.15;
+	};
+	["Treasure Room"] = {
+		SpawnLocation = true;
+		Order = 11;
+		Cover = "rbxassetid://79238405720201";
+		Items = {"Dead Fish", "Skeleton Fish", "Swordfish", "Viperfish", "Vampire Squid", "Spotted Lantern Fish", "Monk Fish", "Jellyfish", "Synodontis", "Fang Tooth Fish", "Armor Catfish", "Blob Fish", "Angler Fish", "Deep Sea Crab", "King Crab", "Queen Crab", "Antique Watch", "Ruby"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.15;
+	};
+	["Sisyphus Statue"] = {
+		SpawnLocation = true;
+		Order = 11;
+		Cover = "rbxassetid://117010035055721";
+		Items = {"Electric Eel", "Boar Fish", "Dark Eel", "Viperfish", "Vampire Squid", "Spotted Lantern Fish", "Monk Fish", "Jellyfish", "Liar Nose Fish", "Synodontis", "Fang Tooth Fish", "Armor Catfish", "Blob Fish", "Angler Fish", "Deep Sea Crab", "Giant Squid", "Robot Kraken", "Pearl", "Panther Eel", "Cryoshade Glider"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.15;
+	};
+	["Ancient Jungle"] = {
+		SpawnLocation = true;
+		Order = 12;
+		Cover = "rbxassetid://114125347913390";
+		Items = {"King Jelly", "Mosasaur Shark", "Green Gillfish", "Parrot Blopfish", "Ancient Arapaima", "Sacred Guardian Squid", "Sophisticated Angler", "Crocodile", "Temple Spokes Tuna", "Skeleton Angler Fish", "Spear Guardian", "Manoai Statue Fish", "Goliath Tiger", "Abyshorn Fish", "Beanie Leedsicheye", "Drippy Tucanare", "Freshwater Piranha", "Angler Piranha", "Mossy Fishlet", "Parrot Fish", "Red Goatfish", "Runic Wispeye", "Sail Fish", "Temple Spokes Tuna", "Viperangler Fish", "Water Snake", "Waveback Fish", "Zebra Snakehead", "Thinkler Fish"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.1;
+	};
+	["Sacred Temple"] = {
+		SpawnLocation = true;
+		Order = 13;
+		Cover = "rbxassetid://138116765059672";
+		Items = {"Viridis Lurker", "Bone Whale", "Elshark Gran Maja", "Ancient Arapaima", "Sacred Guardian Squid", "Crocodile", "Temple Spokes Tuna", "Skeleton Angler Fish", "Spear Guardian", "Manoai Statue Fish", "Goliath Tiger", "Abyshorn Fish", "Beanie Leedsicheye", "Drippy Tucanare", "Freshwater Piranha", "Angler Piranha", "Mossy Fishlet", "Parrot Fish", "Red Goatfish", "Runic Wispeye", "Sail Fish", "Temple Spokes Tuna", "Viperangler Fish", "Water Snake", "Waveback Fish", "Zebra Snakehead"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.1;
+	};
+	["Underground Cellar"] = {
+		Order = 14;
+		Cover = "rbxassetid://123397071995263";
+		Items = {"Ancient Whale", "Crystal Salamander", "Ancient Arapaima", "Sacred Guardian Squid", "Lunar Crescent Fish", "Crocodile", "Skeleton Angler Fish", "Spear Guardian", "Manoai Statue Fish", "Goliath Tiger", "Abyshorn Fish", "Beanie Leedsicheye", "Drippy Tucanare", "Freshwater Piranha", "Angler Piranha", "Mossy Fishlet", "Parrot Fish", "Red Goatfish", "Runic Wispeye", "Sail Fish", "Temple Spokes Tuna", "Viperangler Fish", "Water Snake", "Waveback Fish", "Zebra Snakehead"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.1;
+	};
+	["Ancient Ruin"] = {
+		SpawnLocation = true;
+		Order = 10001;
+		Cover = "rbxassetid://105051030290819";
+		Items = {"Elshark Gran Maja", "Gladiator Shark", "Primordial Octopus", "Cavern Dweller", "Ancient Squid", "Runic Squid", "Sea Crustacean", "Runic Sea Crustacean", "Flying Manta", "Primal Axolotl", "Runic Axolotl", "Primal Lobster", "Runic Lobster", "Ancient Pufferfish", "Blobby Shieldfish", "Angrylion Fish", "Boney Eel", "Pirate Blue Lobster", "Toothy Fish", "Night Glider Fish", "Wing Parrotfish", "Foxtrot Koanfish", "Doober Fish", "Flatheaded Whale Shark", "Baby Shrimp", "Sona Fin Fish", "Evolved Enchant Stone"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.2;
+	};
+	["Pirate Treasure Room"] = {
+		Order = 10003;
+		Cover = "rbxassetid://100389163183290";
+		Items = {"Zebra Striped Fish", "Vineback Pike", "Treasure Crab", "Sunstripe Reef Fish", "Sunband Fish", "Striped Beakfish", "Starry Nights Sawfish", "Starfish", "Spotted Grouper", "Solarflare Koi", "Scarrock Mudfish", "Sailor’s Bluefish", "Sailor Crab", "Rippleveil", "Reef Minnow", "Reef Bluefish", "Pirate Megalodon", "Pirate Sailfish", "Pirate Dreadfin", "Petalfish", "Parrot Fish", "Komodo Dragon", "Goblin Shark", "Cutlass Runner", "Clay Reef Fish", "Captain Pufferfish", "Blueface Sunfish", "Black Tide Shrimp", "Banditfish"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.3;
+	};
+	["Pirate Cove"] = {
+		SpawnLocation = true;
+		Order = 10002;
+		Cover = "rbxassetid://87563835653014";
+		Items = {"Zebra Striped Fish", "Vineback Pike", "Treasure Crab", "Sunstripe Reef Fish", "Sunband Fish", "Striped Beakfish", "Spotted Grouper", "Solarflare Koi", "Scarrock Mudfish", "Sailor’s Bluefish", "Sailor Crab", "Rippleveil", "Reef Minnow", "Reef Bluefish", "Pirate Megalodon", "Pirate Sailfish", "Pirate Dreadfin", "Petalfish", "Parrot Fish", "Komodo Dragon", "Guttenfang", "Cutlass Runner", "Clay Reef Fish", "Captain Pufferfish", "Blueface Sunfish", "Black Tide Shrimp", "Banditfish"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.3;
+	};
+	["Crystal Depths"] = {
+		Order = 10005;
+		Cover = "rbxassetid://81089536288711";
+		Items = {"Elpirate Gran Maja", "Cursed Kraken", "Voidlight Deepfish", "Abyr Squid", "Amethyst Snapper", "Bioluminescent Manta Ray", "Biolumiscent Octopus", "Blossom Jelly", "Blue Sea Dragon", "Brinehead Fish", "Crystal Pufferfish", "Emberfin Pike", "Flying Cavern Fish", "Glowspore Toad", "Moonfish", "Nebble Fish", "Offshore Herald", "Sapphyra", "Slipstream Fish", "Spine Eel", "Star Snail", "Stonebelly Fish"};
+		Variants = {"Crystalized"};
+		BaseLuck = 0;
+		ClickPowerMultiplier = 0.3;
+	};
+}
+local any_Copy_result1_2 = TableUtil.Copy(module["Pirate Cove"], true)
+any_Copy_result1_2.Order = 1000000
+any_Copy_result1_2.Cover = "rbxassetid://73337807125399"
+any_Copy_result1_2.NoDisplay = true
+any_Copy_result1_2.Variants = {"Leviathan Rage"}
+local table_find_result1 = table.find(any_Copy_result1_2.Items, "Pirate Megalodon")
+if table_find_result1 then
+	table.remove(any_Copy_result1_2.Items, table_find_result1)
+end
+table.insert(any_Copy_result1_2.Items, "Leviathan")
+module["Leviathan's Den"] = any_Copy_result1_2
+local any_Copy_result1_3 = TableUtil.Copy(module.Ocean, true)
+any_Copy_result1_3.Order = 1000000
+any_Copy_result1_3.Cover = ""
+any_Copy_result1_3.ClickPowerMultiplier = 0.7
+any_Copy_result1_3.NoDisplay = true
+table.insert(any_Copy_result1_3.Items, "Starry Night Whale")
+table.insert(any_Copy_result1_3.Items, "New Years Axolotl")
+table.insert(any_Copy_result1_3.Items, "New Years Clownfish")
+table.insert(any_Copy_result1_3.Items, "New Years Goby")
+table.insert(any_Copy_result1_3.Items, "New Years Grouper")
+table.insert(any_Copy_result1_3.Items, "New Years Lobster")
+table.insert(any_Copy_result1_3.Items, "New Years Jellyfish")
+table.insert(any_Copy_result1_3.Items, "New Years Seahorse")
+table.insert(any_Copy_result1_3.Items, "New Years Pufferfish")
+table.insert(any_Copy_result1_3.Items, "New Years Whale Shark")
+module["2026 Event"] = any_Copy_result1_3
+local any_Copy_result1 = TableUtil.Copy(module.Ocean, true)
+any_Copy_result1.Order = 1000000
+any_Copy_result1.Cover = ""
+any_Copy_result1.ClickPowerMultiplier = 0.7
+any_Copy_result1.NoDisplay = true
+any_Copy_result1.SpawnLocation = false
+any_Copy_result1.Items = TableUtil.Extend(any_Copy_result1.Items, module.Kohana.Items)
+any_Copy_result1.Items = TableUtil.Extend(any_Copy_result1.Items, module["Kohana Volcano"].Items)
+module["Volcano Eruption"] = any_Copy_result1
+return module
