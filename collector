@@ -1,1 +1,1706 @@
-local a="NEW TRADE - V4.6.9"local b=game:GetService("ReplicatedStorage")local c=game:GetService("RunService")local d=game:GetService("Players")local e=d.LocalPlayer;local f=e.Character or e.CharacterAdded:Wait()local g=f:WaitForChild("HumanoidRootPart")local h=game:GetService("StarterGui")local i=e:WaitForChild("PlayerGui")local j=b:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild("net")local k=require(b.Packages.Replion).Client;local l=require(b.Shared.ItemUtility)local m=require(b.Shared.TierUtility)local n=b:WaitForChild("Variants")local o=false;local p=false;local q=true;local r=false;local s=tick()local t="List Transaksi: "local u="50000"local v=283;local w=""local x=0;local y=0;local z=tick()local A=""local B=0;local C=0;local D=""local E=false;local F=Instance.new("ScreenGui")F.Name="! @HAYA"F.DisplayOrder=999;F.Parent=i;local G=nil;local H={}local I=1;for J,K in ipairs(j:GetDescendants())do if K:IsA("RemoteEvent")or K:IsA("RemoteFunction")then H[I]={no=I,path=K.Name,name=K.ClassName}I=I+1 end end;local function L(string)for J,K in pairs(H)do if K.path:find(string,1,true)then print("Found",H[K.no].path)return H[K.no+1].path end end end;local M=L("FavoriteItem")local N=L("EquipItem")local O=L("UnequipItem")local P=L("EquipToolFromHotbar")local Q=L("SpawnTotem")local R=L("SellAllItems")local S=L("FishCaught")local T=L("ObtainedNewFishNotification")local U=L("AwaitTradeResponse")local V=L("InitiateTrade")local W=L("UpdateAutoSellThreshold")local X=L("TextNotification")local Y=L("ChangeSetting")local Z=L("SendTradeOffer")local _=L("AddItem")local a0=L("SetReady")local a1=L("ConfirmTrade")local a2=L("AcceptTradeOffer")local a3=L("TradeOfferReceived")local a4=L("TradeCompleted")local a5=L("DeclineTradeOffer")local a6=L("ConfirmCrafting")local a7=L("TradeStarted")local a8=L("CancelTrade")local a9=Instance.new("Frame")a9.Size=UDim2.new(0,600,0,400)a9.Position=UDim2.new(0,10,0,0)a9.BackgroundColor3=Color3.fromRGB(255,255,255)a9.BackgroundTransparency=0.1;a9.BorderSizePixel=0;a9.Parent=F;local aa=Instance.new("Frame")aa.Size=UDim2.new(0.35,0,1,-10)aa.Position=UDim2.new(0,5,0,5)aa.BackgroundColor3=Color3.fromRGB(200,200,200)aa.Parent=a9;local ab=Instance.new("TextButton")ab.Size=UDim2.new(0,25,0,25)ab.Position=UDim2.new(1,-30,0,5)ab.Text="X"ab.TextColor3=Color3.new(0,0,0)ab.BackgroundColor3=Color3.fromRGB(194,62,62)ab.Parent=aa;local ac=Instance.new("TextButton")ac.Size=UDim2.new(0,50,0,25)ac.Position=UDim2.new(1,-80,0,5)ac.Text="SHOW"ac.TextColor3=Color3.new(0,0,0)ac.BackgroundColor3=Color3.fromRGB(214,188,72)ac.Parent=aa;local ad=Instance.new("TextButton")ad.Size=UDim2.new(0,25,0,25)ad.Position=UDim2.new(0,90,0,5)ad.Text="3D"ad.TextColor3=Color3.new(1,1,1)ad.BackgroundColor3=Color3.fromRGB(202,50,151)ad.Parent=aa;local ae=Instance.new("TextButton")ae.Text="CMD"ae.Size=UDim2.new(0,60,0,25)ae.Position=UDim2.new(0,10,0,5)ae.BackgroundColor3=Color3.fromRGB(148,148,148)ae.TextColor3=Color3.new(0,0,0)ae.Font=Enum.Font.RobotoMono;ae.TextSize=16;ae.Parent=aa;ab.MouseButton1Click:Connect(function()p=true;q=false;F:Destroy()end)local af=Instance.new("TextLabel")af.Size=UDim2.new(1,0,0,80)af.BackgroundTransparency=1;af.Text="HayBot "..a;af.TextXAlignment=Enum.TextXAlignment.Left;af.TextColor3=Color3.new(0,0,0)af.Font=Enum.Font.RobotoMono;af.TextSize=16;af.Parent=aa;local ag=Instance.new("ScrollingFrame")ag.Size=UDim2.new(1,-10,0.8,0)ag.Position=UDim2.new(0,5,0,65)ag.CanvasSize=UDim2.new(0,0,0,0)ag.ScrollBarThickness=6;ag.BackgroundTransparency=0.7;ag.Parent=aa;local ah=Instance.new("UIListLayout")ah.Padding=UDim.new(0,5)ah.Parent=ag;ah:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()ag.CanvasSize=UDim2.new(0,0,0,ah.AbsoluteContentSize.Y+10)end)local ai=Instance.new("Frame")ai.Size=UDim2.new(0.6,0,1,-10)ai.Position=UDim2.new(0.4,0,0,5)ai.BackgroundTransparency=1;ai.Parent=a9;local aj=Instance.new("TextLabel")aj.Text="Statistik Info\n\nNONE"aj.Size=UDim2.new(1,0,0,80)aj.Position=UDim2.new(0,0,0,20)aj.TextXAlignment=Enum.TextXAlignment.Left;aj.BackgroundTransparency=1;aj.TextColor3=Color3.new(0,0,0)aj.Font=Enum.Font.RobotoMono;aj.TextSize=20;aj.Parent=ai;local ak=Instance.new("TextBox")ak.Text="jumlah"ak.PlaceholderText=""ak.Size=UDim2.new(0,60,0,25)ak.Position=UDim2.new(0,100,0,120)ak.BackgroundColor3=Color3.fromRGB(210,210,210)ak.TextColor3=Color3.new(0,0,0)ak.Font=Enum.Font.RobotoMono;ak.TextSize=16;ak.Parent=ai;local al=Instance.new("TextBox")al.Text="id"al.PlaceholderText="fav id"al.Size=UDim2.new(0,50,0,25)al.Position=UDim2.new(0,170,0,120)al.BackgroundColor3=Color3.fromRGB(210,210,210)al.TextColor3=Color3.new(0,0,0)al.Font=Enum.Font.RobotoMono;al.TextSize=16;al.Parent=ai;local am=Instance.new("TextLabel")am.Text="Player:"am.Size=UDim2.new(1,0,0,20)am.Position=UDim2.new(0,0,0,310)am.BackgroundTransparency=1;am.TextXAlignment=Enum.TextXAlignment.Left;am.TextColor3=Color3.new(0,0,0)am.Font=Enum.Font.RobotoMono;am.TextSize=18;am.Parent=ai;local an=Instance.new("TextButton")an.Text="Collect: OFF"an.Size=UDim2.new(0,100,0,25)an.Position=UDim2.new(0,0,0,330)an.BackgroundColor3=Color3.fromRGB(100,100,100)an.TextColor3=Color3.new(1,1,1)an.Font=Enum.Font.RobotoMono;an.TextSize=16;an.Parent=ai;local ao=Instance.new("TextButton")ao.Text="Accept: OFF"ao.Size=UDim2.new(0,100,0,25)ao.Position=UDim2.new(0,120,0,330)ao.BackgroundColor3=Color3.fromRGB(100,100,100)ao.TextColor3=Color3.new(1,1,1)ao.Font=Enum.Font.RobotoMono;ao.TextSize=16;ao.Parent=ai;local ap=Instance.new("TextButton")ap.Text="TRADE"ap.Size=UDim2.new(0,60,0,25)ap.Position=UDim2.new(0,0,0,360)ap.BackgroundColor3=Color3.fromRGB(122,190,12)ap.TextColor3=Color3.new(1,1,1)ap.Font=Enum.Font.RobotoMono;ap.TextSize=16;ap.Parent=ai;local aq=Instance.new("TextButton")aq.Text="List"aq.Size=UDim2.new(0,60,0,25)aq.Position=UDim2.new(0,130,0,360)aq.BackgroundColor3=Color3.fromRGB(47,136,106)aq.TextColor3=Color3.new(1,1,1)aq.Font=Enum.Font.RobotoMono;aq.TextSize=16;aq.Parent=ai;local ar=Instance.new("TextButton")ar.Text="ZOOM"ar.Size=UDim2.new(0,60,0,25)ar.Position=UDim2.new(0,65,0,360)ar.BackgroundColor3=Color3.fromRGB(0,89,255)ar.TextColor3=Color3.new(0,0,0)ar.Font=Enum.Font.RobotoMono;ar.TextSize=16;ar.Parent=ai;local as=Instance.new("TextButton")as.Text="STOP"as.Size=UDim2.new(0,60,0,25)as.Position=UDim2.new(0,250,0,360)as.BackgroundColor3=Color3.fromRGB(243,6,6)as.TextColor3=Color3.fromRGB(253,253,253)as.Font=Enum.Font.RobotoMono;as.TextSize=16;as.Parent=ai;local at=Instance.new("TextButton")at.Text="🧹"at.Size=UDim2.new(0,30,0,25)at.Position=UDim2.new(0,305,0,120)at.BackgroundColor3=Color3.fromRGB(172,172,172)at.TextColor3=Color3.new(1,1,1)at.Font=Enum.Font.RobotoMono;at.TextSize=16;at.Parent=ai;local au=Instance.new("TextBox")au.Text=u;au.PlaceholderText=""au.Size=UDim2.new(0,65,0,25)au.Position=UDim2.new(0,235,0,120)au.BackgroundColor3=Color3.fromRGB(210,210,210)au.TextColor3=Color3.new(0,0,0)au.Font=Enum.Font.RobotoMono;au.TextSize=16;au.Parent=ai;local av=Instance.new("ScrollingFrame")av.Size=UDim2.new(1,-10,0,150)av.Position=UDim2.new(0,0,0,160)av.BackgroundColor3=Color3.fromRGB(255,255,255)av.ScrollBarThickness=8;av.CanvasSize=UDim2.new(0,0,0,0)av.Parent=ai;av.BackgroundTransparency=0.3;local aw=Instance.new("UIListLayout")aw.Parent=av;aw.SortOrder=Enum.SortOrder.LayoutOrder;aw:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()av.CanvasSize=UDim2.new(0,0,0,aw.AbsoluteContentSize.Y)av.CanvasPosition=Vector2.new(0,av.CanvasSize.Y.Offset)end)local ax=Instance.new("TextLabel")ax.Text="detail"ax.Size=UDim2.new(0,0,0,0)ax.Position=UDim2.new(0,240,0,320)ax.TextColor3=Color3.new(0,0,0)ax.Font=Enum.Font.RobotoMono;ax.TextSize=16;ax.Parent=ai;local ay=Instance.new("TextButton")ay.Size=UDim2.new(0,80,0,25)ay.Position=UDim2.new(0,0,0,120)ay.BackgroundColor3=Color3.fromRGB(141,61,161)ay.TextColor3=Color3.new(1,1,1)ay.Font=Enum.Font.Roboto;ay.TextScaled=true;ay.Text="MENU"ay.Parent=ai;local az=Instance.new("Frame")az.Size=UDim2.new(0,200,0,0)az.Position=UDim2.new(0,0,0,150)az.BackgroundColor3=Color3.fromRGB(60,60,60)az.BorderSizePixel=1;az.Visible=false;az.ClipsDescendants=true;az.Parent=ai;local aA={"Mitik All","Mitik BIG","ALL MYTHIC","-","EVOLVED","RUBY LOCHNESS","accept trade","cancel trade","","VIPERFISH","-","CUSTOM ID","INDEX SECRET","MASTER","MAJA","QUEEN CRAB","Gladiator","KING CRAB","FACE CUSTOM","JOB ID","JOINER","PACKET LIST","Find Packet","trade_new"}local function aB(aC)opsi(aC)end;local aD=6;local aE=30;local aF=120;local aG=math.ceil(#aA/aD)az.Size=UDim2.new(0,aF*aG,0,0)for aH,aI in ipairs(aA)do local aJ=math.floor((aH-1)/aD)local aK=(aH-1)%aD;local aL=Instance.new("TextButton")aL.Size=UDim2.new(0,aF,0,aE)aL.Position=UDim2.new(0,aJ*aF,0,aK*aE)aL.BackgroundColor3=Color3.fromRGB(80,80,80)aL.TextColor3=Color3.new(1,1,1)aL.Font=Enum.Font.Roboto;aL.TextScaled=true;aL.Text=aI;aL.Parent=az;aL.MouseEnter:Connect(function()aL.BackgroundColor3=Color3.fromRGB(100,100,100)end)aL.MouseLeave:Connect(function()aL.BackgroundColor3=Color3.fromRGB(80,80,80)end)aL.MouseButton1Click:Connect(function()ay.Text=aI.." ▼"az:TweenSize(UDim2.new(0,aF*aG,0,0),"Out","Sine",0.2,true)task.delay(0.2,function()az.Visible=false end)aB(aH)end)end;ay.MouseButton1Click:Connect(function()if az.Visible then az:TweenSize(UDim2.new(0,aF*aG,0,0),"Out","Sine",0.2,true)task.delay(0.2,function()az.Visible=false end)else az.Visible=true;local aM=math.min(#aA,aD)*aE;az:TweenSize(UDim2.new(0,aF*aG,0,aM),"Out","Sine",0.2,true)end end)local function aN(aO)local aP=Instance.new("TextLabel")aP.Size=UDim2.new(1,15,0,15)aP.BackgroundTransparency=1;aP.Text=tostring(aO)aP.TextSize=16;aP.TextColor3=Color3.fromRGB(19,19,19)aP.Font=Enum.Font.RobotoMono;aP.TextXAlignment=Enum.TextXAlignment.Left;aP.Parent=av;print("PESAN: ",aO)at.MouseButton1Click:Connect(function()aP:Destroy()ax.Text="Reset"ak.Text=""end)end;local function aQ()print("ENABLE ANTI AFK")if getconnections then for J,aR in pairs(getconnections(e.Idled))do if aR.Disable then aR:Disable()elseif aR.Disconnect then aR:Disconnect()end end else warn("Executor tidak mendukung getconnections()")end end;local function aS(aT)local aU=math.floor(aT/3600)local aV=math.floor(aT%3600/60)local aW=math.floor(aT%60)return string.format("%02d:%02d:%02d",aU,aV,aW)end;local function aX(aY)local aZ=n:FindFirstChild(aY)if not aZ then return nil end;local a_,b0=pcall(require,aZ)if not a_ then warn("Gagal memuat module untuk "..aY..": "..tostring(b0))return nil end;return b0 end;local b1="00:00:00"local b2=false;local function b3()b2=not b2;if b2==true then c:Set3dRenderingEnabled(false)else c:Set3dRenderingEnabled(true)end end;local b4=nil;local b5=nil;local b6=game:GetService("HttpService")local b7="settings.json"local b8={auto_trade=false,auto_accept=false}local function b9()if isfile and isfile(b7)then local b0=readfile(b7)local ba=b6:JSONDecode(b0)if ba then b8=ba;b4=b8.auto_trade;b5=b8.auto_accept end else aN("No settings file found, using default.")end end;b9()local function bb()if writefile then local b0=b6:JSONEncode(b8)writefile(b7,b0)else aN("❌ writefile() not supported in this environment.")end end;local bc={}for J,aZ in pairs(b:WaitForChild("Items"):GetDescendants())do if aZ:IsA("ModuleScript")then local a_,b0=pcall(require,aZ)if a_ and b0.Data.Type=="Fish"then bc[b0.Data.Id]={harga=b0.SellPrice,tier=b0.Data.Tier,nama=b0.Data.Name,id=b0.Data.Id}end end end;local function bd(be,bf)local bg=10^(bf or 0)return math.floor(be*bg+0.5)/bg end;local function bh(aU)if aU then local bi;local bj;if aU<999 then bi=tostring(aU)elseif aU<1000000 then bj=aU/1000;bi=tostring(bd(bj,2)).." K"else bj=aU/1000000;bi=tostring(bd(bj,2)).." M"end;return bi end end;local function bk(bl)if bl==6 then return"MYTHIC"elseif bl==7 then return"SECRET"end end;local function bm(aC,bn,bo)local bp=e.Character or e.CharacterAdded:Wait()local g=bp:FindFirstChild("HumanoidRootPart")if g then g.CFrame=CFrame.new(Vector3.new(aC,bn,bo))end end;local function bq(br)if g then local bs=g.Position;local bt=math.rad(br)local bu=Vector3.new(math.sin(bt),0,math.cos(bt))g.CFrame=CFrame.lookAt(bs,bs+bu)end;task.wait(2)end;local function bv(bw)local bx=d:FindFirstChild(bw)if not bx then return nil,"player not found"end;local bp=bx.Character or bx.CharacterAdded:Wait()local by=bp:FindFirstChild("HumanoidRootPart")if not by then return nil,"HumanoidRootPart not found"end;return by.Position end;local function bz()local bA=Instance.new("Part")bA.Name="LocalPlatform"bA.Size=Vector3.new(6,0.2,6)bA.Anchored=true;bA.CanCollide=true;bA.Transparency=0.3;bA.Color=Color3.new(1,0,0)bA.Parent=workspace;local function bB()bA.CFrame=CFrame.new(g.Position.X,g.Position.Y-3,g.Position.Z)end;bB()g:GetPropertyChangedSignal("Position"):Connect(bB)end;e.CharacterAdded:Connect(bz)if e.Character then bz()end;local function bC()local bD=game:GetService("Lighting")local bE=workspace:FindFirstChildOfClass("Terrain")local bF=game:GetService("MaterialService")b8().Rendering.QualityLevel=Enum.QualityLevel.Level01;bD.GlobalShadows=false;bD.Brightness=1;bD.EnvironmentDiffuseScale=0;bD.EnvironmentSpecularScale=0;for J,bG in ipairs(bD:GetChildren())do if bG:IsA("PostEffect")then bG.Enabled=false end end;if bE then bE.WaterWaveSize=0;bE.WaterWaveSpeed=0;bE.WaterReflectance=0;bE.WaterTransparency=1 end;bF.Use2022Materials=false end;local b0=k:WaitReplion("Data")local function bH()return b0:GetExpect({"Inventory"})end;local bI={}local bJ={}local bK={}local bL={}local bM={}local bN={}local bO={}local bP=163;local bQ="https://hayfishit.dpdns.org/collector_update"local function bR(bS)task.spawn(function()local bT,bU=pcall(function()return request({Url=bS,Method="GET"})end)if bT and bU then print("OK:",bU.StatusCode)aN("kirim data berhasil")else warn("Request error:",bU)end end)end;local function bV()bI={}bJ={}bK={}bL={}bM={}C=0;bO={}bN={}local bW=0;local bX=0;local bY=0;local bZ=0;local b_=0;local c0=0;local c1=0;local c2=0;local c3=0;local c4=0;local c5=bH()for c6,c7 in pairs(c5)do if c6=="Items"then for aH,c8 in ipairs(c7)do local c9=l:GetItemData(c8.Id)or l:GetBaitData(c8.Id)or l:GetPotionData(c8.Id)local ca="None"if c9 and c9.Data and c9.Data.Tier then local cb=m:GetTier(c9.Data.Tier)if cb and cb.Name then ca=string.gsub(cb.Name,"%s+","")end end;local cc=c8.Metadata and c8.Metadata.Weight or 0;local cd=c8.Metadata and c8.Metadata.VariantId or nil;local ce=0;local cf=""local cg=""local ch=""local ci=c9.Data.Name;if c9.Data.Type=="Enchant Stones"then if c8.Id==10 then A=c8.UUID;B=c8.Quantity elseif c8.Id==558 then w=c8.UUID;x=c8.Quantity end end;if c9.Data.Type=="Fish"and c9.SellPrice and cc~=0 then ce=c9.SellPrice;cf=""if cc>c9.Weight.Default.Max then cf="*BIG*"local cj=(cc-c9.Weight.Default.Max)/(c9.Weight.Big.Max-c9.Weight.Default.Max)ce=ce*(1+cj)else cf=""end;if c8.Metadata.Shiny==true then ce=ce+ce*1.5;cg="*SHINY*"end;if cd then local ck=aX(cd)if ck then ch=string.gsub(ck.Data.Name,"%s+","")if c8.Metadata.Shiny==true then ce=ce+ce*ck.SellMultiplier*1.5 else ce=ce+ce*ck.SellMultiplier end end end;if ca=="SECRET"or c8.Id==158 or c8.Id==243 then bN[c3]={nama=ci,id=c8.Id,uuid=tostring(c8.UUID),harga=ce,berat=tostring(cc),mutasi=cd}c3=c3+1 end;if c8.Id==243 and cd=="Gemstone"then D=tostring(c8.UUID)end;if ca=="SECRET"or c8.Id==158 then if cd~=nil and cd~="Albino"and cd~="Ghost"and cd~="Stone"and cd~="Sandy"and cd~="Gold"and cd~="Frozen"then else bM[ci]=(bM[ci]or 0)+1 end;bW=bW+ce;bL[bX]={nama=ci,id=c8.Id,uuid=tostring(c8.UUID),harga=ce,berat=tostring(cc),mutasi=cd}bX=bX+1 end;if ca=="Mythic"then if cd~=nil and cd~="Albino"and cd~="Ghost"and cd~="Stone"and cd~="Sandy"and cd~="Gold"and cd~="Frozen"then else bY=bY+ce;bK[c0]={nama=ci,id=c8.Id,uuid=tostring(c8.UUID),harga=ce,berat=tostring(cc),mutasi=cd}c0=c0+1;u=au.Text;if ce>tonumber(u)then bZ=bZ+ce;bI[c1]={nama=ci,id=c8.Id,uuid=tostring(c8.UUID),harga=ce,berat=tostring(cc),mutasi=cd}c1=c1+1 else b_=b_+ce;bJ[c2]={nama=ci,id=c8.Id,uuid=tostring(c8.UUID),harga=ce,berat=tostring(cc),mutasi=cd}c2=c2+1 end end end;if c8.Id==v then if v==269 and cd~=nil then else if cd~=nil and cd~="Albino"and cd~="Ghost"and cd~="Stone"and cd~="Sandy"and cd~="Gold"and cd~="Frozen"then else if v==136 and cc>13000 then aN("skip frostborn "..tostring(cc))else bO[c4]={nama=ci,id=c8.Id,uuid=tostring(c8.UUID),harga=ce,berat=tostring(cc),mutasi=cd}c4=c4+1 end end end end;if o==true then local cl=aH..". "..ch.."->"..cf.." "..cg..ci.." |$ "..bh(ce)aN(cl)end;C=C+1 end end end end;local cm="Secret : "..bh(bW).." | "..bX.." \n".."Mitik All: "..bh(bY).." | "..c0 .." \n".."Mitik Big: "..bh(bZ).." | "..c1 .." \n".."Mitik Small: "..bh(b_).." | "..c2 .." \n".."TOTAL IKAN: "..C.." \n".." Evo: "..tostring(x)aj.Text=cm end;local function cn(co)aN("send handsake ke "..co)local cp=d:FindFirstChild(co)j:WaitForChild(Z):InvokeServer(cp)end;local function cq(cp,cr,cs,ct)if ct=="master"then cr=bN;cs=#bN end;local cu=20;aN("total trade: "..tostring(cs))local cv=cs/cu;local cw=math.ceil(cv)or 1;aN("TOTAL BATCH: "..tostring(cw))local cx=0;bV()for aH=1,cw do print("BATCH KE ",aH)local cy=d:FindFirstChild(cp)if cy then cn(cy.Name)else aN("GAGAL : PLAYER TIDAK ADA")return end;for bn=1,10 do if E then break end;print("wait start trade ",E)task.wait(5)end;if E==false then aN("GAGAL : TIMEOUT MENU TRADE")return end;task.wait(1)y=0;local cz;while true do cx=cx+1;cz=cr[cx]if cz==nil then aN("list kosong / nil")break end;aN(tostring(cx)..". added item: "..cz.nama)j:WaitForChild(_):InvokeServer("Fish",cz.uuid)if cx%cu==0 or cx>=cs then aN("jumlah telah terpenuhi ")print("counter = ",cx)print("jumlah = ",cs)print("max_batch = ",cu)break end;task.wait(0.7)end;task.wait(5)aN("set ready")j:WaitForChild(a0):InvokeServer(true)task.wait(6)aN("confirm")print("step 2")for aH=1,5 do aN("send confirm")local cA=j:WaitForChild(a1):InvokeServer(true)task.wait(10)if cA then aN("confirm = true")break end end;task.wait(10)for cB=1,10 do if y==1 then aN("berhasil trade")break end;aN("wait status trade "..tostring(cB))task.wait(10)end;if y==0 then aN("GAGAL : STATUS TRADE 0")return end;aN("SELESAI "..tostring(cx))task.wait(5)end;aN("selesai semua trade ")end;local cC=false;ac.MouseButton1Click:Connect(function()if cC then ai.Visible=true;a9.BackgroundTransparency=0;aa.BackgroundTransparency=0;ag.Visible=true;cC=false else ai.Visible=false;a9.BackgroundTransparency=1;aa.BackgroundTransparency=1;ag.Visible=false;cC=true end end)as.MouseButton1Click:Connect(function()p=not p;if p then as.BackgroundColor3=Color3.fromRGB(109,0,0)aN("trade stopped ON")else as.BackgroundColor3=Color3.fromRGB(243,6,6)aN("trade stopped OFF")end end)local function cD()if b8.auto_trade then an.Text="Collect: ON"an.BackgroundColor3=Color3.fromRGB(74,158,74)else an.Text="Collect: OFF"an.BackgroundColor3=Color3.fromRGB(100,100,100)end;if b8.auto_accept then ao.Text="Accept: ON"ao.BackgroundColor3=Color3.fromRGB(74,158,74)else ao.Text="Accept: OFF"ao.BackgroundColor3=Color3.fromRGB(100,100,100)end end;local cE=b8.auto_trade;an.MouseButton1Click:Connect(function()b8.auto_trade=not b8.auto_trade;cE=b8.auto_trade;aN("setting: Auto Collect "..tostring(cE))bb()cD()end)local cF=b8.auto_accept;ao.MouseButton1Click:Connect(function()b8.auto_accept=not b8.auto_accept;cF=b8.auto_accept;aN("setting: Auto Accept "..tostring(cF))bb()cD()end)ad.MouseButton1Click:Connect(function()b3()end)aq.MouseButton1Click:Connect(function()for cG,cs in pairs(bM)do aN(cG.." : "..cs)end end)ae.MouseButton1Click:Connect(function()h:SetCore("DevConsoleVisible",true)end)ar.MouseButton1Click:Connect(function()local cs=tonumber(ak.Text)if cs==nil then cs=400 end;e.CameraMaxZoomDistance=cs end)local function cH()while true do local cI=tick()-z;cI=math.floor(cI*10+0.5)/10;if cI>75 then aN("!! timer lebih dari 75 sec !!")return end;am.Text="timer "..cI.." sec."task.wait(1)end end;local function cJ(ct)az.Visible=false;aN("trade mulai")bV()if ct=="fav"then aN("total: "..#bO)end;if not G then aN("❌ Pilih player dulu!")return end;local cs=tonumber(ak.Text)if ct=="master"then cs=999 end;if not cs or cs<=0 then aN("❌ Masukkan jumlah valid!")return end;aN("trade to "..G)cq(G,bO,cs,ct)end;aN("Collector GUI loaded.")local C=1;local cK=1;bV()local function cL(cG)aN("start auto collect")if cG then local bs,cM=bv(cG)if bs then local aC=bs.X;local bn=bs.Y;local bo=bs.Z;bm(aC,bn,bo)task.wait(5)local cy=d:FindFirstChild(cG)if cy then aN("kirim handshake")z=tick()cn(cy.Name)else print("player tidak ada")end end end end;local cN=j:WaitForChild(a4)cN.OnClientEvent:Connect(function(cO,cP,...)aN(cO)aN(cP)if cP:match("completed!")then y=1 end end)local function cQ(bw)local cR=Instance.new("TextButton")cR.Size=UDim2.new(1,-10,0,30)cR.BackgroundColor3=Color3.fromRGB(70,100,150)cR.Text=bw;cR.TextColor3=Color3.new(1,1,1)cR.Font=Enum.Font.RobotoMono;cR.TextSize=16;cR.Parent=ag;cR.MouseButton1Click:Connect(function()if G==bw then G=nil;cR.BackgroundColor3=Color3.fromRGB(70,100,150)am.Text="Player: -"else G=bw;am.Text=bw;cR.BackgroundColor3=Color3.fromRGB(200,80,80)aN("Selected: "..bw)local bs,cM=bv(bw)if bs then print("Posisi sekarang:",bs)local aC=bs.X;local bn=bs.Y;local bo=bs.Z;bm(aC,bn,bo)task.wait(5)end end end)end;for J,cS in ipairs(d:GetPlayers())do if cS~=e then cQ(cS.Name)end end;d.PlayerAdded:Connect(function(cS)if cS~=e then cQ(cS.Name)aN(cS.Name.." joined")end end)d.PlayerRemoving:Connect(function(cS)for J,cR in ipairs(ag:GetChildren())do if cR:IsA("TextButton")and cR.Text==cS.Name then cR:Destroy()end end;if G==cS.Name then G=nil;am.Text="Selected Player: -"end;aN(cS.Name.." left")end)local function cT(cp)print("start waiting")local cU,cV=bv(cp)if not cU then warn(cV)return end;local cW=1;while true do local bs,cX=bv(cp)if not bs then warn(cX)return end;local cY=(bs-cU).Magnitude;if cY<0.5 then print("menunggu...")else print("posisi sudah berubah, selisih:",cY)aN("Selesai")return end;if cW>30 then return end;cW=cW+1;task.wait(15)end end;ap.MouseButton1Click:Connect(function()aN("select handshake to "..G)local cy=d:FindFirstChild(G)if cy then aN("kirim handshake")z=tick()cn(cy.Name)cH()else print("player tidak ada")end end)if v then aN("set fav: "..bc[v].nama)end;function opsi(cZ)if cZ==1 then cJ("mitik_all")elseif cZ==2 then cJ("mitik_big")elseif cZ==3 then cJ("mitik_small")elseif cZ==4 then elseif cZ==5 then aN("total: "..tostring(x))cJ("evolved")elseif cZ==6 then v=228;bV()local c_=bO[1].uuid;local d0={}table.insert(d0,c_)table.insert(d0,D)if c_==nil or D==nil then aN("item nil")return end;print("total ruby dan lochness ",#d0)cq(G,d0,2)elseif cZ==7 then j:WaitForChild(a8):InvokeServer()elseif cZ==8 then local cR=game:GetService("Players").LocalPlayer.PlayerGui["! Trading"].Frame.Interior.Decline;for J,K in pairs(getconnections(cR.Activated))do K.Function()end elseif cZ==9 then elseif cZ==10 then bm(-3615,-267,-1581)bq(180)elseif cZ==11 then elseif cZ==12 then v=tonumber(al.Text)aN("set fav: "..bc[v].nama)aN("Total fav: "..#bO)cJ("fav")elseif cZ==13 then for d1,d2 in pairs(bc)do if d2.tier=="SECRET"then print(d2.nama,d2.harga,d2.tier,d2.id)aN(d2.nama.." > "..tostring(d2.id))end end elseif cZ==14 then cJ("master")elseif cZ==15 then v=269;aN("set fav: "..bc[v].nama)cJ("fav")elseif cZ==16 then v=187;aN("set fav: "..bc[v].nama)cJ("fav")elseif cZ==17 then v=359;aN("set fav: "..bc[v].nama)cJ("fav")elseif cZ==18 then v=158;aN("set fav: "..bc[v].nama)cJ("fav")elseif cZ==19 then local d3=tonumber(ak.Text)bq(d3)elseif cZ==20 then local d4=game.JobId;if setclipboard then setclipboard(d4)task.wait(1.5)aN("berhasil copy job id")else aN("gagal copy job id")end elseif cZ==21 then local d5=game:GetService("TeleportService")local d6=game.PlaceId;d5:TeleportToPlaceInstance(d6,al.Text,e)elseif cZ==22 then for J,K in pairs(H)do aN(K.no.." | "..K.path)end elseif cZ==23 then local d7=ak.Text;local d8=d7;for J,K in pairs(H)do if K.path:find(d8,1,true)then aN("Found")aN(K.no.."|"..K.path)end end elseif cZ==24 then cq()end end;aQ()cD()local d9=require(b.Controllers.BattlepassShopController)d9.Init=function()end;d9.Start=function()end;d9.PurchaseItem=function()end;local da=require(b.Controllers.FireflyController)da.Start=function()end;da.updateFireflies=function()end;da.assignTargetCFrame=function()end;local db=8;aN("Auto Play in: ")if q then for aH=1,db do local dc=db-aH;aN(dc)task.wait(1)end end;local dd=require(b.Controllers.PromptController)dd.DrawPrompt=function()return true end;local de=j:WaitForChild(a7)de.OnClientEvent:Connect(function(df,...)aN("incoming request")E=true;if b5 or cF then y=0;local dg=1;print("step 1")for aH=1,15 do aN("send ready ")task.wait(10)local dh=j:WaitForChild(a0):InvokeServer(true)if dh then aN("ready = true")dg=2;break end end;if dg==2 then print("step 2")for aH=1,5 do task.wait(10)aN("send confirm")local cA=j:WaitForChild(a1):InvokeServer(true)if cA then aN("confirm = true")dg=3;break end end end;if dg==3 then print("step 3")for aH=1,5 do if y==1 then aN("berhasil trade")break end;task.wait(10)end end;if y==0 then aN("gagal trade")if cE then j:WaitForChild(a8):InvokeServer()end end end end)print(b4)print(cE)print(b5)print(cF)if b4 and cE and b5 and cF then if q then if#d:GetPlayers()>6 then aN("PLAYER LEBIH DARI 6")else aN("trade sudah siap")bV()task.wait(2)aN("total ikan "..tostring(C))if C>4200 then aN("ikan penuh")return end;task.wait(1)b3()for J,cp in ipairs(d:GetPlayers())do if cp~=e then ax.Text=cp.Name;cL(cp.Name)cH()end end;aa.BackgroundColor3=Color3.fromRGB(127,0,255)end;aN("SELESAI SEMUA AUTO COLLECT")end end;local di=0;if q then j:WaitForChild(X).OnClientEvent:Connect(function(b0)if b0 and b0.Text=="Trade completed!"then di=di+1;local cz="Total : "..tostring(di)ax.Text=cz end end)end;while q do if r then b1=aS(math.floor(tick()-s))am.Text=b1;task.wait(1)else task.wait(50)end end
+local versi = "NEW TRADE - V4.6.9"
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local root = character:WaitForChild("HumanoidRootPart")
+local StarterGui = game:GetService("StarterGui")
+
+local gui = player:WaitForChild("PlayerGui")
+local Net =
+    ReplicatedStorage:WaitForChild("Packages"):WaitForChild("_Index"):WaitForChild("sleitnick_net@0.2.0"):WaitForChild(
+    "net"
+)
+local Client = require(ReplicatedStorage.Packages.Replion).Client
+local ItemUtility = require(ReplicatedStorage.Shared.ItemUtility)
+local TierUtility = require(ReplicatedStorage.Shared.TierUtility)
+local Variants = ReplicatedStorage:WaitForChild("Variants")
+
+local dump_inventory = false
+local trade_stop = false
+local running = true
+local start_timer = false
+local startscript = tick()
+local printer = "List Transaksi: "
+local set_harga = "50000"
+local fav_item = 283
+local evolved_uuid = ""
+local evolved_jumlah = 0
+
+local status_trade = 0
+local update_time = tick()
+local stone_uuid = ""
+local stone_jumlah = 0
+local total_ikan = 0
+local ruby = ""
+local start_trade = false
+-- ScreenGui utama
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "! @HAYA"
+screenGui.DisplayOrder = 999
+screenGui.Parent = gui
+local selectedPlayer = nil
+
+--//ANCHOR DECRYPT_STRING
+local net_index = {}
+local nomor = 1
+for _, v in ipairs(Net:GetDescendants()) do
+    if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
+        --print(v.ClassName, v:GetFullName())
+        net_index[nomor] = {no = nomor, path = v.Name, name = v.ClassName}
+        nomor = nomor + 1
+    end
+end
+
+local function net_resolver(string)
+    for _,v in pairs(net_index) do
+        if v.path:find(string, 1, true) then
+            print("Found", net_index[v.no].path)
+            return net_index[v.no+1].path
+        end
+        --if counting % 2 == 0 then
+            
+        --end
+    end
+end
+
+local net_FavoriteItem = net_resolver("FavoriteItem")
+local net_EquipItem = net_resolver("EquipItem")
+local net_UnequipItem = net_resolver("UnequipItem")
+local net_EquipToolFromHotbar = net_resolver("EquipToolFromHotbar")
+
+local net_SpawnTotem = net_resolver("SpawnTotem")
+
+local net_SellAllItems = net_resolver("SellAllItems")
+local net_fishCaught = net_resolver("FishCaught")
+local net_ObtainedNewFishNotification = net_resolver("ObtainedNewFishNotification")
+
+local net_AwaitTradeResponse = net_resolver("AwaitTradeResponse")
+local net_InitiateTrade = net_resolver("InitiateTrade")
+
+local net_UpdateAutoSellThreshold = net_resolver("UpdateAutoSellThreshold")
+local net_TextNotification = net_resolver("TextNotification")
+local net_ChangeSetting = net_resolver("ChangeSetting")
+
+local net_SendTradeOffer = net_resolver("SendTradeOffer")
+local net_AddItem = net_resolver("AddItem")
+local net_SetReady = net_resolver("SetReady")
+local net_ConfirmTrade = net_resolver("ConfirmTrade")
+local net_AcceptTradeOffer = net_resolver("AcceptTradeOffer")
+local net_TradeOfferReceived = net_resolver("TradeOfferReceived")
+local net_TradeCompleted = net_resolver("TradeCompleted")
+local net_DeclineTradeOffer = net_resolver("DeclineTradeOffer")
+local net_ConfirmCrafting = net_resolver("ConfirmCrafting")
+local net_TradeStarted = net_resolver("TradeStarted")
+local net_cancel_trade = net_resolver("CancelTrade")
+
+-- Frame utama (putih)
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 600, 0, 400)
+mainFrame.Position = UDim2.new(0, 10, 0, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+mainFrame.BackgroundTransparency = 0.1
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+
+-- === KIRI : PLAYER LIST ===
+local playerFrame = Instance.new("Frame")
+playerFrame.Size = UDim2.new(0.35, 0, 1, -10)
+playerFrame.Position = UDim2.new(0, 5, 0, 5)
+playerFrame.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+playerFrame.Parent = mainFrame
+
+
+-- Tombol Close
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 25, 0, 25)
+closeBtn.Position = UDim2.new(1, -30, 0, 5)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(0, 0, 0)
+closeBtn.BackgroundColor3 = Color3.fromRGB(194, 62, 62)
+closeBtn.Parent = playerFrame
+
+local showBtn = Instance.new("TextButton")
+showBtn.Size = UDim2.new(0, 50, 0, 25)
+showBtn.Position = UDim2.new(1, -80, 0, 5)
+showBtn.Text = "SHOW"
+showBtn.TextColor3 = Color3.new(0, 0, 0)
+showBtn.BackgroundColor3 = Color3.fromRGB(214, 188, 72)
+showBtn.Parent = playerFrame
+
+-- Tombol 3d
+local renderBtn = Instance.new("TextButton")
+renderBtn.Size = UDim2.new(0, 25, 0, 25)
+renderBtn.Position = UDim2.new(0, 90, 0, 5)
+renderBtn.Text = "3D"
+renderBtn.TextColor3 = Color3.new(1,1,1)
+renderBtn.BackgroundColor3 = Color3.fromRGB(202, 50, 151)
+renderBtn.Parent = playerFrame
+
+
+local CMDBtn = Instance.new("TextButton")
+CMDBtn.Text = "CMD"
+CMDBtn.Size = UDim2.new(0, 60, 0, 25)
+CMDBtn.Position = UDim2.new(0, 10, 0, 5)
+CMDBtn.BackgroundColor3 = Color3.fromRGB(148, 148, 148)
+CMDBtn.TextColor3 = Color3.new(0, 0, 0)
+CMDBtn.Font = Enum.Font.RobotoMono
+CMDBtn.TextSize = 16
+CMDBtn.Parent = playerFrame
+
+closeBtn.MouseButton1Click:Connect(function()
+    trade_stop = true
+    running = false
+	screenGui:Destroy()
+end)
+
+
+
+local listLabel = Instance.new("TextLabel")
+listLabel.Size = UDim2.new(1, 0, 0, 80)
+listLabel.BackgroundTransparency = 1
+listLabel.Text = "HayBot " .. versi
+listLabel.TextXAlignment = Enum.TextXAlignment.Left
+listLabel.TextColor3 = Color3.new(0, 0, 0)
+listLabel.Font = Enum.Font.RobotoMono
+listLabel.TextSize = 16
+listLabel.Parent = playerFrame
+
+local listScroll = Instance.new("ScrollingFrame")
+listScroll.Size = UDim2.new(1, -10, 0.8, 0)
+listScroll.Position = UDim2.new(0, 5, 0, 65)
+listScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+listScroll.ScrollBarThickness = 6
+listScroll.BackgroundTransparency = 0.7
+listScroll.Parent = playerFrame
+
+local listLayout = Instance.new("UIListLayout")
+listLayout.Padding = UDim.new(0, 5)
+listLayout.Parent = listScroll
+
+listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	listScroll.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 10)
+end)
+
+-- === KANAN : INFO DAN KONTROL ===
+local rightFrame = Instance.new("Frame")
+rightFrame.Size = UDim2.new(0.6, 0, 1, -10)
+rightFrame.Position = UDim2.new(0.4, 0, 0, 5)
+rightFrame.BackgroundTransparency = 1
+rightFrame.Parent = mainFrame
+
+-- Statistik info
+local statsLabel = Instance.new("TextLabel")
+statsLabel.Text = "Statistik Info\n\nNONE"
+statsLabel.Size = UDim2.new(1, 0, 0, 80)
+statsLabel.Position = UDim2.new(0, 0, 0, 20)
+statsLabel.TextXAlignment = Enum.TextXAlignment.Left
+statsLabel.BackgroundTransparency = 1
+statsLabel.TextColor3 = Color3.new(0,0,0)
+statsLabel.Font = Enum.Font.RobotoMono
+statsLabel.TextSize = 20
+statsLabel.Parent = rightFrame
+
+-- Input jumlah
+local amountBox = Instance.new("TextBox")
+amountBox.Text = "jumlah"
+amountBox.PlaceholderText = ""
+amountBox.Size = UDim2.new(0, 60, 0, 25)
+amountBox.Position = UDim2.new(0, 100, 0, 120)
+amountBox.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+amountBox.TextColor3 = Color3.new(0,0,0)
+amountBox.Font = Enum.Font.RobotoMono
+amountBox.TextSize = 16
+amountBox.Parent = rightFrame
+
+local customId = Instance.new("TextBox")
+customId.Text = "id"
+customId.PlaceholderText = "fav id"
+customId.Size = UDim2.new(0, 50, 0, 25)
+customId.Position = UDim2.new(0, 170, 0, 120)
+customId.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+customId.TextColor3 = Color3.new(0,0,0)
+customId.Font = Enum.Font.RobotoMono
+customId.TextSize = 16
+customId.Parent = rightFrame
+
+local selectedLabel = Instance.new("TextLabel")
+selectedLabel.Text = "Player:"
+selectedLabel.Size = UDim2.new(1, 0, 0, 20)
+selectedLabel.Position = UDim2.new(0, 0, 0, 310)
+selectedLabel.BackgroundTransparency = 1
+selectedLabel.TextXAlignment = Enum.TextXAlignment.Left
+selectedLabel.TextColor3 = Color3.new(0,0,0)
+selectedLabel.Font = Enum.Font.RobotoMono
+selectedLabel.TextSize = 18
+selectedLabel.Parent = rightFrame
+
+
+-- === Buat tombol toggle ===
+local settingBtn = Instance.new("TextButton")
+settingBtn.Text = "Collect: OFF"
+settingBtn.Size = UDim2.new(0, 100, 0, 25)
+settingBtn.Position = UDim2.new(0, 0, 0, 330) -- -
+settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+settingBtn.TextColor3 = Color3.new(1,1,1)
+settingBtn.Font = Enum.Font.RobotoMono
+settingBtn.TextSize = 16
+settingBtn.Parent = rightFrame
+
+local AcceptBtn = Instance.new("TextButton")
+AcceptBtn.Text = "Accept: OFF"
+AcceptBtn.Size = UDim2.new(0, 100, 0, 25)
+AcceptBtn.Position = UDim2.new(0, 120, 0, 330) -- -
+AcceptBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+AcceptBtn.TextColor3 = Color3.new(1,1,1)
+AcceptBtn.Font = Enum.Font.RobotoMono
+AcceptBtn.TextSize = 16
+AcceptBtn.Parent = rightFrame
+
+local Handshake = Instance.new("TextButton")
+Handshake.Text = "TRADE"
+Handshake.Size = UDim2.new(0, 60, 0, 25)
+Handshake.Position = UDim2.new(0, 0, 0, 360) -- -
+Handshake.BackgroundColor3 = Color3.fromRGB(122, 190, 12)
+Handshake.TextColor3 = Color3.new(1,1,1)
+Handshake.Font = Enum.Font.RobotoMono
+Handshake.TextSize = 16
+Handshake.Parent = rightFrame
+
+local dumpBtn = Instance.new("TextButton")
+dumpBtn.Text = "List"
+dumpBtn.Size = UDim2.new(0, 60, 0, 25)
+dumpBtn.Position = UDim2.new(0, 130, 0, 360)-- -
+dumpBtn.BackgroundColor3 = Color3.fromRGB(47, 136, 106)
+dumpBtn.TextColor3 = Color3.new(1,1,1)
+dumpBtn.Font = Enum.Font.RobotoMono
+dumpBtn.TextSize = 16
+dumpBtn.Parent = rightFrame
+
+
+local zoomBtn = Instance.new("TextButton")
+zoomBtn.Text = "ZOOM"
+zoomBtn.Size = UDim2.new(0, 60, 0, 25)
+zoomBtn.Position = UDim2.new(0, 65, 0, 360)
+zoomBtn.BackgroundColor3 = Color3.fromRGB(0, 89, 255)
+zoomBtn.TextColor3 = Color3.new(0, 0, 0)
+zoomBtn.Font = Enum.Font.RobotoMono
+zoomBtn.TextSize = 16
+zoomBtn.Parent = rightFrame
+
+local stopBtn = Instance.new("TextButton")
+stopBtn.Text = "STOP"
+stopBtn.Size = UDim2.new(0, 60, 0, 25)
+stopBtn.Position = UDim2.new(0, 250, 0, 360)
+stopBtn.BackgroundColor3 = Color3.fromRGB(243, 6, 6)
+stopBtn.TextColor3 = Color3.fromRGB(253, 253, 253)
+stopBtn.Font = Enum.Font.RobotoMono
+stopBtn.TextSize = 16
+stopBtn.Parent = rightFrame
+
+local resetBtn = Instance.new("TextButton")
+resetBtn.Text = "🧹"
+resetBtn.Size = UDim2.new(0, 30, 0, 25)
+resetBtn.Position = UDim2.new(0, 305, 0, 120)
+resetBtn.BackgroundColor3 = Color3.fromRGB(172, 172, 172)
+resetBtn.TextColor3 = Color3.new(1,1,1)
+resetBtn.Font = Enum.Font.RobotoMono
+resetBtn.TextSize = 16
+resetBtn.Parent = rightFrame
+
+local setharga = Instance.new("TextBox")
+setharga.Text = set_harga
+setharga.PlaceholderText = ""
+setharga.Size = UDim2.new(0, 65, 0, 25)
+setharga.Position = UDim2.new(0, 235, 0, 120)
+setharga.BackgroundColor3 = Color3.fromRGB(210, 210, 210)
+setharga.TextColor3 = Color3.new(0,0,0)
+setharga.Font = Enum.Font.RobotoMono
+setharga.TextSize = 16
+setharga.Parent = rightFrame
+
+-- === LOG FRAME ===
+local logFrame = Instance.new("ScrollingFrame")
+logFrame.Size = UDim2.new(1, -10, 0, 150)
+logFrame.Position = UDim2.new(0, 0, 0, 160)
+logFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+
+logFrame.ScrollBarThickness = 8
+logFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+logFrame.Parent = rightFrame
+logFrame.BackgroundTransparency = 0.3
+local logLayout = Instance.new("UIListLayout")
+logLayout.Parent = logFrame
+logLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+logLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	logFrame.CanvasSize = UDim2.new(0, 0, 0, logLayout.AbsoluteContentSize.Y)
+	logFrame.CanvasPosition = Vector2.new(0, logFrame.CanvasSize.Y.Offset)
+end)
+
+local detail_harga = Instance.new("TextLabel")
+detail_harga.Text = "detail"
+detail_harga.Size = UDim2.new(0, 0, 0, 0)
+detail_harga.Position = UDim2.new(0, 240, 0, 320)
+detail_harga.TextColor3 = Color3.new(0, 0, 0)
+detail_harga.Font = Enum.Font.RobotoMono
+detail_harga.TextSize = 16
+detail_harga.Parent = rightFrame
+
+-- Buat tombol utama (dropdown)
+local dropdownButton = Instance.new("TextButton")
+dropdownButton.Size = UDim2.new(0, 80, 0, 25)
+dropdownButton.Position = UDim2.new(0, 0, 0, 120)
+dropdownButton.BackgroundColor3 = Color3.fromRGB(141, 61, 161)
+dropdownButton.TextColor3 = Color3.new(1, 1, 1)
+dropdownButton.Font = Enum.Font.Roboto
+dropdownButton.TextScaled = true
+dropdownButton.Text = "MENU"
+dropdownButton.Parent = rightFrame
+
+-- Frame isi dropdown
+local dropdownFrame = Instance.new("Frame")
+dropdownFrame.Size = UDim2.new(0, 200, 0, 0)
+dropdownFrame.Position = UDim2.new(0, 0, 0, 150)
+dropdownFrame.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+dropdownFrame.BorderSizePixel = 1
+dropdownFrame.Visible = false
+dropdownFrame.ClipsDescendants = true
+dropdownFrame.Parent = rightFrame
+
+--// ANCHOR OPTION MENU
+local options = {
+                "Mitik All","Mitik BIG","ALL MYTHIC", "-", "EVOLVED", "RUBY LOCHNESS",
+                "accept trade","cancel trade","","VIPERFISH","-", "CUSTOM ID",
+                "INDEX SECRET","MASTER", "MAJA","QUEEN CRAB","Gladiator","KING CRAB",
+                "FACE CUSTOM", "JOB ID", "JOINER", "PACKET LIST","Find Packet","trade_new"
+            }
+
+local function opsia(x)
+    opsi(x)
+end
+
+-- pengaturan layout
+local maxPerColumn = 6
+local optionHeight = 30
+local columnWidth = 120
+
+-- hitung total kolom
+local numColumns = math.ceil(#options / maxPerColumn)
+dropdownFrame.Size = UDim2.new(0, columnWidth * numColumns, 0, 0)
+
+for i, text in ipairs(options) do
+    local column = math.floor((i - 1) / maxPerColumn)
+    local row = (i - 1) % maxPerColumn
+
+    local option = Instance.new("TextButton")
+    option.Size = UDim2.new(0, columnWidth, 0, optionHeight)
+    option.Position = UDim2.new(0, column * columnWidth, 0, row * optionHeight)
+    option.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    option.TextColor3 = Color3.new(1, 1, 1)
+    option.Font = Enum.Font.Roboto
+    option.TextScaled = true
+    option.Text = text
+    option.Parent = dropdownFrame
+
+    -- Hover efek
+    option.MouseEnter:Connect(function()
+        option.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    end)
+    option.MouseLeave:Connect(function()
+        option.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    end)
+
+    -- Klik opsi
+    option.MouseButton1Click:Connect(function()
+        dropdownButton.Text = text .. " ▼"
+        dropdownFrame:TweenSize(UDim2.new(0, columnWidth * numColumns, 0, 0), "Out", "Sine", 0.2, true)
+        task.delay(0.2, function()
+            dropdownFrame.Visible = false
+        end)
+        opsia(i)
+    end)
+end
+
+-- Fungsi toggle dropdown
+dropdownButton.MouseButton1Click:Connect(function()
+    if dropdownFrame.Visible then
+        dropdownFrame:TweenSize(UDim2.new(0, columnWidth * numColumns, 0, 0), "Out", "Sine", 0.2, true)
+        task.delay(0.2, function()
+            dropdownFrame.Visible = false
+        end)
+    else
+        dropdownFrame.Visible = true
+        local totalHeight = math.min(#options, maxPerColumn) * optionHeight
+        dropdownFrame:TweenSize(UDim2.new(0, columnWidth * numColumns, 0, totalHeight), "Out", "Sine", 0.2, true)
+    end
+end)
+
+-- === Fungsi pesan Log ===
+local function pesan(teks)
+	local logLine = Instance.new("TextLabel")
+	logLine.Size = UDim2.new(1, 15, 0, 15)
+	logLine.BackgroundTransparency = 1
+	logLine.Text = tostring(teks)
+	logLine.TextSize = 16
+	logLine.TextColor3 = Color3.fromRGB(19, 19, 19)
+	logLine.Font = Enum.Font.RobotoMono
+	logLine.TextXAlignment = Enum.TextXAlignment.Left
+	logLine.Parent = logFrame
+    print("PESAN: ", teks)
+    resetBtn.MouseButton1Click:Connect(function()
+        logLine:Destroy()
+        detail_harga.Text = "Reset"
+        amountBox.Text = ""
+    end)
+end
+local function AntiAFK()
+    print("ENABLE ANTI AFK")
+    if getconnections then
+        for _, connection in pairs(getconnections(player.Idled)) do
+            if connection.Disable then
+                connection:Disable()
+            elseif connection.Disconnect then
+                connection:Disconnect()
+            end
+        end
+    else
+        warn("Executor tidak mendukung getconnections()")
+    end
+end
+local function formatTime(seconds)
+    local h = math.floor(seconds / 3600)
+    local m = math.floor((seconds % 3600) / 60)
+    local s = math.floor(seconds % 60)
+    return string.format("%02d:%02d:%02d", h, m, s)
+end
+
+local function list_variant(childName)
+    local child = Variants:FindFirstChild(childName)
+    if not child then
+        return nil
+    end
+
+    -- Jalankan ModuleScript dan ambil datanya
+    local success, data = pcall(require, child)
+    if not success then
+        warn("Gagal memuat module untuk " .. childName .. ": " .. tostring(data))
+        return nil
+    end
+
+    return data
+end
+
+----------------------------------------------------
+---fungsi 
+local running_time = "00:00:00"
+local renderEnabled = false
+local function render()
+    renderEnabled = not renderEnabled
+    if renderEnabled == true then
+        RunService:Set3dRenderingEnabled(false)
+    else
+        RunService:Set3dRenderingEnabled(true)
+    end
+end
+local auto_collect = nil
+local auto_accept = nil
+-- === SETTING AUTO TRADE ===
+local HttpService = game:GetService("HttpService")
+local settingsFile = "settings.json"
+local settings = { auto_trade = false, auto_accept = false }
+-- Load settings dari file
+local function loadSettings()
+    if isfile and isfile(settingsFile) then
+        local data = readfile(settingsFile)
+        local decoded = HttpService:JSONDecode(data)
+        if decoded then
+            settings = decoded
+            auto_collect = settings.auto_trade
+            auto_accept = settings.auto_accept
+        end
+    else
+        pesan("No settings file found, using default.")
+    end
+end
+loadSettings()
+-- Simpan settings ke file
+local function saveSettings()
+    if writefile then
+        local data = HttpService:JSONEncode(settings)
+        writefile(settingsFile, data)
+    else
+        pesan("❌ writefile() not supported in this environment.")
+    end
+end
+-- === Tambahan fitur: simpan jumlah transaksi ===
+
+-- Fungsi untuk menyimpan jumlah transaksi
+
+local list_ikan = {}
+for _, child in pairs(ReplicatedStorage:WaitForChild("Items"):GetDescendants()) do
+    if child:IsA("ModuleScript") then
+        local success, data = pcall(require, child)
+        if success and data.Data.Type == "Fish" then
+            list_ikan[data.Data.Id] = {
+                harga = data.SellPrice,
+                tier = data.Data.Tier,
+                nama = data.Data.Name,
+                id = data.Data.Id
+            }
+        end
+    end
+end
+
+local function round(num, numDecimalPlaces)
+	local mult = 10^(numDecimalPlaces or 0)
+	return math.floor(num * mult + 0.5) / mult
+end
+local function konvert_harga(h)
+    if h then
+        local result
+        local kk
+        if h < 999 then
+            result = tostring(h)
+        elseif h < 1000000 then
+            kk = h / 1000
+            result = tostring(round(kk, 2)) .. " K"
+        else
+            kk = h / 1000000
+            result = tostring(round(kk, 2)) .. " M"
+        end
+        return result
+    end
+end
+
+local function get_tier(tier)
+    if tier == 6 then 
+        return "MYTHIC" 
+    elseif tier == 7 then
+        return "SECRET"
+    end
+end
+
+local function teleport(x, y, z)
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if root then
+        root.CFrame = CFrame.new(Vector3.new(x, y, z))
+    end
+end
+local function face(yawDeg)
+    if root then
+        local pos = root.Position
+        local yaw = math.rad(yawDeg) 
+        local dir = Vector3.new(math.sin(yaw), 0, math.cos(yaw))
+        root.CFrame = CFrame.lookAt(pos, pos + dir)
+    end
+    task.wait(2)
+end
+local function getPositionByName(name)
+    local plr = Players:FindFirstChild(name)
+    if not plr then return nil, "player not found" end
+
+    local char = plr.Character or plr.CharacterAdded:Wait()
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil, "HumanoidRootPart not found" end
+
+    return hrp.Position
+end
+local function attachSmartPlatform()
+    -- Buat platform sekali
+    local platform = Instance.new("Part")
+    platform.Name = "LocalPlatform"
+    platform.Size = Vector3.new(6, 0.2, 6)
+    platform.Anchored = true
+    platform.CanCollide = true
+    platform.Transparency = 0.3
+    platform.Color = Color3.new(1, 0, 0)
+    platform.Parent = workspace
+
+    -- Update posisi hanya ketika karakter bergerak
+    local function updatePlatform()
+        platform.CFrame = CFrame.new(root.Position.X, root.Position.Y - 3, root.Position.Z)
+    end
+    updatePlatform()
+    root:GetPropertyChangedSignal("Position"):Connect(updatePlatform)
+end
+player.CharacterAdded:Connect(attachSmartPlatform)
+if player.Character then
+    attachSmartPlatform()
+end
+local function SetLowGraphics()
+    local Lighting = game:GetService("Lighting")
+    local Terrain = workspace:FindFirstChildOfClass("Terrain")
+    local MaterialService = game:GetService("MaterialService")
+    settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+    Lighting.GlobalShadows = false
+    Lighting.Brightness = 1
+    Lighting.EnvironmentDiffuseScale = 0
+    Lighting.EnvironmentSpecularScale = 0
+    for _, effect in ipairs(Lighting:GetChildren()) do
+        if effect:IsA("PostEffect") then
+            effect.Enabled = false
+        end
+    end
+    if Terrain then
+        Terrain.WaterWaveSize = 0
+        Terrain.WaterWaveSpeed = 0
+        Terrain.WaterReflectance = 0
+        Terrain.WaterTransparency = 1
+    end
+    MaterialService.Use2022Materials = false
+end
+--[[
+---------------------------------------------------------------------
+-- 1. Daftar efek yang akan dihapus
+---------------------------------------------------------------------
+local effectClasses = {
+    ParticleEmitter = true,
+    Trail = true,
+    Smoke = true,
+    Fire = true,
+    Sparkles = true,
+    Beam = true,
+    Highlight = true
+}
+
+---------------------------------------------------------------------
+-- 2. Fungsi aman untuk membersihkan object
+---------------------------------------------------------------------
+local function cleanObject(obj)
+    pcall(function()
+
+        ---------------------------------------------------------------------
+        -- Hapus semua particle / efek
+        ---------------------------------------------------------------------
+        if effectClasses[obj.ClassName] then
+            obj:Destroy()
+            return
+        end
+
+        ---------------------------------------------------------------------
+        -- MeshPart → hapus tekstur agar polos
+        ---------------------------------------------------------------------
+        if obj:IsA("MeshPart") then
+            obj.TextureID = ""
+        end
+
+        ---------------------------------------------------------------------
+        -- Decal, Texture, SurfaceAppearance → dihancurkan
+        ---------------------------------------------------------------------
+        if obj:IsA("Decal") 
+        or obj:IsA("Texture") 
+        or obj:IsA("SurfaceAppearance") then
+            obj:Destroy()
+            return
+        end
+
+    end)
+end
+
+---------------------------------------------------------------------
+-- 3. Bersihkan semua object yang sudah ada
+---------------------------------------------------------------------
+for _, obj in ipairs(workspace:GetDescendants()) do
+    cleanObject(obj)
+end
+
+---------------------------------------------------------------------
+-- 4. Mencegah efek/warnatekstur baru muncul
+--    (dipanggil 1 frame setelah instance muncul agar tidak valid-member-error)
+---------------------------------------------------------------------
+workspace.DescendantAdded:Connect(function(obj)
+    task.defer(function()
+        cleanObject(obj)
+    end)
+end)
+--]]
+local data = Client:WaitReplion("Data")
+
+-- ambil inventory pertama kali
+local function getInventory()
+    return data:GetExpect({"Inventory"})
+end
+
+local list_mitik_big = {}
+local list_mitik_small = {}
+local list_mitik_all = {}
+local list_sekret_all = {}
+local list_all = {}
+local list_master = {}
+local list_fav = {}
+local trade_id = 163 --vyper fish 
+--// ANCHOR update_inventory
+local SERVER_URL = "https://hayfishit.dpdns.org/collector_update"
+local function collector_done(url)
+    task.spawn(function()
+        local ok, res = pcall(function()
+            return request({Url = url, Method = "GET"})
+        end)
+        if ok and res then
+            print("OK:", res.StatusCode)
+            pesan("kirim data berhasil")
+        else
+            warn("Request error:", res)
+        end
+    end)
+end
+
+local function update_inventory()
+     list_mitik_big = {}
+     list_mitik_small = {}
+     list_mitik_all = {}
+     list_sekret_all = {}
+     list_all = {}
+     total_ikan = 0
+     list_fav = {}
+     list_master = {}
+     local total_secret = 0
+     local index_secret = 0
+
+     local total_mitik_all = 0
+     local total_mitik_big = 0
+     local total_mitik_small = 0
+     local index_mitik_all = 0
+     local index_mitik_big = 0
+     local index_mitik_small = 0
+     local hitung_master = 0
+     local hitung_fav = 0
+     
+    local inventory = getInventory()
+    for category, items in pairs(inventory) do
+        
+        if category == "Items" then
+            for i, item in ipairs(items) do
+                
+                local itemData = ItemUtility:GetItemData(item.Id)
+                    or ItemUtility:GetBaitData(item.Id)
+                    or ItemUtility:GetPotionData(item.Id)
+
+                local tierName = "None"
+                if itemData and itemData.Data and itemData.Data.Tier then
+                    local tierData = TierUtility:GetTier(itemData.Data.Tier)
+                    if tierData and tierData.Name then
+                        tierName = string.gsub(tierData.Name, "%s+", "")
+                    end
+                end
+                local berat = item.Metadata and item.Metadata.Weight or 0
+                local variant = item.Metadata and item.Metadata.VariantId or nil
+                local custom_harga = 0
+                local category_harga = ""
+                local shiny = ""
+                local mutasiName = ""
+                local nama_item = itemData.Data.Name
+                if itemData.Data.Type == "Enchant Stones" then
+                    if item.Id == 10 then
+                         stone_uuid = item.UUID
+                         stone_jumlah = item.Quantity
+                    elseif item.Id == 558 then
+                         evolved_uuid = item.UUID
+                         evolved_jumlah = item.Quantity
+                     end
+                end
+                if itemData.Data.Type == "Fish" and itemData.SellPrice and berat ~= 0 then
+                    custom_harga = itemData.SellPrice
+                    category_harga = ""
+                    if berat > itemData.Weight.Default.Max then
+                        category_harga = "*BIG*"
+                        local multiplication_big = (berat - itemData.Weight.Default.Max) / (itemData.Weight.Big.Max - itemData.Weight.Default.Max)
+                        
+                        custom_harga =  custom_harga * ( 1 + multiplication_big)
+                    else
+                        category_harga = ""
+                    end
+                    if item.Metadata.Shiny == true then
+                        custom_harga = custom_harga + (custom_harga * 1.5)
+                        shiny = "*SHINY*"
+                    end
+                    if variant then
+                        local info_variant = list_variant(variant)
+                        if info_variant then
+                            mutasiName = string.gsub(info_variant.Data.Name, "%s+", "")
+                            if item.Metadata.Shiny == true then
+                                custom_harga = custom_harga + (custom_harga * info_variant.SellMultiplier * 1.5)
+                            else
+                                custom_harga = custom_harga + (custom_harga * info_variant.SellMultiplier)
+                            end
+                        end
+                    end
+
+                    if tierName == "SECRET" or item.Id == 158 or item.Id == 243 then -- or ruby
+                        list_master[hitung_master] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant}
+                        hitung_master = hitung_master + 1
+                    end
+                    if item.Id == 243 and variant == "Gemstone" then
+                        ruby = tostring(item.UUID)
+                    end
+                    if tierName == "SECRET" or item.Id == 158 then
+                        if variant ~= nil and variant ~= "Albino" and variant ~= "Ghost" and variant ~= "Stone" and variant ~= "Sandy" and variant ~= "Gold" and variant ~= "Frozen" then
+                        
+                        else
+                            list_all[nama_item] = (list_all[nama_item] or 0) + 1
+                        end
+
+                        total_secret = total_secret + custom_harga
+                        list_sekret_all[index_secret] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat),mutasi = variant}
+                        index_secret = index_secret + 1
+                    end
+
+                    if tierName == "Mythic" then
+                        if variant ~= nil and variant ~= "Albino" and variant ~= "Ghost" and variant ~= "Stone" and variant ~= "Sandy" and variant ~= "Gold" and variant ~= "Frozen" then
+                           
+                        else
+                            total_mitik_all = total_mitik_all + custom_harga
+                            list_mitik_all[index_mitik_all] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
+                            index_mitik_all = index_mitik_all + 1
+                            set_harga = setharga.Text
+                            if custom_harga > tonumber(set_harga) then
+                                    total_mitik_big = total_mitik_big + custom_harga
+                                    list_mitik_big[index_mitik_big] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
+                                    index_mitik_big = index_mitik_big + 1
+                            else
+                                total_mitik_small = total_mitik_small + custom_harga
+                                list_mitik_small[index_mitik_small] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
+                                index_mitik_small = index_mitik_small + 1
+                            end
+                        end
+                    end
+                    if item.Id == fav_item then
+                        if fav_item == 269 and variant ~= nil then --for maja
+                            
+                        else
+                            if variant ~= nil and variant ~= "Albino" and variant ~= "Ghost" and variant ~= "Stone" and variant ~= "Sandy" and variant ~= "Gold" and variant ~= "Frozen" then
+                                
+                            else
+                                if fav_item == 136 and berat > 13000 then
+                                    pesan("skip frostborn " .. tostring(berat))
+                                else
+                                    list_fav[hitung_fav] = {nama = nama_item, id = item.Id, uuid = tostring(item.UUID), harga = custom_harga, berat = tostring(berat), mutasi = variant}
+                                    hitung_fav = hitung_fav + 1
+                                end
+                            end
+                        end
+                    end
+                    if dump_inventory == true then
+                        local namas = i .. ". " ..mutasiName.."->".. category_harga .." ".. shiny .. nama_item .. " |$ " .. konvert_harga(custom_harga)
+                        pesan(namas)
+                    end
+                    total_ikan = total_ikan + 1
+                end
+            end
+        end
+    end
+    local cetak_info = "Secret : ".. konvert_harga(total_secret) .. " | " .. index_secret .. " \n"
+    .. "Mitik All: ".. konvert_harga(total_mitik_all) .." | " .. index_mitik_all .. " \n"
+    .. "Mitik Big: ".. konvert_harga(total_mitik_big) .." | " .. index_mitik_big .. " \n"
+    .. "Mitik Small: ".. konvert_harga(total_mitik_small) .." | " .. index_mitik_small .. " \n"
+    .. "TOTAL IKAN: " .. total_ikan .. " \n"
+    .. " Evo: " .. tostring(evolved_jumlah)
+    statsLabel.Text = cetak_info
+end
+
+--//ANCHOR shandshake
+local function send_handshake(users)
+    pesan("send handsake ke " .. users)
+    local user = Players:FindFirstChild(users)
+    Net:WaitForChild(net_SendTradeOffer):InvokeServer(user)
+end
+-- === PLAYER MANAGEMENT ===
+--[[
+local function trade_map(target, jumlah, type)
+    local completed = false
+    startscript = tick()
+    start_timer = true
+    Net:WaitForChild(net_TextNotification).OnClientEvent:Connect(
+        function(data)
+            print("ADA NOTIF: ", data.Text)
+            if data and data.Text == "Trade completed!" then
+                completed = true
+            end
+        end
+    )
+    local pos, err = getPositionByName(target)
+    if pos then
+        print("Posisi sekarang:", pos)
+        local x = pos.X
+        local y = pos.Y
+        local z = pos.Z
+        teleport(x,y,z)
+        task.wait(5)
+    end
+
+    update_inventory()
+    local custom_list = nil
+    local flag_secret = false
+    local flag_stone = false
+    local limit_stone = 0
+    if type then
+        if type == "secret" then
+            printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
+            custom_list = list_sekret_all
+            flag_secret = true
+
+        elseif type == "mitik_all" then
+            printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
+            custom_list = list_mitik_all
+        elseif type == "mitik_big" then
+            
+            printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
+            custom_list = list_mitik_big
+
+        elseif type == "mitik_small" then
+            printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
+            custom_list = list_mitik_small
+
+        elseif type == "stone" then
+            printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
+            flag_secret = true
+            flag_stone = true
+            custom_list = stone_uuid
+            limit_stone = stone_jumlah
+
+        elseif type == "evolved" then
+            printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
+            flag_secret = true
+            flag_stone = true
+            limit_stone = evolved_jumlah
+            custom_list = evolved_uuid
+        
+        elseif type == "fav" then
+            printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
+            flag_secret = true
+            custom_list = list_fav
+
+        elseif type == "master" then
+            if target == "hayfish96" or target == "hayati_lelah7" then
+                printer = "Trade "..type.."  ke " .. target .. " sejumlah " .. jumlah
+                flag_secret = true
+                custom_list = list_master
+            else
+                pesan("MASTER SALAH")
+                return
+            end
+        else
+            pesan("tidak ada pilihan trade")
+            return
+        end
+    end
+    pesan(printer)
+    local berhasil = 0
+    local info_akhir = ""
+    local current_harga = 0
+    local uuid = ""
+    local function trade_user(usr)
+        print("Player ditemukan:", usr.Name, "UserId:", usr.UserId)
+        if custom_list ~= nil then
+            local map_i = 0
+            local info
+            while true do
+                if flag_stone then
+                    if limit_stone < jumlah then
+                        pesan("jumlah stone lebih sedikit dari pada set")
+                        return
+                    end
+                    uuid = custom_list
+                else
+                    info = custom_list[map_i]
+                    if info == nil then
+                        pesan("ikan sudah habis")
+                        break
+                    end
+                    uuid = info.uuid
+                end
+                Net:WaitForChild(net_EquipItem):FireServer(uuid, "Fishes")
+                Net:WaitForChild(net_InitiateTrade):InvokeServer(usr.UserId, uuid)
+                local timeout = 0
+                while completed ~= true do
+                    print("wait")
+                    timeout = timeout + 1
+                    if timeout > 30 then
+                        print("timeout lebih dari 15 detik")
+                        break
+                    end
+                    task.wait(0.4)
+                end
+                if timeout < 30 then
+                    berhasil = berhasil + 1
+                    map_i = map_i + 1
+                    info_akhir = "Total: " .. berhasil
+                    local info_ikan = "-"
+                    if flag_stone then
+                        info_ikan = berhasil .. ". Stone success Traded."
+                    else
+                        current_harga = current_harga  + info.harga
+                        local current_mutasi = info.mutasi or "-"
+                        info_ikan = berhasil ..". SEND " .. info.nama .. " (" .. info.berat .. " kg) " .. current_mutasi
+                        detail_harga.Text = info_akhir .." | $ ".. konvert_harga(current_harga)
+                    end
+                    pesan(info_ikan)
+                    printer = printer .. "\n".. info_ikan
+                end
+                completed = false
+                local mm = current_harga / 1000000
+                local limit = round(mm, 2)
+                if flag_secret == true then
+                    if berhasil >= jumlah then
+                        pesan("total transaksi tercapai: " .. tostring(jumlah))
+                        break
+                    end
+                else
+                    if jumlah > 0 and limit > jumlah then
+                        pesan("jumlah tercapai ! " .. konvert_harga(current_harga))
+                        break
+                    end
+                end
+                if trade_stop == true then
+                    pesan("! TRADE STOPED !")
+                    break
+                end
+                start_timer = false
+                task.wait(5)
+            end
+        else
+            pesan("tidak ada barang lagi")
+        end
+        pesan("SELESAI SEMUA " .. info_akhir)
+        update_inventory()
+    end
+    local existing = Players:FindFirstChild(target)
+    if existing then
+        trade_user(existing)
+    else
+        pesan("player tidak ada")
+    end
+end
+--]]
+--//ANCHOR trade NEW
+local function trade_new(user, listings,jumlah, tipe)
+    --[[
+    if #listings < jumlah then
+        pesan("GAGAL JUMLAH ITEM KURANG ")
+        return
+    end
+    --]]
+    if tipe == "master" then
+        listings = list_master
+        jumlah = #list_master
+    end
+    local max_batch = 20
+    pesan("total trade: " .. tostring(jumlah))
+    local batch = jumlah / max_batch
+    local total_batch = math.ceil(batch) or 1
+    pesan("TOTAL BATCH: " .. tostring(total_batch))
+    local counter = 0
+    update_inventory()
+    for i = 1, total_batch do
+        print("BATCH KE ", i)
+        local existing = Players:FindFirstChild(user)
+        if existing then
+            send_handshake(existing.Name)
+        else
+            pesan("GAGAL : PLAYER TIDAK ADA")
+            return
+        end
+        for y= 1, 10 do
+            if start_trade then
+                break
+            end
+            print("wait start trade ", start_trade)
+            task.wait(5)
+        end
+        if start_trade == false then
+            pesan("GAGAL : TIMEOUT MENU TRADE")
+            return
+        end
+        task.wait(1)
+        status_trade = 0
+        local info
+        while true do
+            counter = counter + 1
+            info = listings[counter]
+            if info == nil then
+                pesan("list kosong / nil")
+                break
+            end
+            pesan(tostring(counter) .. ". added item: " .. info.nama)
+            Net:WaitForChild(net_AddItem):InvokeServer("Fish",info.uuid)
+            if counter % max_batch == 0 or counter >= jumlah then
+                pesan("jumlah telah terpenuhi ")
+                print("counter = ", counter)
+                print("jumlah = ", jumlah)
+                print("max_batch = ",max_batch)
+                break
+            end
+            task.wait(0.7)
+        end
+        task.wait(5)
+        pesan("set ready")
+        Net:WaitForChild(net_SetReady):InvokeServer(true)
+        task.wait(6)
+        pesan("confirm")
+        print("step 2")
+        for i=1, 5 do
+            pesan("send confirm")
+            local confirm = Net:WaitForChild(net_ConfirmTrade):InvokeServer(true)
+            task.wait(10)
+            if confirm then
+                pesan("confirm = true")
+                break
+            end
+        end
+        task.wait(10)
+        for d = 1, 10 do
+            if status_trade == 1 then
+                pesan("berhasil trade")
+                break
+            end
+            pesan("wait status trade " .. tostring(d))
+            task.wait(10)
+        end
+        if status_trade == 0 then
+            pesan("GAGAL : STATUS TRADE 0")
+            return
+        end
+        pesan("SELESAI " ..tostring(counter))
+        task.wait(5)
+    end
+    pesan("selesai semua trade ")
+end
+--//ANCHOR Button
+
+local toogle_right_frame = false
+showBtn.MouseButton1Click:Connect(function()
+    if toogle_right_frame then
+        rightFrame.Visible = true
+        mainFrame.BackgroundTransparency = 0
+        playerFrame.BackgroundTransparency = 0
+        listScroll.Visible = true
+        toogle_right_frame = false
+    else
+        rightFrame.Visible = false
+        mainFrame.BackgroundTransparency = 1
+        playerFrame.BackgroundTransparency = 1
+        listScroll.Visible = false
+        toogle_right_frame = true
+    end
+end)
+
+stopBtn.MouseButton1Click:Connect(function()
+	trade_stop = not trade_stop
+    if trade_stop then
+        stopBtn.BackgroundColor3 = Color3.fromRGB(109, 0, 0)
+        pesan("trade stopped ON")
+    else
+        stopBtn.BackgroundColor3 = Color3.fromRGB(243, 6, 6)
+        pesan("trade stopped OFF")
+    end
+end)
+
+local function updateButton()
+	if settings.auto_trade then
+		settingBtn.Text = "Collect: ON"
+		settingBtn.BackgroundColor3 = Color3.fromRGB(74, 158, 74)
+	else
+		settingBtn.Text = "Collect: OFF"
+		settingBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+	end
+    
+	if settings.auto_accept then
+		AcceptBtn.Text = "Accept: ON"
+		AcceptBtn.BackgroundColor3 = Color3.fromRGB(74, 158, 74)
+	else
+		AcceptBtn.Text = "Accept: OFF"
+		AcceptBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+	end
+
+end
+-- Klik toggle
+local toogle_autocollect = settings.auto_trade
+settingBtn.MouseButton1Click:Connect(function()
+	settings.auto_trade = not settings.auto_trade
+    toogle_autocollect = settings.auto_trade
+    pesan("setting: Auto Collect " .. tostring(toogle_autocollect))
+	saveSettings()
+    updateButton()
+end)
+
+local toogle_autoaccept = settings.auto_accept
+AcceptBtn.MouseButton1Click:Connect(function()
+	settings.auto_accept = not settings.auto_accept
+    toogle_autoaccept = settings.auto_accept
+    pesan("setting: Auto Accept " .. tostring(toogle_autoaccept))
+	saveSettings()
+    updateButton()
+end)
+
+renderBtn.MouseButton1Click:Connect(function()
+    render()
+end)
+dumpBtn.MouseButton1Click:Connect(function()
+    for nama, jumlah in pairs(list_all) do
+        pesan(nama .. " : " .. jumlah)
+    end
+end)
+CMDBtn.MouseButton1Click:Connect(function()
+    StarterGui:SetCore("DevConsoleVisible", true)
+    --Net:WaitForChild(net_cancel_trade):InvokeServer()
+end)
+zoomBtn.MouseButton1Click:Connect(function()
+    local jumlah = tonumber(amountBox.Text)
+    if jumlah == nil then
+        jumlah = 400
+    end
+    player.CameraMaxZoomDistance = jumlah 
+end)
+--// ANCHOR TIMER
+local function timer()
+    while true do
+        local delta = tick() - update_time
+        delta = math.floor(delta * 10 + 0.5) / 10
+
+        if delta > 75 then
+            pesan("!! timer lebih dari 75 sec !!")
+            return
+        end
+
+        selectedLabel.Text = "timer " .. delta .. " sec."
+        task.wait(1)
+    end
+end
+--//ANCHOR TRADE
+local function trade(tipe)
+    dropdownFrame.Visible = false
+    pesan("trade mulai")
+    update_inventory()
+    if tipe == "fav" then
+        pesan("total: " .. #list_fav)
+    end
+    if not selectedPlayer then
+		pesan("❌ Pilih player dulu!")
+		return
+	end
+	local jumlah = tonumber(amountBox.Text)
+    if tipe == "master" then
+        jumlah = 999
+    end
+	if not jumlah or jumlah <= 0 then
+		pesan("❌ Masukkan jumlah valid!")
+		return
+	end
+    pesan("trade to " .. selectedPlayer)
+	trade_new(selectedPlayer, list_fav, jumlah, tipe)
+end
+    -- === Jalankan load saat awal ===
+
+--//ANCHOR client invoke
+pesan("Collector GUI loaded.")
+--[[
+if total_transaksi and total_transaksi ~= 0 then
+    detail_harga.Text = "Load Trade: " .. konvert_harga(total_transaksi)
+end
+--]]
+local total_ikan = 1
+local total_batu = 1
+
+
+update_inventory()
+
+--//ANCHOR Auto collecting
+local function auto_collecting(nama)
+    pesan("start auto collect")
+    if nama then
+        local pos, err = getPositionByName(nama)
+        if pos then
+            local x = pos.X
+            local y = pos.Y
+            local z = pos.Z
+            teleport(x,y,z)
+            task.wait(5)
+            local existing = Players:FindFirstChild(nama)
+            if existing then
+                pesan("kirim handshake")
+                update_time = tick()
+                send_handshake(existing.Name)
+            else
+                print("player tidak ada")
+            end
+        end
+    end
+end
+
+
+local trd_completed = Net:WaitForChild(net_TradeCompleted)
+trd_completed.OnClientEvent:Connect(function(uuid,status, ...)
+    pesan(uuid)
+    pesan(status)
+    if status:match("completed!") then
+        status_trade = 1
+    end
+end)
+
+
+
+local function createPlayerButton(name)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, -10, 0, 30)
+	btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
+	btn.Text = name
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Font = Enum.Font.RobotoMono
+	btn.TextSize = 16
+	btn.Parent = listScroll
+
+	btn.MouseButton1Click:Connect(function()
+		if selectedPlayer == name then
+			selectedPlayer = nil
+			btn.BackgroundColor3 = Color3.fromRGB(70, 100, 150)
+			selectedLabel.Text = "Player: -"
+		else
+			selectedPlayer = name
+			selectedLabel.Text = name
+			btn.BackgroundColor3 = Color3.fromRGB(200, 80, 80)
+			pesan("Selected: " .. name)
+            local pos, err = getPositionByName(name)
+            if pos then
+                print("Posisi sekarang:", pos)
+                local x = pos.X
+                local y = pos.Y
+                local z = pos.Z
+                teleport(x,y,z)
+                task.wait(5)
+            end
+		end
+	end)
+end
+
+for _, p in ipairs(Players:GetPlayers()) do
+	if p ~= player then
+		createPlayerButton(p.Name)
+	end
+end
+
+Players.PlayerAdded:Connect(function(p)
+	if p ~= player then
+		createPlayerButton(p.Name)
+		pesan(p.Name .. " joined")
+	end
+end)
+
+Players.PlayerRemoving:Connect(function(p)
+	for _, btn in ipairs(listScroll:GetChildren()) do
+		if btn:IsA("TextButton") and btn.Text == p.Name then
+			btn:Destroy()
+		end
+	end
+	if selectedPlayer == p.Name then
+		selectedPlayer = nil
+		selectedLabel.Text = "Selected Player: -"
+	end
+	pesan(p.Name .. " left")
+end)
+
+local function waiting(user)
+    print("start waiting")
+    local posisi_awal, error1 = getPositionByName(user)
+    if not posisi_awal then
+        warn(error1)
+        return
+    end
+    local count = 1
+    while true do
+        local pos, error2 = getPositionByName(user)
+        if not pos then
+            warn(error2)
+            return
+        end
+
+        -- hitung perbedaan posisi
+        local distance = (pos - posisi_awal).Magnitude
+
+        if distance < 0.5 then
+            print("menunggu...")
+        else
+            print("posisi sudah berubah, selisih:", distance)
+            pesan("Selesai")
+            return
+        end
+        if count > 30 then
+            return
+        end
+        count = count + 1
+        task.wait(15)
+    end
+end
+
+
+Handshake.MouseButton1Click:Connect(function()
+    pesan("select handshake to " .. selectedPlayer)
+    local existing = Players:FindFirstChild(selectedPlayer)
+    if existing then
+        pesan("kirim handshake")
+        update_time = tick()
+        send_handshake(existing.Name)
+        timer()
+    else
+        print("player tidak ada")
+    end
+
+end)
+
+--//ANCHOR main
+if fav_item then
+    pesan("set fav: " .. list_ikan[fav_item].nama)
+end
+
+--//ANCHOR OPSI FUNCTION
+
+function opsi(index)
+    if index == 1 then -- ROW I
+        trade("mitik_all")
+    elseif index == 2 then
+       trade("mitik_big")
+    elseif index == 3 then
+        trade("mitik_small")
+    elseif index == 4 then
+        
+    elseif index == 5 then
+        pesan("total: " .. tostring(evolved_jumlah))
+        trade("evolved")
+    elseif index == 6 then
+        fav_item = 228
+        update_inventory()
+        local dino = list_fav[1].uuid
+        local list_trading = {}
+        table.insert(list_trading, dino)
+        table.insert(list_trading, ruby)
+        if dino == nil or ruby == nil then
+            pesan("item nil")
+            return
+        end
+        print("total ruby dan lochness ", #list_trading)
+	    trade_new(selectedPlayer, list_trading , 2)
+
+    elseif index == 7 then
+        Net:WaitForChild(net_cancel_trade):InvokeServer()
+    elseif index == 8 then
+      local btn = game:GetService("Players").LocalPlayer.PlayerGui["! Trading"].Frame.Interior.Decline
+      for _, v in pairs(getconnections(btn.Activated)) do
+            v.Function()
+        end
+    elseif index == 9 then
+        
+    elseif index == 10 then
+        teleport(-3615,-267,-1581)
+        face(180)
+    elseif index == 11 then
+        
+    elseif index == 12 then
+        fav_item = tonumber(customId.Text)
+        pesan("set fav: " .. list_ikan[fav_item].nama)
+        pesan("Total fav: " .. #list_fav)
+        trade("fav")
+    elseif index == 13 then
+        for id, ikan in pairs(list_ikan) do
+            if ikan.tier == "SECRET" then
+                print(ikan.nama, ikan.harga, ikan.tier, ikan.id)
+                pesan(ikan.nama .." > " .. tostring(ikan.id))
+            end
+        end
+    elseif index == 14 then
+        
+        trade("master")
+    elseif index == 15 then
+        fav_item = 269 -- maja
+        pesan("set fav: " .. list_ikan[fav_item].nama)
+        trade("fav")
+    elseif index == 16 then
+        fav_item = 187 -- QUEEN
+        pesan("set fav: " .. list_ikan[fav_item].nama)
+        trade("fav")
+    elseif index == 17 then
+        fav_item = 359 -- GLADIATOR
+        pesan("set fav: " .. list_ikan[fav_item].nama)
+        trade("fav")
+    elseif index == 18 then
+       fav_item = 158 -- KING CRAB
+        pesan("set fav: " .. list_ikan[fav_item].nama)
+        trade("fav")
+    elseif index == 19 then
+        local posisi = tonumber(amountBox.Text)
+        face(posisi)
+    elseif index == 20 then
+        local jobId = game.JobId
+        if setclipboard then
+            setclipboard(jobId)
+            task.wait(1.5)
+            pesan("berhasil copy job id")
+        else
+            pesan("gagal copy job id")
+        end
+    elseif index == 21 then
+        local TeleportService = game:GetService("TeleportService")
+        local PLACE_ID = game.PlaceId
+
+        TeleportService:TeleportToPlaceInstance(PLACE_ID,customId.Text,player)
+    elseif index == 22 then
+        for _,v in pairs(net_index) do
+            pesan(v.no .. " | " .. v.path)
+        end
+    elseif index == 23 then
+        local Event = amountBox.Text
+        local findText = Event
+        for _,v in pairs(net_index) do
+            if v.path:find(findText, 1, true) then
+                pesan("Found")
+                pesan(v.no .. "|" .. v.path)
+            end
+        end
+    elseif index == 24 then
+        trade_new()
+    end
+end
+
+AntiAFK()
+updateButton()
+
+
+local battlepass = require(ReplicatedStorage.Controllers.BattlepassShopController)
+battlepass.Init = function() end
+battlepass.Start = function() end
+battlepass.PurchaseItem = function() end
+
+local firefly = require(ReplicatedStorage.Controllers.FireflyController)
+firefly.Start = function() end
+firefly.updateFireflies = function() end
+firefly.assignTargetCFrame = function() end
+
+--[[
+local hudd = require(ReplicatedStorage.Controllers.HUDController)
+hudd.Init = function() return false end
+hudd.Start = function() end
+hudd.SetBlurSize = function() end
+--]]
+
+local countdown = 8
+pesan("Auto Play in: ")
+if running then
+    for i = 1, countdown do
+        local elapsed = countdown - i
+        pesan(elapsed)
+        task.wait(1)
+    end
+end
+--//ANCHOR incoming request trade
+local Prompt = require(ReplicatedStorage.Controllers.PromptController)
+Prompt.DrawPrompt = function()
+    return true
+end
+-- auto accept trade new
+local TS = Net:WaitForChild(net_TradeStarted)
+TS.OnClientEvent:Connect(function(players, ...)
+    pesan("incoming request")
+    start_trade = true
+    if auto_accept or toogle_autoaccept then
+        status_trade = 0
+        local step_trade = 1
+        print("step 1")
+        for i=1, 15 do
+            pesan("send ready ")
+            task.wait(10)
+            local ready = Net:WaitForChild(net_SetReady):InvokeServer(true)
+            if ready then
+                pesan("ready = true")
+                step_trade = 2
+                break
+            end
+        end
+        if step_trade == 2 then
+            print("step 2")
+            for i=1, 5 do
+                task.wait(10)
+                pesan("send confirm")
+                local confirm = Net:WaitForChild(net_ConfirmTrade):InvokeServer(true)
+                if confirm then
+                    pesan("confirm = true")
+                    step_trade = 3
+                    break
+                end
+            end
+        end
+        if step_trade == 3 then
+            print("step 3")
+            for i = 1, 5 do
+                if status_trade == 1 then
+                    pesan("berhasil trade")
+                    break
+                end
+                task.wait(10)
+            end
+        end
+        if status_trade == 0 then
+            pesan("gagal trade")
+            if toogle_autocollect then
+                Net:WaitForChild(net_cancel_trade):InvokeServer()
+            end
+        end
+    end
+end)
+print(auto_collect)
+print(toogle_autocollect)
+print(auto_accept)
+print(toogle_autoaccept)
+
+
+
+if auto_collect and toogle_autocollect and auto_accept and toogle_autoaccept then
+    if running then
+        if #Players:GetPlayers() > 6 then
+            pesan("PLAYER LEBIH DARI 6")
+        else
+            pesan("trade sudah siap")
+            update_inventory()
+            task.wait(2)
+            pesan("total ikan " .. tostring(total_ikan))
+            if total_ikan > 4200 then
+                pesan("ikan penuh")
+                return
+            end
+            task.wait(1)
+            render()
+            for _, user in ipairs(Players:GetPlayers()) do
+                if user ~= player then
+                    detail_harga.Text = user.Name
+                    auto_collecting(user.Name)
+                    timer()
+                end
+            end
+            playerFrame.BackgroundColor3 = Color3.fromRGB(127, 0, 255)
+        end
+        pesan("SELESAI SEMUA AUTO COLLECT")
+    end
+end
+local total_trade = 0
+if running then 
+    Net:WaitForChild(net_TextNotification).OnClientEvent:Connect(
+        function(data)
+            if data and data.Text == "Trade completed!" then
+                total_trade = total_trade + 1
+                local info = "Total : " .. tostring(total_trade)
+                detail_harga.Text = info
+            end
+        end
+    )
+end
+--SetLowGraphics()
+while running do
+    if start_timer then
+        running_time = formatTime(math.floor(tick() - startscript))
+        selectedLabel.Text = running_time
+        task.wait(1)
+    else
+        task.wait(50)
+    end
+end
+--]]
